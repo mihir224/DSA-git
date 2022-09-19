@@ -87,6 +87,7 @@ public class LinkedLis {
                         System.out.println("Going to " + listIterator.next());
                     }else{
                         System.out.println("Reached the end of the list. No more cities left to visit!");
+                        goingFwd=false;
                     }
                     break;
                 case 2:
@@ -102,6 +103,7 @@ public class LinkedLis {
                     else
                     {
                         System.out.println("Back to where we started. ");
+                        goingFwd=true;
                     }
                     break;
                 case 3:
