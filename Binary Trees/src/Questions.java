@@ -1,6 +1,4 @@
-import java.lang.reflect.Array;
 import java.util.*;
-
 
 public class Questions {
     class Pair{
@@ -349,7 +347,7 @@ public class Questions {
     }
 
     //root to node path
-    //
+    //https://www.interviewbit.com/problems/path-to-given-node/#_=_
     private boolean getPath(TreeNode root, ArrayList<Integer> ans, int target){
         if(root==null){
             return false;
@@ -364,12 +362,16 @@ public class Questions {
         ans.remove(ans.size()-1);
         return false;
     }
-    public ArrayList<Integer> pathToNode(TreeNode root, int target){
-        ArrayList<Integer> ans=new ArrayList<>();
+    public int[] solve(TreeNode root, int target){
+        ArrayList<Integer> ansList=new ArrayList<>();
+        getPath(root,ansList,target);
+        int[] ans=new int[ansList.size()];
         if(root==null){
             return ans;
         }
-        getPath(root,ans,target);
+        for (int i=0;i<ans.length;i++){
+            ans[i]=ansList.get(i);
+        }
         return ans;
     }
 
