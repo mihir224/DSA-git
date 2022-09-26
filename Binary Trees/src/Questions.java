@@ -1,3 +1,5 @@
+import com.sun.source.tree.Tree;
+
 import java.util.*;
 
 public class Questions {
@@ -356,7 +358,7 @@ public class Questions {
         if(root.value==target){
             return true;
         }
-        if (getPath(root.left,ans,target)||getPath(root.right,ans,target)){
+        if (getPath(root.left,ans,target)||getPath(root.right,ans,target)){ //if anyone returns true, we've found a path
             return true;
         }
         ans.remove(ans.size()-1);
@@ -375,5 +377,73 @@ public class Questions {
         return ans;
     }
 
+    //lowest common ancestor
+    //https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root==null||root==p||root==q){
+            return root;
+        }
+        TreeNode left=lowestCommonAncestor(root.left, p, q);
+        TreeNode right=lowestCommonAncestor(root.right, p, q);
+        if(left==null){ //take right if left is returning null even if right is also null
+            return right;
+        }
+        else if(right==null){ //take left if right is returning null even if left is also null
+            return left;
+        }
+        else{ //both left and right are not null
+            return root;
+        }
+    }
+
+    //max width of a binary tree
+    //https://leetcode.com/problems/maximum-width-of-binary-tree/
+
+    class Pair2{
+        private TreeNode node;
+        private int index;
+        public Pair2() {
+        }
+        public Pair2(TreeNode node, int index) {
+            this.node = node;
+            this.index = index;
+        }
+    }
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root==null){
+            return 0;
+        }
+        int ans=0;
+        Queue<Pair2> q=new LinkedList<>();
+        q.offer(new Pair2(root, 0));
+        while(!q.isEmpty()){
+            int n=q.size();
+            int first=0;
+            int last=0;
+            int min=q.peek().index; //min index of each level since queue is fifo
+            for(int i=0;i<n;i++){
+                int currentIndex=q.peek().index-min; //to avoid overflow
+                TreeNode node=q.poll().node;
+                if(i==0){
+                    first=currentIndex; //storing the first node index at each level
+                }
+                if(i==n-1){
+                    last=currentIndex; //storing the last node index at each level
+                }
+                if(node.left!=null){
+                    q.offer(new Pair2(node.left, currentIndex*2+1));
+                }
+                if(node.right!=null){
+                    q.offer(new Pair2(node.right,currentIndex*2+2));
+                }
+            }
+            ans=Math.max(ans, last-first+1); //max width among all levels
+        }
+        return ans;
+    }
+
 }
+
+
+
 
