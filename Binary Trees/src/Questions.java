@@ -442,6 +442,102 @@ public class Questions {
         return ans;
     }
 
+    //convert to children sum tree
+    public void toChildrenSum(TreeNode root){
+        if(root==null){
+            return;
+        }
+        int initialSum=0;
+        if(root.left!=null){
+            initialSum+=root.left.value;
+        }
+        if(root.right!=null){
+            initialSum+=root.right.value;
+        }
+        if(initialSum>=root.value){
+            root.value=initialSum;
+        }
+        else{
+            if(root.left!=null){
+                root.left.value=root.value;
+            }
+            if(root.right!=null){
+                root.right.value=root.value;
+            }
+        }
+        toChildrenSum(root.left);
+        toChildrenSum(root.right);
+        int sum=0;
+        if(root.left!=null){
+            sum+=root.left.value;
+        }
+        if(root.right!=null){
+            sum+=root.right.value;
+        }
+        if(root.left!=null||root.right!=null){
+            root.value=sum;
+        }
+    }
+
+    //all nodes distance k
+    //https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
+    private void markParents(TreeNode root,Map<TreeNode,TreeNode> parentMap){
+        Queue<TreeNode> q=new LinkedList<>();
+        q.offer(root);
+        while(!q.isEmpty()){
+            TreeNode node=q.poll();
+            if(node.left!=null){
+                parentMap.put(node.left, node);
+                q.offer(node.left);
+            }
+            if(node.right!=null){
+                parentMap.put(node.right, node);
+                q.offer(node.right);
+            }
+        }
+    }
+
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        Map<TreeNode,TreeNode> parentMap=new HashMap<>();
+        markParents(root, parentMap);
+        Queue<TreeNode> q=new LinkedList<>();
+        List<Integer> ans=new ArrayList<>();
+        Map<TreeNode, Boolean> visitedNode=new HashMap<>();
+        q.offer(target);
+        visitedNode.put(target,true);
+
+        int distance=0;
+        while(!q.isEmpty()){
+            int n=q.size();
+            if(distance==k){
+                break;
+            }
+            distance++;
+            for(int i=0;i<n;i++){
+                TreeNode node=q.poll();
+                if(node.left!=null&&visitedNode.get(node.left)==null){ //moving radially downwards. Also, when a boolean
+                    //value is null it is neither true nor false
+                    q.offer(node.left);
+                    visitedNode.put(node.left,true);
+                }
+                if(node.right!=null&&visitedNode.get(node.right)==null){ //moving radially downwards
+                    q.offer(node.right);
+                    visitedNode.put(node.right,true);
+                }
+                if(parentMap.get(node)!=null&&visitedNode.get(parentMap.get(node))==null){ //moving radially upwards if parent exists
+                    q.offer(parentMap.get(node));
+                    visitedNode.put(parentMap.get(node),true);
+                }
+            }
+        }
+        while (!q.isEmpty()){
+            for(int i=0;i<q.size();i++){
+                ans.add(i,q.poll().value);
+            }
+        }
+        return ans;
+    }
+
 }
 
 
