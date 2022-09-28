@@ -270,19 +270,69 @@ public class Questions {
 
     //reverse string leetcode
     //https://leetcode.com/problems/reverse-string/
-    public void reverseString(char[] s){
-        Stack<Character> stack=new Stack<>();
-       for(int i=0;i<s.length;i++){
-           stack.push(s[i]);
-       }
-       for(int i=0;i<s.length;i++){
-           if(!stack.isEmpty()){
-               s[i]=stack.pop();
-           }
-           else{
-               return;
-           }
-       }
+    //9920102054 MIHIR SAINI E2
+    //Q1
+    public void reverseString(char[] s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length; i++) {
+            stack.push(s[i]);
+        }
+        for (int i = 0; i < s.length; i++) {
+            if (!stack.isEmpty()) {
+                s[i] = stack.pop();
+            } else {
+                return;
+            }
+        }
+    }
+
+    //infix to postfix
+    //https://www.geeksforgeeks.org/stack-set-2-infix-to-postfix/
+    //9920102054 MIHIR SAINI E2
+    //Q2
+    public String infixToPostfix(String str){
+        String ans="";
+        Deque<Character> stack=new ArrayDeque<>();
+        for(int i=0;i<str.length();i++){
+            char ch=str.charAt(i);
+            if(ch=='('){
+                stack.push(ch);
+            }
+            else if(Character.isLetterOrDigit(ch)){
+                ans+=ch;
+            }
+            else if(ch==')'){
+                while(!stack.isEmpty()&&stack.peek()!='('){ //popping from the stack till '(' is encountered
+                    ans+=stack.pop();
+                }
+                stack.pop();
+            }
+            else{ //operator encountered
+                while(!stack.isEmpty()&&precedence(stack.peek())>=precedence(ch)){
+                    ans+=stack.pop();
+                }
+                stack.push(ch);
+            }
+        }
+        while(stack.isEmpty()){
+            if(stack.peek()=='(') {//edge case for when a ( is extra in the expression
+                return "invalid";
+            }
+            ans+=stack.pop();
+        }
+        return ans;
+
+    }
+    public int precedence(char ch){
+        switch(ch){
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+        }
+        return -1;
     }
 
     //postfix evaluation
@@ -416,6 +466,7 @@ public class Questions {
     }
     public int returnMin(String s){
         Stack<Character> stack=new Stack<>(); //this stack will contain all the invalid parenthesis
+        Queue<Integer> q=new LinkedList<>();
         for(int i=0;i<s.length();i++){
             char ch=s.charAt(i);
             if(ch=='('){
@@ -703,8 +754,32 @@ public class Questions {
         }
         return nge;
 
-
-
     }
+
+    //interleave the first of queue with second half
+    public void interLeaveQueue(Queue<Integer> q){
+        Stack<Integer> stack=new Stack<>();
+        if(q.size()%2!=0){ //case when queue doesn't have even no. of elements
+            return;
+        }
+        int half=q.size()/2;
+        for(int i=0; i<half;i++){ //pushing 1st half of the queue to the stack
+            stack.push(q.poll());
+        }
+        while(!stack.isEmpty()){ //adding stack elements to the queue
+            q.add(stack.pop());
+        }
+        for(int i=0;i<half;i++){
+            q.add(q.poll()); //deque and enqueue simultaneously
+        }
+        for(int i=0;i<half;i++){
+            stack.push(q.poll()); //again pushing 1st half of queue to the stack
+        }
+        while(!stack.isEmpty()){ //interleave stack and queue elements
+            q.add(stack.pop());
+            q.add(q.poll());
+        }
+    }
+   
 }
 
