@@ -19,6 +19,9 @@ public class Questions {
         TreeNode left;
         TreeNode right;
 
+        public TreeNode() {
+        }
+
         public TreeNode(int value) {
             this.value = value;
             left = null;
@@ -536,6 +539,144 @@ public class Questions {
             }
         }
         return ans;
+    }
+    //min time taken to burn the binary tree
+    //https://practice.geeksforgeeks.org/problems/burning-tree/1
+
+    private static TreeNode markParents1(TreeNode root, Map<TreeNode, TreeNode> parentMap, int target){
+        Queue<TreeNode> q=new LinkedList<>();
+        q.offer(root);
+        TreeNode foundNode=null;
+        while(!q.isEmpty()){
+            TreeNode node=q.poll();
+            if(node.value==target){
+                foundNode=node;
+            }
+            if(node.left!=null){
+                parentMap.put(node.left, node);
+                q.offer(node.left);
+            }
+            if(node.right!=null){
+                parentMap.put(node.right, node);
+                q.offer(node.right);
+            }
+        }
+        return foundNode;
+    }
+    public static int findMaxDistance(Map<TreeNode, TreeNode> parentMap, TreeNode targetNode){
+        Queue<TreeNode> q=new LinkedList<>();
+        Map<TreeNode, Boolean> visitedNode=new HashMap<>();
+        q.offer(targetNode);
+        visitedNode.put(targetNode,true);
+        int distance=0;
+        while(!q.isEmpty()){
+            int n=q.size();
+            int flag=0; //to check if the current node is capable of burning any other nodes
+            for(int i=0;i<n;i++){
+                TreeNode node=q.poll();
+                if(node.left!=null&&visitedNode.get(node.left)==null){ //moving radially downwards. Also, when a boolean
+                    //value is null it is neither true nor false
+                    flag=1;
+                    q.offer(node.left);
+                    visitedNode.put(node.left,true);
+                }
+                if(node.right!=null&&visitedNode.get(node.right)==null){ //moving radially downwards
+                    flag=1;
+                    q.offer(node.right);
+                    visitedNode.put(node.right,true);
+                }
+                if(parentMap.get(node)!=null&&visitedNode.get(parentMap.get(node))==null){ //moving radially upwards if parent exists
+                    flag=1;
+                    q.offer(parentMap.get(node));
+                    visitedNode.put(parentMap.get(node),true);
+                }
+            }
+            if(flag==1){
+                distance++;
+            }
+        }
+        return distance;
+    }
+    public static int minTime(TreeNode root, int target)
+    {
+        Map<TreeNode,TreeNode> parentMap=new HashMap<>();
+        TreeNode targetNode=markParents1(root, parentMap,target);
+        int time=findMaxDistance(parentMap, targetNode);
+        return time;
+    }
+
+    //count complete binary tree nodes
+    //https://leetcode.com/problems/count-complete-tree-nodes/
+    public int countNodes(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        int lh=findLeftHeight(root);
+        int rh=findRightHeight(root);
+        if(lh==rh){
+            return (int)Math.pow(2,lh)-1;
+        }
+        return 1+countNodes(root.left)+countNodes(root.right);
+    }
+    public int findLeftHeight(TreeNode root){
+        int count=0;
+        while(root!=null){
+            count++;
+            root=root.left;
+        }
+        return count;
+    }
+    public int findRightHeight(TreeNode root){
+        int count=0;
+        while(root!=null){
+            count++;
+            root=root.right;
+        }
+        return count;
+    }
+
+    //construct a binary tree from pre-order and inorder traversal
+    //https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        Map<Integer, Integer> inOrderMap=new HashMap<>();
+        for(int i=0;i<inorder.length;i++){
+            inOrderMap.put(inorder[i],i);
+        }
+        TreeNode root=buildTree1(preorder, 0, preorder.length-1, inorder, 0,inorder.length-1, inOrderMap);
+        return root;
+    }
+    public TreeNode buildTree1(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart, int inEnd, Map<Integer, Integer> inOrderMap){
+        if(preStart>preEnd||inStart>inEnd){
+            return null;
+        }
+        TreeNode root=new TreeNode(preorder[preStart]);
+        int inRootIndex=inOrderMap.get(root.value);
+        int x=inRootIndex-inStart;
+        root.left=buildTree1(preorder, preStart+1, preStart+x, inorder, inStart, inRootIndex-1, inOrderMap);
+        root.right=buildTree1(preorder, preStart+x+1, preEnd, inorder, inRootIndex+1, inEnd, inOrderMap);
+        return root;
+    }
+
+    //construct binary tree from in order and post-order traversal
+    //https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+    public TreeNode buildTree3(int[] inorder, int[] postorder) {
+        Map<Integer, Integer> inOrderMap=new HashMap<>();
+        for(int i=0;i<inorder.length;i++){
+            inOrderMap.put(inorder[i],i);
+        }
+        TreeNode root=buildTree4(postorder, 0, postorder.length-1, inorder, 0,inorder.length-1, inOrderMap);
+        return root;
+    }
+    public TreeNode buildTree4(int[] postorder, int postStart, int postEnd, int[] inorder, int inStart, int inEnd, Map<Integer, Integer> inOrderMap){
+        if(postStart>postEnd||inStart>inEnd){
+            return null;
+        }
+        TreeNode root=new TreeNode(postorder[postEnd]);
+        int inRootIndex=inOrderMap.get(root.value);
+        int x=inRootIndex-inStart;
+        root.left=buildTree4(postorder, postStart, postStart+x, inorder, inStart, inRootIndex-1, inOrderMap);
+        root.right=buildTree4(postorder, postStart+x+1, postEnd, inorder, inRootIndex+1, inEnd, inOrderMap);
+        return root;
     }
 
 }
