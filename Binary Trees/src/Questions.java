@@ -3,6 +3,7 @@ import com.sun.source.tree.Tree;
 import java.util.*;
 
 public class Questions {
+    TreeNode prev=null;
     class Pair{
         private TreeNode node;
         private int line;
@@ -334,7 +335,7 @@ public class Questions {
         leftSideView(node.left, ans, level+1); //pre order traversal
         leftSideView(node.right, ans, level+1);
     }
-    
+
     //symmetrical binary tree
     //https://leetcode.com/problems/symmetric-tree/
     public boolean isSymmetric(TreeNode root) {
@@ -679,7 +680,127 @@ public class Questions {
         return root;
     }
 
+    //serialize deserialize
+    //https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+    public String serialize(TreeNode root) {
+        Queue<TreeNode> q=new LinkedList<>();
+        StringBuilder ans=new StringBuilder();
+        q.offer(root);
+        while(!q.isEmpty()){
+            TreeNode node=q.poll();
+            if(node==null){
+                ans.append("NULL ");
+                continue;
+            }
+            ans.append(node.value + " ");
+            q.add(root.left);
+            q.add(root.right);
+        }
+        return ans.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) { //we apply the reverse logic of what we applied in serialize
+        if(data==""){
+            return null;
+        }
+        Queue<TreeNode> q=new LinkedList<>();
+        String[] strArray=data.split(" ");
+        TreeNode root=new TreeNode(Integer.parseInt(strArray[0])); //we know for sure that root can never be null
+        q.add(root);
+        for(int i=1;i<strArray.length;i++){
+            TreeNode node=q.poll();
+            if(!strArray[i].equals("NULL")){
+                TreeNode left=new TreeNode(Integer.parseInt(strArray[i])); { //forming the left of root node
+                    node.left=left;
+                    q.add(left);
+                }
+            }
+            if(!strArray[++i].equals("NULL")){ //if the next of left ie right is not null we attach it to the tree
+                TreeNode right=new TreeNode(Integer.parseInt(strArray[i])); { //forming the left of root node
+                    node.right=right;
+                    q.add(right);
+                }
+
+            }
+        }
+        return root;
+    }
+
+    //morris traversal
+    //inorder
+    public ArrayList<Integer> morrisInOrder(TreeNode root){
+        ArrayList<Integer> list=new ArrayList<>();
+        TreeNode node=root;
+        while(node!=null){
+            if(node.left==null){
+                list.add(node.value);
+                node=node.right;
+            }
+            else{
+                TreeNode prev=node.left; //left subtree
+                if(prev.right!=null&&prev.right!=node){ //check if thread already exists and if right is null
+                    prev=prev.right;
+                }
+                else{
+                    if(prev.right==null){ //reached right most node of the left subtree, thus creating a thread and moving left
+                        prev.right=node;
+                        node=node.left;
+                    }
+                    else{ //thread already exists, thus remove it, print node and move right
+                        prev.right=null;
+                        list.add(node.value);
+                        node=node.right;
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+
+
+
+
+
+
+
+    //flatten a binary tree to linked list
+    //https://leetcode.com/problems/flatten-binary-tree-to-linked-list/submissions/
+
+    //recursive
+    public void flatten(TreeNode root) {
+        if(root==null){
+            return;
+        }
+        flatten(root.right);
+        flatten(root.left);
+        root.right=prev;
+        root.left=null;
+        prev=root;
+    }
+
+    //using stacks
+    public void flatten2(TreeNode root) {
+        if(root==null){
+            return;
+        }
+        Stack<TreeNode> stack=new Stack<>();
+        stack.push(root);
+        while(!stack.isEmpty()){
+            TreeNode node=stack.pop();
+            if(node.right!=null){
+                stack.push(node.right);
+            }
+            if(node.left!=null){
+                stack.push(node.left);
+            }
+            node.right=stack.peek();
+            node.left=null;
+        }
+    }
 }
+
 
 
 
