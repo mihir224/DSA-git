@@ -91,15 +91,60 @@ public class BST {
                 }
             }
         }
-    return root;
+        return root;
     }
 
     //delete a node in bst
     //https://leetcode.com/problems/delete-node-in-a-bst/
     public TreeNode deleteNode(TreeNode root, int key) {
-        3
+        if(root==null){
+            return null;
+        }
+        if(root.value==key){
+            return helper(root); //case when root is to be deleted
+        }
+        TreeNode node=root;
+        while(node!=null){
+            if(key<node.value){ //key exists in left subtree
+                if(node.left!=null&&node.left.value==key){
+                    node.left=helper(node.left);
+                    break;
+                }
+                else {
+                    node = node.left;
+                }
+            }
+            else{ //key exists in right sub tree
+                if(root.right!=null&&node.right.value==key) {
+                    node.right = helper(node.right);
+                    break;
+                }
+                else{
+                    node=node.right;
+                }
+            }
+        }
         return root;
     }
 
+    public TreeNode helper(TreeNode node){
+        if(node.left==null){   //edge cases
+            return node.right;
+        }
+        else if(node.right==null){
+            return node.left;
+        }
+        TreeNode rightChild=node.right;
+        TreeNode rightOfLeftSubTree=findRightLeaf(node.left);
+        rightOfLeftSubTree.right=rightChild;
+        return node.left;
+    }
+
+    public TreeNode findRightLeaf(TreeNode node){
+        if(node.right==null){
+            return root;
+        }
+        return findRightLeaf(node.right);
+    }
 
 }

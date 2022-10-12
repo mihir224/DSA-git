@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca909abc-c0c2-474e-8d21-6dc93de582e4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Binary Trees/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Binary Trees/src/Questions.java" afterDir="false" />
+    <list default="true" id="4e07f98a-bdf8-4667-b316-e4d57c4540bf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BST.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Stacks/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Stacks/src/Main.java" afterDir="false" />
@@ -26,10 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProjectId" id="2FxKf5ORVHqYkrj2M2sWqevv6QS" />
+  <component name="ProjectId" id="2G20lVdqIdlqMtGvCiWnu2uSaZx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -38,18 +33,17 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/janhvisaini/IdeaProjects/Binary Search Trees"
+    "RunOnceActivity.ShowReadmeOnStart": "true"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="ca909abc-c0c2-474e-8d21-6dc93de582e4" name="Changes" comment="" />
-      <created>1665428395093</created>
+      <changelist id="4e07f98a-bdf8-4667-b316-e4d57c4540bf" name="Changes" comment="" />
+      <created>1665571523119</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1665428395093</updated>
+      <updated>1665571523119</updated>
     </task>
     <servers />
   </component>
