@@ -115,7 +115,7 @@ public class BST {
                 }
             }
             else{ //key exists in right sub tree
-                if(root.right!=null&&node.right.value==key) {
+                if(node.right!=null&&node.right.value==key) {
                     node.right = helper(node.right);
                     break;
                 }
@@ -142,7 +142,7 @@ public class BST {
 
     public TreeNode findRightLeaf(TreeNode node){
         if(node.right==null){
-            return root;
+            return node;
         }
         return findRightLeaf(node.right);
     }
