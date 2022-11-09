@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class BST {
@@ -312,6 +315,90 @@ public class BST {
         }
     }
 
+    //recover bst
+    //https://leetcode.com/problems/recover-binary-search-tree/
+    TreeNode prev; //to store node prev to current node
+    TreeNode first;
+    TreeNode mid;
+    TreeNode last;
+    public void recoverTree(TreeNode root) {
+        first=null;
+        mid=null;
+        last=null;
+        prev =new TreeNode(Integer.MIN_VALUE);
+        helper4(root);
+        if(first!=null&&last!=null){ //swap nodes not adjacent
+            int temp=first.value; //java is pass by value, thus we perform swap manually
+            first.value=last.value;
+            last.value=temp ;
+        }
+        else if(first!=null&&mid!=null){
+            int temp=first.value;
+            first.value=mid.value;
+            mid.value=temp;
+        }
+    }
+    public void helper4(TreeNode root){  //to simultaneously perform inorder and check each node
+        if(root==null){
+            return;
+        }
+        helper4(root.left); //go left
+        if(prev!=null&&(root.value< prev.value)){  //first violation
+            if(first==null){
+                first=prev;
+                mid=root;
+            }
+            else{  //second violation
+                last=root;
+            }
+        }
+        prev=root; //mark this root as prev and then go right
+        helper4(root.right);
+    }
+
+    //size of largest bst in a bt
+    //https://practice.geeksforgeeks.org/problems/largest-bst/1
+    static class Node{
+        public int smallestRight;
+        public int largestLeft;
+        public int size;
+        public Node(int largestLeft, int smallestRight, int size) {
+            this.largestLeft = largestLeft;
+            this.smallestRight = smallestRight;
+            this.size = size;
+        }
+    }
+    static int largestBst(TreeNode root)
+    {
+        return helper5(root).size;
+    }
+    static public Node helper5(TreeNode root){
+        if(root==null){
+            return new Node(Integer.MIN_VALUE,Integer.MAX_VALUE,0);
+        }
+        Node left=helper5(root.left); //performing post order traversal
+        Node right=helper5(root.right);
+        if(left.largestLeft<root.value&&root.value<right.smallestRight){ //valid bst
+            return new Node(Math.max(root.value,left.largestLeft),Math.min(root.value, right.smallestRight),left.size+right.size+1);
+        }
+        //otherwise invalid bst, return node with max largest and min smallest
+        return new Node(Integer.MAX_VALUE, Integer.MIN_VALUE,Math.max(left.size, right.size));
+
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> pq=new PriorityQueue<>();
+        for(int i=0;i<k;i++){
+            pq.add(nums[i]);
+        }
+        for(int i=k;i<nums.length;i++){
+            if(pq.peek()<nums[i]) {
+                pq.poll();
+                pq.add(nums[i]);
+            }
+        }
+        return pq.peek();
+    }
 
 }
 
