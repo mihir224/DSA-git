@@ -133,7 +133,6 @@ public class Questions {
         }
         return c;
     }
-
     public void heapify(int[] arr,int n,int i){
         int largest=i;
         int left=2*i+1; //0-based indexing
@@ -150,6 +149,50 @@ public class Questions {
             arr[largest]=temp;
             heapify(arr,n,largest); //recursively converting further nodes to heap
         }
+    }
+
+    //min cost of ropes
+    //https://practice.geeksforgeeks.org/problems/minimum-cost-of-ropes-1587115620/1
+    long minCost(long arr[], int n)
+    {
+        PriorityQueue<Long> pq=new PriorityQueue<Long>();
+        for(long i:arr){
+            pq.offer(i);
+        }
+        long ans=0;
+        while(n>1){
+            long a=pq.poll();
+            long b=pq.poll();
+            long sum=a+b;
+            ans+=sum;
+        }
+        return ans;
+    }
+
+    //convert bst to min heap where left child is always smaller than right child
+    //https://www.geeksforgeeks.org/convert-bst-min-heap/
+    private int index;
+    public void inorder(TreeNode root, ArrayList<Integer> arr){
+        if(root==null){
+            return;
+        }
+        inorder(root.left,arr);
+        arr.add(root.val);
+        inorder(root.right,arr);
+    }
+    public void preorder(TreeNode root, ArrayList<Integer> arr){
+        if(root==null){
+            return ;
+        }
+        root.val= arr.get(index++); //this will change the root in each iteration to the corresponding inorder element of the given bst
+        preorder(root.left,arr);
+        preorder(root.right,arr);
+    }
+    public void convertToMinHeap(TreeNode root){
+        this.index=0;
+        ArrayList<Integer> arr=new ArrayList<>();
+        inorder(root,arr); //traversing inorder and storing it in arr
+        preorder(root,arr);
     }
 
 }
