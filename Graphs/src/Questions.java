@@ -122,6 +122,123 @@ public class Questions {
 
     //rotten oranges
     //https://leetcode.com/problems/rotting-oranges/
-     
+    public class triad{
+        int row;
+        int col;
+        int time;
+
+        public triad(int row, int col, int time) {
+            this.row = row;
+            this.col = col;
+            this.time = time;
+        }
+    }
+    public int orangesRotting(int[][] grid) {
+        int n=grid.length;
+        int m=grid[0].length;
+        int[][] vis=new int[n][m];
+        Queue<triad> q=new LinkedList<>();
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        int timeCount=0;
+        int freshCount=0; //to keep track of the fresh oranges, in case some are unreachable
+        int count=0; //to keep track of every fresh orange that has been rotten-ed
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==2){
+                    q.add(new triad(i,j,0)); //add initial rotten to queue
+                    vis[i][j]=2; //mark visit
+                }
+                else if(grid[i][j]==1){ //counting total fresh nodes initially present in the given matrix
+                    freshCount++;
+                }
+            }
+        }
+        while(!q.isEmpty()){
+            int row=q.peek().row;
+            int col=q.peek().col;
+            int time=q.peek().time;
+            timeCount=Math.max(timeCount,time);
+            q.poll();
+            for(int i=0;i<4;i++){ //checking for valid neighbours (4 directional)
+                int neighRow=row+delRow[i];
+                int neighCol=col+delCol[i];
+                if(neighRow>=0&&neighRow<n&&neighCol>=0&&neighCol<m&&vis[neighRow][neighCol]!=2&&grid[neighRow][neighCol]==1){
+                    q.add(new triad(neighRow,neighCol,time+1));
+                    vis[neighRow][neighCol]=2;
+                    count++;
+                }
+            }
+        }
+        if(count!=freshCount){ //some fresh oranges were unreachable
+            return -1;
+        }
+        return timeCount;
+    }
+
+    //Cycle Detection
+    //https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
+
+    //Using bfs
+    public boolean isCycle(int V, ArrayList<ArrayList<Integer>> adj) {
+        boolean[] vis=new boolean[V]; //visited array
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                if(checkCycle(i,adj,vis)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean checkCycle(int sn, ArrayList<ArrayList<Integer>> adj, boolean[] vis){
+        vis[sn]=true;
+        Queue<Pair> q=new LinkedList<>();
+        q.add(new Pair(sn,-1)); //the starting node is coming from nowhere, thus its source is -1
+        while(!q.isEmpty()){
+            Pair p=q.poll(); //popping front of queue
+            int node=p.first;
+            int parent=p.second;
+            for(int i: adj.get(node)){ //neighbours of current node
+                if(!vis[i]){
+                    vis[i]=true;
+                    q.add(new Pair(i,node));
+                }
+                else if(parent!=i){ //case we have a node which has been visited and is not a parent
+                    return true; //cycle exists
+                }
+            }
+        }
+        return false;
+    }
+
+    //using dfs
+    public boolean isCycle1(int V, ArrayList<ArrayList<Integer>> adj) {
+        boolean[] vis = new boolean[V];
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                if (dfs2(i, -1, vis, adj)) { //since the graph can have multiple components, calling dfs for each
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean dfs2(int node, int parent, boolean[] vis, ArrayList<ArrayList<Integer>> adj) {
+        vis[node] = true;
+        for (int i : adj.get(node)) {
+            if (!vis[i]) {
+                if (dfs2(i, node, vis, adj)) { //return true if any dfs returns true
+                    return true;
+                }
+            }
+            else if (parent != i) { //when a neighbour other than parent has already been visited
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
