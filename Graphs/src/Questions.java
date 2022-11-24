@@ -163,7 +163,10 @@ public class Questions {
             for(int i=0;i<4;i++){ //checking for valid neighbours (4 directional)
                 int neighRow=row+delRow[i];
                 int neighCol=col+delCol[i];
-                if(neighRow>=0&&neighRow<n&&neighCol>=0&&neighCol<m&&vis[neighRow][neighCol]!=2&&grid[neighRow][neighCol]==1){
+                if(neighRow>=0&&neighRow<n&&
+                        neighCol>=0&&neighCol<m&&
+                        vis[neighRow][neighCol]!=2&&
+                        grid[neighRow][neighCol]==1){
                     q.add(new triad(neighRow,neighCol,time+1));
                     vis[neighRow][neighCol]=2;
                     count++;
@@ -239,6 +242,175 @@ public class Questions {
         }
         return false;
     }
+
+    public int numIslands1(char[][] isConnected) {
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        boolean[] vis=new boolean[isConnected.length];
+        int count=0;
+        for(int i=0;i<isConnected.length;i++){
+            adj.add(new ArrayList<>());
+        }
+        for (int i = 0; i < isConnected.length; i++) { //converting adj matrix to adj list
+            for (int j = 0; j < isConnected[0].length; j++) {
+                if (isConnected[i][j] == '1' && i != j) {
+                    adj.get(i).add(j);
+                    adj.get(j).add(i);
+                }
+            }
+        }
+        for(int i=0;i<isConnected.length;i++){
+            if(!vis[i]){
+                count++;
+                dfs(i,adj,vis);
+            }
+        }
+        return count;
+    }
+
+    //Distance of the nearest cell having 1
+    //https://practice.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1-1587115620/1
+    public int[][] nearest(int[][] grid)
+    {
+        int n=grid.length;
+        int m=grid[0].length;
+        Queue<triad> q=new LinkedList<>();
+        boolean[][] vis=new boolean[n][m];
+        int[][] ans=new int[n][m];
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1){
+                    q.add(new triad(i,j,0));
+                    vis[i][j]=true;
+                }
+            }
+        }
+        while(!q.isEmpty()){
+            triad t=q.peek();
+            int row=t.row;
+            int col=t.col;
+            int cnt=t.time;
+            q.poll();
+            ans[row][col]=cnt;
+            for(int i=0;i<4;i++){
+                int neighRow=row+delRow[i];
+                int neighCol=col+delCol[i];
+                if(neighRow>=0&&neighRow<grid.length&&
+                        neighCol>=0&&neighCol<grid[0].length&&
+                        !vis[neighRow][neighCol]){
+                    vis[neighRow][neighCol]=true;
+                    q.add(new triad(neighRow,neighCol,cnt+1));
+                }
+            }
+        }
+        return ans;
+    }
+
+    //https://practice.geeksforgeeks.org/problems/replace-os-with-xs0052/1
+    static char[][] fill(int n, int m, char a[][])
+    {
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        boolean[][] vis=new boolean[n][m];
+        //traversing all boundaries and checking for 0's
+        for(int j=0;j<m;j++){
+            //first row
+            if(a[0][j]=='O'&&!vis[0][j]){
+                dfs3(0,j,vis,a,delRow,delCol);
+            }
+            //last row
+            if(a[n-1][j]=='O'&&!vis[n-1][j]){
+                dfs3(n-1,j,vis,a,delRow,delCol);
+            }
+        }
+        for(int i=0;i<n;i++){
+            //first col
+            if(a[i][0]=='O'&&!vis[i][0]){
+                dfs3(i,0,vis,a,delRow,delCol);
+            }
+            //last col
+            if(a[i][m-1]=='O'&&!vis[i][m-1]){
+                dfs3(i,m-1,vis,a,delRow,delCol);
+            }
+
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(!vis[i][j]&&a[i][j]=='O'){ //converting 0s which were not visited by boundaries
+                    a[i][j]='X';
+                }
+            }
+        }
+        return a;
+    }
+    public static void dfs3(int row, int col, boolean[][] vis, char[][] a, int[] delRow, int[] delCol){
+        vis[row][col]=true;
+        int n=a.length;
+        int m=a[0].length;
+        for(int i=0;i<4;i++){
+            int neighRow=row+delRow[i];
+            int neighCol=col+delCol[i];
+            if(neighRow>=0&&neighRow<n&&
+                    neighCol>=0&&neighCol<m&&
+                    !vis[neighRow][neighCol]&&
+                    a[neighRow][neighCol]=='O'){
+                dfs3(neighRow,neighCol,vis,a,delRow,delCol);
+            }
+        }
+    }
+    //number of enclaves (similar to previous problem)
+    //https://practice.geeksforgeeks.org/problems/number-of-enclaves/1
+    public int numberOfEnclaves(int[][] grid) {
+        int n= grid.length;
+        int m=grid[0].length;
+        int count=0;
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        boolean[][] vis=new boolean[n][m];
+        //traversing all boundaries
+        for(int j=0;j<m;j++){
+            if(grid[0][j]==1&&!vis[0][j]){
+                dfs4(0,j,vis,grid,delRow,delCol);
+            }
+            if(grid[n-1][j]==1&&!vis[n-1][j]){
+                dfs4(n-1,j,vis,grid,delRow,delCol);
+            }
+        }
+        for(int i=0;i<n;i++){
+            if(grid[i][0]==1&&!vis[i][0]){
+                dfs4(i,0,vis,grid,delRow,delCol);
+            }
+            if(grid[i][m-1]==1&&!vis[i][m-1]){
+                dfs4(i,m-1,vis,grid,delRow,delCol);
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1&&!vis[i][j]){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public void dfs4(int row, int col, boolean[][] vis, int[][] grid, int[] delRow, int[] delCol){
+        vis[row][col]=true;
+        for(int i=0;i<4;i++){
+            int neighRow=row+delRow[i];
+            int neighCol=col+delCol[i];
+            if(neighRow>=0&&neighRow<grid.length&&
+                    neighCol>=0&&neighCol<grid[0].length&&
+                    !vis[neighRow][neighCol]&&
+                    grid[neighRow][neighCol]==1
+            ){
+                dfs4(neighRow,neighCol,vis,grid,delRow,delCol);
+            }
+        }
+    }
+
+    //number of distinct islands
+    //https://practice.geeksforgeeks.org/problems/number-of-distinct-islands/1
 
 
 
