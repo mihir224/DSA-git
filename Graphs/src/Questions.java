@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -411,8 +413,79 @@ public class Questions {
 
     //number of distinct islands
     //https://practice.geeksforgeeks.org/problems/number-of-distinct-islands/1
+    int countDistinctIslands(int[][] grid) {
+        int n=grid.length;
+        int m=grid[0].length;
+        boolean[][] vis=new boolean[n][m];
+        HashSet<ArrayList<String>> st=new HashSet<>(); //to store the list of coordinate distances of every node on a particular island in a unique manner
+        for(int i=0;i<n;i++){
+            for (int j=0;j<m;j++){
+                if(!vis[i][j]&&grid[i][j]==1){
+                    ArrayList<String> list=new ArrayList<>(); //since a hashset cannot detect duplicate lists of pair type, we store our coordinates in lists of string type
+                    dfs5(i,j,vis,grid,list,i,j); //calling dfs for each 1 and taking i, j as base
+                    st.add(list);
+                }
+            }
+        }
+        return st.size();
+    }
+    public void dfs5(int row, int col, boolean[][] vis, int[][] grid, ArrayList<String> list, int row0, int col0){
+        int n=grid.length;
+        int m=grid[0].length;
+        vis[row][col]=true;
+        list.add(toString(row-row0, col-col0)); //storing the coordinate distances of each node in a current island
+        //so that we can identify when two islands are exactly same by looking at their 1's coordinates in this list
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        for(int i=0;i<4;i++){
+            int neighRow=row+delRow[i];
+            int neighCol=col+delCol[i];
+            if(neighRow>=0&&neighRow<n&&
+                    neighCol>=0&&neighCol<m&&
+                    !vis[neighRow][neighCol]&&
+                    grid[neighRow][neighCol]==1){
+                dfs5(neighRow,neighCol,vis,grid,list,row0,col0);
+            }
+        }
+    }
+    public String toString(int row, int col) {
+        return Integer.toString(row) + " , " + Integer.toString(col);
+    }
 
-
-
+    //check bipartite
+    //https://practice.geeksforgeeks.org/problems/bipartite-graph/1
+    public boolean isBipartite(int V, ArrayList<ArrayList<Integer>>adj)
+    {
+        int[] color=new int[V];
+        for(int i=0;i<V;i++){
+            color[i]=-1;
+        }
+        for(int i=0;i<V;i++){
+            if(color[i]==-1){
+                if(!checkBipartite(i, V, adj, color)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean checkBipartite(int sn, int V, ArrayList<ArrayList<Integer>> adj, int[] color){
+        Queue<Integer> q=new LinkedList<>();
+        color[sn]=0;
+        q.add(sn);
+        while(!q.isEmpty()){
+            int node=q.poll();
+            for(int i:adj.get(node)){
+                if(color[i]==-1){ //color the neighbour
+                    color[i]=1-color[node];  //if color of node is 0, this will make color of its neighbour 1 o/w 0
+                    q.add(i); //add to queue
+                }
+                else if(color[i]==color[node]){ //adjacent nodes have same colour
+                    return false;
+                }
+            }
+        }
+        return true; //colored all nodes, no two adjacent nodes had same color
+    }
 }
 
