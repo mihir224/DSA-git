@@ -1,8 +1,5 @@
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Questions {
     public static void main(String[] args) {
@@ -13,9 +10,9 @@ public class Questions {
     //https://leetcode.com/problems/number-of-provinces/
     public int findCircleNum(int[][] isConnected) {
         ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        boolean[] vis=new boolean[isConnected.length];
-        int count=0;
-        for(int i=0;i<isConnected.length;i++){
+        boolean[] vis = new boolean[isConnected.length];
+        int count = 0;
+        for (int i = 0; i < isConnected.length; i++) {
             adj.add(new ArrayList<>());
         }
         for (int i = 0; i < isConnected.length; i++) { //converting adj matrix to adj list
@@ -26,69 +23,73 @@ public class Questions {
                 }
             }
         }
-        for(int i=0;i<isConnected.length;i++){
-            if(!vis[i]){
+        for (int i = 0; i < isConnected.length; i++) {
+            if (!vis[i]) {
                 count++;
-                dfs(i,adj,vis);
+                dfs(i, adj, vis);
             }
         }
         return count;
     }
-    public void dfs(int node, ArrayList<ArrayList<Integer>> adj, boolean[] vis){
-        vis[node]=true;
-        for(int i: adj.get(node)){
-            if(!vis[i]){
-                dfs(i,adj,vis);
+
+    public void dfs(int node, ArrayList<ArrayList<Integer>> adj, boolean[] vis) {
+        vis[node] = true;
+        for (int i : adj.get(node)) {
+            if (!vis[i]) {
+                dfs(i, adj, vis);
             }
         }
     }
 
     //number of islands
     //https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1
-    class Pair{
+    class Pair {
         int first;
         int second;
-        public Pair(int first,int second){
-            this.first=first;
-            this.second=second;
+
+        public Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
         }
     }
+
     public int numIslands(char[][] grid) {
-        int n=grid.length;
-        int m=grid[0].length;
-         boolean[][] vis=new boolean[n][m];
-         int count=0;
-         for(int i=0;i<n;i++){
-             for(int j=0;j<m;j++){
-                 if(!vis[i][j]&&grid[i][j]=='1'){ //not visited and equal to 1 ie new island
-                     count++;
-                     bfs(i,j,vis,grid);
-                 }
-             }
-         }
-         return count;
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!vis[i][j] && grid[i][j] == '1') { //not visited and equal to 1 ie new island
+                    count++;
+                    bfs(i, j, vis, grid);
+                }
+            }
+        }
+        return count;
     }
-    public void bfs(int row, int col,boolean[][] vis, char[][] grid){
-        vis[row][col]=true; //mark visit of current node
-        Queue<Pair> q=new LinkedList<>();
-        q.add(new Pair(row,col)); //pushing current node to the queue
-        int n=grid.length;
-        int m=grid[0].length;
-        while(!q.isEmpty()){
-            Pair p=q.poll();
-            int i=p.first;
-            int j=p.second;
+
+    public void bfs(int row, int col, boolean[][] vis, char[][] grid) {
+        vis[row][col] = true; //mark visit of current node
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(row, col)); //pushing current node to the queue
+        int n = grid.length;
+        int m = grid[0].length;
+        while (!q.isEmpty()) {
+            Pair p = q.poll();
+            int i = p.first;
+            int j = p.second;
             //find neighbours (checking all 8 directions of current node) and mark visit
-            for(int delRow=-1;delRow<=1;delRow++){
-                for(int delCol=-1;delCol<=1;delCol++){
-                    int neighRow=i+delRow;
-                    int neighCol=j+delCol;
-                    if(neighRow>=0&&neighRow<n&& //to check for valid rows
-                            neighCol>=0&&neighCol<m&& //to check for valid cols
-                            grid[neighRow][neighCol]=='1' //to make sure that current node is a land
-                            &&!vis[neighRow][neighCol]){ //to make sure current node has not already been visited\
-                        vis[neighRow][neighCol]=true;
-                        q.add(new Pair(neighRow,neighCol)); //adding neighbours (lands) having value 1
+            for (int delRow = -1; delRow <= 1; delRow++) {
+                for (int delCol = -1; delCol <= 1; delCol++) {
+                    int neighRow = i + delRow;
+                    int neighCol = j + delCol;
+                    if (neighRow >= 0 && neighRow < n && //to check for valid rows
+                            neighCol >= 0 && neighCol < m && //to check for valid cols
+                            grid[neighRow][neighCol] == '1' //to make sure that current node is a land
+                            && !vis[neighRow][neighCol]) { //to make sure current node has not already been visited\
+                        vis[neighRow][neighCol] = true;
+                        q.add(new Pair(neighRow, neighCol)); //adding neighbours (lands) having value 1
                     }
                 }
             }
@@ -98,33 +99,34 @@ public class Questions {
     //flood fill
     //https://leetcode.com/problems/flood-fill/
     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
-        int initialColor=image[sr][sc];
-        int[][] copy=image;
-        int[] delRow={-1,0,1,0}; //possible values of row and col of all neighbours (in order)
-        int[] delCol={0,1,0,-1};
-        dfs1(sr,sc,image,copy,color,initialColor,delRow,delCol);
+        int initialColor = image[sr][sc];
+        int[][] copy = image;
+        int[] delRow = {-1, 0, 1, 0}; //possible values of row and col of all neighbours (in order)
+        int[] delCol = {0, 1, 0, -1};
+        dfs1(sr, sc, image, copy, color, initialColor, delRow, delCol);
         return copy;
     }
-    public void dfs1(int sr, int sc, int[][] image, int[][] copy, int newColor, int initialColor, int[] delRow, int[] delCol){
-        copy[sr][sc]=newColor; //coloring starting pixel with new color
-        int n=image.length;
-        int m=image[0].length;
+
+    public void dfs1(int sr, int sc, int[][] image, int[][] copy, int newColor, int initialColor, int[] delRow, int[] delCol) {
+        copy[sr][sc] = newColor; //coloring starting pixel with new color
+        int n = image.length;
+        int m = image[0].length;
         //checking for neighbours (4 directional)
-        for(int i=0;i<4;i++){
-            int neighRow=sr+delRow[i];
-            int neighCol=sc+delCol[i];
-            if(neighRow>=0&&neighRow<n&& //checking validity of rows and cols
-                    neighCol>=0&&neighCol<m
-                    &&image[neighRow][neighCol]==initialColor //checking for same color neighbour
-                    &&copy[neighRow][neighCol]!=newColor){  //checking if the neighbour has already been replaced with new color
-                dfs1(neighRow,neighCol,image,copy,newColor,initialColor,delRow,delCol);
+        for (int i = 0; i < 4; i++) {
+            int neighRow = sr + delRow[i];
+            int neighCol = sc + delCol[i];
+            if (neighRow >= 0 && neighRow < n && //checking validity of rows and cols
+                    neighCol >= 0 && neighCol < m
+                    && image[neighRow][neighCol] == initialColor //checking for same color neighbour
+                    && copy[neighRow][neighCol] != newColor) {  //checking if the neighbour has already been replaced with new color
+                dfs1(neighRow, neighCol, image, copy, newColor, initialColor, delRow, delCol);
             }
         }
     }
 
     //rotten oranges
     //https://leetcode.com/problems/rotting-oranges/
-    public class triad{
+    public class triad {
         int row;
         int col;
         int time;
@@ -135,47 +137,47 @@ public class Questions {
             this.time = time;
         }
     }
+
     public int orangesRotting(int[][] grid) {
-        int n=grid.length;
-        int m=grid[0].length;
-        int[][] vis=new int[n][m];
-        Queue<triad> q=new LinkedList<>();
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        int timeCount=0;
-        int freshCount=0; //to keep track of the fresh oranges, in case some are unreachable
-        int count=0; //to keep track of every fresh orange that has been rotten-ed
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]==2){
-                    q.add(new triad(i,j,0)); //add initial rotten to queue
-                    vis[i][j]=2; //mark visit
-                }
-                else if(grid[i][j]==1){ //counting total fresh nodes initially present in the given matrix
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        Queue<triad> q = new LinkedList<>();
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        int timeCount = 0;
+        int freshCount = 0; //to keep track of the fresh oranges, in case some are unreachable
+        int count = 0; //to keep track of every fresh orange that has been rotten-ed
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 2) {
+                    q.add(new triad(i, j, 0)); //add initial rotten to queue
+                    vis[i][j] = 2; //mark visit
+                } else if (grid[i][j] == 1) { //counting total fresh nodes initially present in the given matrix
                     freshCount++;
                 }
             }
         }
-        while(!q.isEmpty()){
-            int row=q.peek().row;
-            int col=q.peek().col;
-            int time=q.peek().time;
-            timeCount=Math.max(timeCount,time);
+        while (!q.isEmpty()) {
+            int row = q.peek().row;
+            int col = q.peek().col;
+            int time = q.peek().time;
+            timeCount = Math.max(timeCount, time);
             q.poll();
-            for(int i=0;i<4;i++){ //checking for valid neighbours (4 directional)
-                int neighRow=row+delRow[i];
-                int neighCol=col+delCol[i];
-                if(neighRow>=0&&neighRow<n&&
-                        neighCol>=0&&neighCol<m&&
-                        vis[neighRow][neighCol]!=2&&
-                        grid[neighRow][neighCol]==1){
-                    q.add(new triad(neighRow,neighCol,time+1));
-                    vis[neighRow][neighCol]=2;
+            for (int i = 0; i < 4; i++) { //checking for valid neighbours (4 directional)
+                int neighRow = row + delRow[i];
+                int neighCol = col + delCol[i];
+                if (neighRow >= 0 && neighRow < n &&
+                        neighCol >= 0 && neighCol < m &&
+                        vis[neighRow][neighCol] != 2 &&
+                        grid[neighRow][neighCol] == 1) {
+                    q.add(new triad(neighRow, neighCol, time + 1));
+                    vis[neighRow][neighCol] = 2;
                     count++;
                 }
             }
         }
-        if(count!=freshCount){ //some fresh oranges were unreachable
+        if (count != freshCount) { //some fresh oranges were unreachable
             return -1;
         }
         return timeCount;
@@ -186,30 +188,30 @@ public class Questions {
 
     //Using bfs
     public boolean isCycle(int V, ArrayList<ArrayList<Integer>> adj) {
-        boolean[] vis=new boolean[V]; //visited array
-        for(int i=0;i<V;i++){
-            if(!vis[i]){
-                if(checkCycle(i,adj,vis)){
+        boolean[] vis = new boolean[V]; //visited array
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                if (checkCycle(i, adj, vis)) {
                     return true;
                 }
             }
         }
         return false;
     }
-    public boolean checkCycle(int sn, ArrayList<ArrayList<Integer>> adj, boolean[] vis){
-        vis[sn]=true;
-        Queue<Pair> q=new LinkedList<>();
-        q.add(new Pair(sn,-1)); //the starting node is coming from nowhere, thus its source is -1
-        while(!q.isEmpty()){
-            Pair p=q.poll(); //popping front of queue
-            int node=p.first;
-            int parent=p.second;
-            for(int i: adj.get(node)){ //neighbours of current node
-                if(!vis[i]){
-                    vis[i]=true;
-                    q.add(new Pair(i,node));
-                }
-                else if(parent!=i){ //case we have a node which has been visited and is not a parent
+
+    public boolean checkCycle(int sn, ArrayList<ArrayList<Integer>> adj, boolean[] vis) {
+        vis[sn] = true;
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(sn, -1)); //the starting node is coming from nowhere, thus its source is -1
+        while (!q.isEmpty()) {
+            Pair p = q.poll(); //popping front of queue
+            int node = p.first;
+            int parent = p.second;
+            for (int i : adj.get(node)) { //neighbours of current node
+                if (!vis[i]) {
+                    vis[i] = true;
+                    q.add(new Pair(i, node));
+                } else if (parent != i) { //case we have a node which has been visited and is not a parent
                     return true; //cycle exists
                 }
             }
@@ -237,8 +239,7 @@ public class Questions {
                 if (dfs2(i, node, vis, adj)) { //return true if any dfs returns true
                     return true;
                 }
-            }
-            else if (parent != i) { //when a neighbour other than parent has already been visited
+            } else if (parent != i) { //when a neighbour other than parent has already been visited
                 return true;
             }
         }
@@ -247,9 +248,9 @@ public class Questions {
 
     public int numIslands1(char[][] isConnected) {
         ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        boolean[] vis=new boolean[isConnected.length];
-        int count=0;
-        for(int i=0;i<isConnected.length;i++){
+        boolean[] vis = new boolean[isConnected.length];
+        int count = 0;
+        for (int i = 0; i < isConnected.length; i++) {
             adj.add(new ArrayList<>());
         }
         for (int i = 0; i < isConnected.length; i++) { //converting adj matrix to adj list
@@ -260,10 +261,10 @@ public class Questions {
                 }
             }
         }
-        for(int i=0;i<isConnected.length;i++){
-            if(!vis[i]){
+        for (int i = 0; i < isConnected.length; i++) {
+            if (!vis[i]) {
                 count++;
-                dfs(i,adj,vis);
+                dfs(i, adj, vis);
             }
         }
         return count;
@@ -271,38 +272,37 @@ public class Questions {
 
     //Distance of the nearest cell having 1
     //https://practice.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1-1587115620/1
-    public int[][] nearest(int[][] grid)
-    {
-        int n=grid.length;
-        int m=grid[0].length;
-        Queue<triad> q=new LinkedList<>();
-        boolean[][] vis=new boolean[n][m];
-        int[][] ans=new int[n][m];
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]==1){
-                    q.add(new triad(i,j,0));
-                    vis[i][j]=true;
+    public int[][] nearest(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        Queue<triad> q = new LinkedList<>();
+        boolean[][] vis = new boolean[n][m];
+        int[][] ans = new int[n][m];
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    q.add(new triad(i, j, 0));
+                    vis[i][j] = true;
                 }
             }
         }
-        while(!q.isEmpty()){
-            triad t=q.peek();
-            int row=t.row;
-            int col=t.col;
-            int cnt=t.time;
+        while (!q.isEmpty()) {
+            triad t = q.peek();
+            int row = t.row;
+            int col = t.col;
+            int cnt = t.time;
             q.poll();
-            ans[row][col]=cnt;
-            for(int i=0;i<4;i++){
-                int neighRow=row+delRow[i];
-                int neighCol=col+delCol[i];
-                if(neighRow>=0&&neighRow<grid.length&&
-                        neighCol>=0&&neighCol<grid[0].length&&
-                        !vis[neighRow][neighCol]){
-                    vis[neighRow][neighCol]=true;
-                    q.add(new triad(neighRow,neighCol,cnt+1));
+            ans[row][col] = cnt;
+            for (int i = 0; i < 4; i++) {
+                int neighRow = row + delRow[i];
+                int neighCol = col + delCol[i];
+                if (neighRow >= 0 && neighRow < grid.length &&
+                        neighCol >= 0 && neighCol < grid[0].length &&
+                        !vis[neighRow][neighCol]) {
+                    vis[neighRow][neighCol] = true;
+                    q.add(new triad(neighRow, neighCol, cnt + 1));
                 }
             }
         }
@@ -310,103 +310,105 @@ public class Questions {
     }
 
     //https://practice.geeksforgeeks.org/problems/replace-os-with-xs0052/1
-    static char[][] fill(int n, int m, char a[][])
-    {
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        boolean[][] vis=new boolean[n][m];
+    static char[][] fill(int n, int m, char a[][]) {
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        boolean[][] vis = new boolean[n][m];
         //traversing all boundaries and checking for 0's
-        for(int j=0;j<m;j++){
+        for (int j = 0; j < m; j++) {
             //first row
-            if(a[0][j]=='O'&&!vis[0][j]){
-                dfs3(0,j,vis,a,delRow,delCol);
+            if (a[0][j] == 'O' && !vis[0][j]) {
+                dfs3(0, j, vis, a, delRow, delCol);
             }
             //last row
-            if(a[n-1][j]=='O'&&!vis[n-1][j]){
-                dfs3(n-1,j,vis,a,delRow,delCol);
+            if (a[n - 1][j] == 'O' && !vis[n - 1][j]) {
+                dfs3(n - 1, j, vis, a, delRow, delCol);
             }
         }
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             //first col
-            if(a[i][0]=='O'&&!vis[i][0]){
-                dfs3(i,0,vis,a,delRow,delCol);
+            if (a[i][0] == 'O' && !vis[i][0]) {
+                dfs3(i, 0, vis, a, delRow, delCol);
             }
             //last col
-            if(a[i][m-1]=='O'&&!vis[i][m-1]){
-                dfs3(i,m-1,vis,a,delRow,delCol);
+            if (a[i][m - 1] == 'O' && !vis[i][m - 1]) {
+                dfs3(i, m - 1, vis, a, delRow, delCol);
             }
 
         }
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(!vis[i][j]&&a[i][j]=='O'){ //converting 0s which were not visited by boundaries
-                    a[i][j]='X';
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!vis[i][j] && a[i][j] == 'O') { //converting 0s which were not visited by boundaries
+                    a[i][j] = 'X';
                 }
             }
         }
         return a;
     }
-    public static void dfs3(int row, int col, boolean[][] vis, char[][] a, int[] delRow, int[] delCol){
-        vis[row][col]=true;
-        int n=a.length;
-        int m=a[0].length;
-        for(int i=0;i<4;i++){
-            int neighRow=row+delRow[i];
-            int neighCol=col+delCol[i];
-            if(neighRow>=0&&neighRow<n&&
-                    neighCol>=0&&neighCol<m&&
-                    !vis[neighRow][neighCol]&&
-                    a[neighRow][neighCol]=='O'){
-                dfs3(neighRow,neighCol,vis,a,delRow,delCol);
+
+    public static void dfs3(int row, int col, boolean[][] vis, char[][] a, int[] delRow, int[] delCol) {
+        vis[row][col] = true;
+        int n = a.length;
+        int m = a[0].length;
+        for (int i = 0; i < 4; i++) {
+            int neighRow = row + delRow[i];
+            int neighCol = col + delCol[i];
+            if (neighRow >= 0 && neighRow < n &&
+                    neighCol >= 0 && neighCol < m &&
+                    !vis[neighRow][neighCol] &&
+                    a[neighRow][neighCol] == 'O') {
+                dfs3(neighRow, neighCol, vis, a, delRow, delCol);
             }
         }
     }
+
     //number of enclaves (similar to previous problem)
     //https://practice.geeksforgeeks.org/problems/number-of-enclaves/1
     public int numberOfEnclaves(int[][] grid) {
-        int n= grid.length;
-        int m=grid[0].length;
-        int count=0;
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        boolean[][] vis=new boolean[n][m];
+        int n = grid.length;
+        int m = grid[0].length;
+        int count = 0;
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        boolean[][] vis = new boolean[n][m];
         //traversing all boundaries
-        for(int j=0;j<m;j++){
-            if(grid[0][j]==1&&!vis[0][j]){
-                dfs4(0,j,vis,grid,delRow,delCol);
+        for (int j = 0; j < m; j++) {
+            if (grid[0][j] == 1 && !vis[0][j]) {
+                dfs4(0, j, vis, grid, delRow, delCol);
             }
-            if(grid[n-1][j]==1&&!vis[n-1][j]){
-                dfs4(n-1,j,vis,grid,delRow,delCol);
-            }
-        }
-        for(int i=0;i<n;i++){
-            if(grid[i][0]==1&&!vis[i][0]){
-                dfs4(i,0,vis,grid,delRow,delCol);
-            }
-            if(grid[i][m-1]==1&&!vis[i][m-1]){
-                dfs4(i,m-1,vis,grid,delRow,delCol);
+            if (grid[n - 1][j] == 1 && !vis[n - 1][j]) {
+                dfs4(n - 1, j, vis, grid, delRow, delCol);
             }
         }
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]==1&&!vis[i][j]){
+        for (int i = 0; i < n; i++) {
+            if (grid[i][0] == 1 && !vis[i][0]) {
+                dfs4(i, 0, vis, grid, delRow, delCol);
+            }
+            if (grid[i][m - 1] == 1 && !vis[i][m - 1]) {
+                dfs4(i, m - 1, vis, grid, delRow, delCol);
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1 && !vis[i][j]) {
                     count++;
                 }
             }
         }
         return count;
     }
-    public void dfs4(int row, int col, boolean[][] vis, int[][] grid, int[] delRow, int[] delCol){
-        vis[row][col]=true;
-        for(int i=0;i<4;i++){
-            int neighRow=row+delRow[i];
-            int neighCol=col+delCol[i];
-            if(neighRow>=0&&neighRow<grid.length&&
-                    neighCol>=0&&neighCol<grid[0].length&&
-                    !vis[neighRow][neighCol]&&
-                    grid[neighRow][neighCol]==1
-            ){
-                dfs4(neighRow,neighCol,vis,grid,delRow,delCol);
+
+    public void dfs4(int row, int col, boolean[][] vis, int[][] grid, int[] delRow, int[] delCol) {
+        vis[row][col] = true;
+        for (int i = 0; i < 4; i++) {
+            int neighRow = row + delRow[i];
+            int neighCol = col + delCol[i];
+            if (neighRow >= 0 && neighRow < grid.length &&
+                    neighCol >= 0 && neighCol < grid[0].length &&
+                    !vis[neighRow][neighCol] &&
+                    grid[neighRow][neighCol] == 1
+            ) {
+                dfs4(neighRow, neighCol, vis, grid, delRow, delCol);
             }
         }
     }
@@ -414,78 +416,178 @@ public class Questions {
     //number of distinct islands
     //https://practice.geeksforgeeks.org/problems/number-of-distinct-islands/1
     int countDistinctIslands(int[][] grid) {
-        int n=grid.length;
-        int m=grid[0].length;
-        boolean[][] vis=new boolean[n][m];
-        HashSet<ArrayList<String>> st=new HashSet<>(); //to store the list of coordinate distances of every node on a particular island in a unique manner
-        for(int i=0;i<n;i++){
-            for (int j=0;j<m;j++){
-                if(!vis[i][j]&&grid[i][j]==1){
-                    ArrayList<String> list=new ArrayList<>(); //since a hashset cannot detect duplicate lists of pair type, we store our coordinates in lists of string type
-                    dfs5(i,j,vis,grid,list,i,j); //calling dfs for each 1 and taking i, j as base
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        HashSet<ArrayList<String>> st = new HashSet<>(); //to store the list of coordinate distances of every node on a particular island in a unique manner
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!vis[i][j] && grid[i][j] == 1) {
+                    ArrayList<String> list = new ArrayList<>(); //since a hashset cannot detect duplicate lists of pair type, we store our coordinates in lists of string type
+                    dfs5(i, j, vis, grid, list, i, j); //calling dfs for each 1 and taking i, j as base
                     st.add(list);
                 }
             }
         }
         return st.size();
     }
-    public void dfs5(int row, int col, boolean[][] vis, int[][] grid, ArrayList<String> list, int row0, int col0){
-        int n=grid.length;
-        int m=grid[0].length;
-        vis[row][col]=true;
-        list.add(toString(row-row0, col-col0)); //storing the coordinate distances of each node in a current island
+
+    public void dfs5(int row, int col, boolean[][] vis, int[][] grid, ArrayList<String> list, int row0, int col0) {
+        int n = grid.length;
+        int m = grid[0].length;
+        vis[row][col] = true;
+        list.add(toString(row - row0, col - col0)); //storing the coordinate distances of each node in a current island
         //so that we can identify when two islands are exactly same by looking at their 1's coordinates in this list
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        for(int i=0;i<4;i++){
-            int neighRow=row+delRow[i];
-            int neighCol=col+delCol[i];
-            if(neighRow>=0&&neighRow<n&&
-                    neighCol>=0&&neighCol<m&&
-                    !vis[neighRow][neighCol]&&
-                    grid[neighRow][neighCol]==1){
-                dfs5(neighRow,neighCol,vis,grid,list,row0,col0);
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        for (int i = 0; i < 4; i++) {
+            int neighRow = row + delRow[i];
+            int neighCol = col + delCol[i];
+            if (neighRow >= 0 && neighRow < n &&
+                    neighCol >= 0 && neighCol < m &&
+                    !vis[neighRow][neighCol] &&
+                    grid[neighRow][neighCol] == 1) {
+                dfs5(neighRow, neighCol, vis, grid, list, row0, col0);
             }
         }
     }
+
     public String toString(int row, int col) {
         return Integer.toString(row) + " , " + Integer.toString(col);
     }
 
     //check bipartite
     //https://practice.geeksforgeeks.org/problems/bipartite-graph/1
-    public boolean isBipartite(int V, ArrayList<ArrayList<Integer>>adj)
-    {
-        int[] color=new int[V];
-        for(int i=0;i<V;i++){
-            color[i]=-1;
+    //using bfs
+    public boolean isBipartite(int V, ArrayList<ArrayList<Integer>> adj) {
+        int[] color = new int[V];
+        for (int i = 0; i < V; i++) {
+            color[i] = -1; //mark all not colored
         }
-        for(int i=0;i<V;i++){
-            if(color[i]==-1){
-                if(!checkBipartite(i, V, adj, color)){
+        for (int i = 0; i < V; i++) { //checking for all components
+            if (color[i] == -1) {
+                if (!checkBipartite(i, V, adj, color)) {
                     return false;
                 }
             }
         }
         return true;
     }
-    public boolean checkBipartite(int sn, int V, ArrayList<ArrayList<Integer>> adj, int[] color){
-        Queue<Integer> q=new LinkedList<>();
-        color[sn]=0;
+
+    public boolean checkBipartite(int sn, int V, ArrayList<ArrayList<Integer>> adj, int[] color) {
+        Queue<Integer> q = new LinkedList<>();
+        color[sn] = 0;
         q.add(sn);
-        while(!q.isEmpty()){
-            int node=q.poll();
-            for(int i:adj.get(node)){
-                if(color[i]==-1){ //color the neighbour
-                    color[i]=1-color[node];  //if color of node is 0, this will make color of its neighbour 1 o/w 0
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            for (int i : adj.get(node)) {
+                if (color[i] == -1) { //color the neighbour
+                    color[i] = 1 - color[node];  //if color of node is 0, this will make color of its neighbour 1 o/w 0
                     q.add(i); //add to queue
-                }
-                else if(color[i]==color[node]){ //adjacent nodes have same colour
+                } else if (color[i] == color[node]) { //adjacent nodes have same colour
                     return false;
                 }
             }
         }
         return true; //colored all nodes, no two adjacent nodes had same color
     }
-}
 
+    //using dfs
+    public boolean isBipartite1(int V, ArrayList<ArrayList<Integer>> adj) {
+        int[] color = new int[V];
+        for (int i = 0; i < V; i++) {
+            color[i] = -1; //mark all not colored
+        }
+        for (int i = 0; i < V; i++) { //checking for all components
+            if (color[i] == -1) {
+                if (!dfs6(i, 0, adj, color)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean dfs6(int node, int clr, ArrayList<ArrayList<Integer>> adj, int[] color) {
+        color[node] = clr;
+        for (int i : adj.get(node)) {
+            if (color[i] == -1) {
+                if (!dfs6(i, 1 - clr, adj, color)) {
+                    return false;
+                }
+            } else if (color[i] == color[node]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //detect cycle in an undirected graph
+    //https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+    public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
+        int[] vis = new int[V];
+        int[] path = new int[V];
+        for (int i = 0; i < V; i++) { //checking for each component
+            if (vis[i] == 0) {
+                if (dfs7(i, adj, vis, path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean dfs7(int node, ArrayList<ArrayList<Integer>> adj, int[] vis, int[] path) {
+        vis[node] = 1;
+        path[node] = 1; //mark path visit
+        for (int i : adj.get(node)) {
+            if (vis[i] == 0) {
+                if (dfs7(i, adj, vis, path)) {
+                    return true;
+                }
+            } else if (path[i] == 1) { //vis and path visited
+                return true;
+            }
+        }
+
+        path[node] = 0; //mark path unvisit if we don't find any cycle
+        return false;
+    }
+
+    //eventual safe states
+    //https://practice.geeksforgeeks.org/problems/eventual-safe-states/1
+    List<Integer> eventualSafeNodes(int V, List<List<Integer>> adj) {
+        int[] vis = new int[V];
+        int[] path = new int[V];
+        int[] check = new int[V];
+        List<Integer> lis = new ArrayList<>();
+        for (int i = 0; i < V; i++) { //checking for each component
+            if (vis[i] == 0) {
+                dfs8(i, adj, vis, path, check);
+            }
+        }
+        for (int i = 0; i < V; i++) {
+            if (check[i] == 1) {
+                lis.add(i);
+            }
+        }
+        return lis;
+    }
+
+    public boolean dfs8(int node, List<List<Integer>> adj, int[] vis, int[] path, int[] check) {
+        vis[node] = 1;
+        path[node] = 1; //mark path visit
+        for (int i : adj.get(node)) {
+            if (vis[i] == 0) {
+                if (dfs8(i, adj, vis, path, check)) {
+                    return true;
+                }
+            } else if (path[i] == 1) { //vis and path visited
+                return true;
+            }
+        }
+        check[node] = 1; //no cycle was encountered, mark node safe
+        path[node] = 0; //mark path unvisited
+        return false;
+    }
+}
