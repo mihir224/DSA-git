@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Algorithms {
     //Prims
@@ -20,7 +17,8 @@ public class Algorithms {
     // adjacency list is in the form of a pair in which first element is the node and second is the weight
     {
         //here we are not required to obtain the MST, we just have to find the sum of the weights of mst thus parent is not taken
-        PriorityQueue<Pair> pq = new PriorityQueue<>((x, y) -> x.first - y.first); //to use a Pair in a min heap
+        PriorityQueue<Pair> pq = new PriorityQueue<>((x, y) -> x.first - y.first); //to use a Pair in a min heap and sort
+        // it according to weight
         boolean[] vis = new boolean[V];
         pq.add(new Pair(0, 0)); // initial config
         int sum = 0;
@@ -32,7 +30,7 @@ public class Algorithms {
                 continue; //current node has already been visited
             }
             vis[node] = true; //mark visit
-            //add to mst list
+            //add to mst list here
             sum += weight; //add weight to sum
             for (int i = 0; i < adj.get(node).size(); i++) {
                 int adjWt = adj.get(node).get(i).get(1); //since we are given an adjacency matrix
@@ -87,5 +85,37 @@ public class Algorithms {
         }
         return mstWeight;
     }
+
+    //Topological Sort
+    static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        boolean[] vis=new boolean[V];
+        Stack<Integer> st=new Stack<>();
+        List<Integer> list=new ArrayList<>();
+        int[] arr=new int[V];
+        for(int i=0;i<V;i++){ //check for all components
+            if(!vis[i]){
+                dfs(i,adj,vis,st);
+            }
+        }
+       while (!st.isEmpty()){
+           list.add(st.pop());
+       }
+       for(int i=0;i<list.size();i++){
+           arr[i]=list.get(i);
+       }
+       return arr;
+    }
+    static void dfs(int node, ArrayList<ArrayList<Integer>> adj, boolean[] vis, Stack<Integer> st){
+        vis[node]=true;
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                dfs(i, adj,vis,st);
+            }
+        }
+        st.push(node);
+    }
+
+
 
 }
