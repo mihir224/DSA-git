@@ -86,7 +86,7 @@ public class Algorithms {
         return mstWeight;
     }
 
-    //Topological Sort
+    //Topological Sort (dfs)
     static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj)
     {
         boolean[] vis=new boolean[V];
@@ -115,6 +115,40 @@ public class Algorithms {
         }
         st.push(node);
     }
+
+    //Kahn's Algo (topological sort bfs)
+    static int[] topoSort1(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        int[] inDegree=new int[V];
+        Queue<Integer> q=new LinkedList<>();
+        List<Integer> list=new ArrayList<>();
+        int[] ans=new int[V];
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                inDegree[adj.get(i).get(j)]++;
+            }
+        }
+        for(int i=0;i<inDegree.length;i++){
+            if(inDegree[i]==0){
+                q.add(i); //inserting all nodes with in-degree 0 into the queue;
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            list.add(node);
+            for(int i:adj.get(node)) {
+                inDegree[i]--;
+                if (inDegree[i] == 0) {
+                    q.offer(i);
+                }
+            }
+        }
+        for(int i=0;i<V;i++){
+            ans[i]=list.get(i);
+        }
+        return ans;
+    }
+
 
 
 
