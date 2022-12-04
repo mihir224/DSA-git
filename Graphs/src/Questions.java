@@ -309,6 +309,7 @@ public class Questions {
         return ans;
     }
 
+    //replace o's with x's
     //https://practice.geeksforgeeks.org/problems/replace-os-with-xs0052/1
     static char[][] fill(int n, int m, char a[][]) {
         int[] delRow = {-1, 0, 1, 0};
@@ -524,6 +525,8 @@ public class Questions {
 
     //detect cycle in an undirected graph
     //https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+    //dfs (using concept of path vis array)
     public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
         int[] vis = new int[V];
         int[] path = new int[V];
@@ -552,6 +555,39 @@ public class Questions {
 
         path[node] = 0; //mark path unvisit if we don't find any cycle
         return false;
+    }
+
+    //bfs (using topological sort - bfs (kahn's algo))
+    public boolean isCyclic1(int V, ArrayList<ArrayList<Integer>> adj) {
+        int[] inDegree=new int[V];
+        Queue<Integer> q=new LinkedList<>();
+        List<Integer> list=new ArrayList<>();
+       for(int i=0;i<V;i++){
+           for(int j:adj.get(i)){
+               inDegree[j]++;
+           }
+       }
+        for(int i=0;i<V;i++){
+            if(inDegree[i]==0){ //pushing all nodes with indegree zero into the queue
+                q.add(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            list.add(node);
+            for(int i:adj.get(node)){
+                inDegree[i]--;
+                if(inDegree[i]==0){
+                    q.add(i);
+                }
+            }
+        }
+        if(list.size()<V){
+            return true;
+        }
+        return false;
+
+
     }
 
     //eventual safe states
@@ -589,5 +625,95 @@ public class Questions {
         check[node] = 1; //no cycle was encountered, mark node safe
         path[node] = 0; //mark path unvisited
         return false;
+    }
+
+    //course schedule
+    //https://leetcode.com/problems/course-schedule/
+    public boolean canFinish(int N, int[][] prerequisites) {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        int[] inDegree=new int[N];
+        Queue<Integer> q=new LinkedList<>();
+        List<Integer> list=new ArrayList<>();
+        for(int i=0;i<N;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<prerequisites.length;i++){
+            adj.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                inDegree[adj.get(i).get(j)]++; //marking in-degree of all nodes
+            }
+        }
+        for(int i=0;i<N;i++){
+            if(inDegree[i]==0){
+                q.add(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            list.add(node);
+            for(int i:adj.get(node)){
+                inDegree[i]--;
+                if(inDegree[i]==0){
+                    q.add(i);
+                }
+            }
+        }
+        if(list.size()<N){
+            return false;
+        }
+        return true;
+    }
+
+    //alien dictionary
+    //https://practice.geeksforgeeks.org/problems/alien-dictionary/1
+    public String findOrder(String [] dict, int N, int K)
+    {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<K;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<N-1;i++){ //traversing the dictionary till N-1 as we have to work in pairs and thus we have to access (i+1) element
+            String s1=dict[i];
+            String s2=dict[i+1];
+            int len=Math.min(s1.length(),s2.length()); //checking the pair of strings till the length of the smaller string
+            for(int ptr=0;ptr<len;ptr++){
+                if(s1.charAt(ptr)!=s2.charAt(ptr)) { //an alphabet comes before the other, thus there is an edge between the two,
+                    // implying that the first alphabet is directed to the second, therefore adding it to the adjacency
+                    adj.get(s1.charAt(ptr) - 'a').add(s2.charAt(ptr) - 'a'); //adding the numeric value of the alphabets
+                    break;
+                }
+            }
+        }
+        List<Integer> list=new ArrayList<>();
+        Queue<Integer> q=new LinkedList<>();
+        int[] inDegree=new int[K];
+
+        String ans="";
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                inDegree[adj.get(i).get(j)]++;
+            }
+        }
+        for(int i=0;i<inDegree.length;i++){
+            if(inDegree[i]==0){
+                q.add(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            list.add(node);
+            for(int i:adj.get(node)){
+                inDegree[i]--;
+                if(inDegree[i]==0){
+                    q.add(i);
+                }
+            }
+        }
+        for(int i:list){
+            ans+=(char)(i+(int)('a')); //typing casting char 'a' to int and then type casting the whole integer to char
+        }
+        return ans;
     }
 }
