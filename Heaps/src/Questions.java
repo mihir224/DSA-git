@@ -1,14 +1,23 @@
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.PriorityQueue;
+import java.util.*;
 
-public class Questions {
+public class Questions implements Comparable<Questions> {
+    @Override
+    public int compareTo(Questions o) {
+        return 0;
+    }
+
     public class TreeNode{
         private int val;
         private TreeNode left;
         private TreeNode right;
+        private int i;
+        private int j;
+        public TreeNode(int val, int row, int col){
+            this.val=val;
+            this.i=row;
+            this.j=col;
+        }
         public TreeNode(){};
         public TreeNode(int val) {
             this.val = val;
@@ -194,5 +203,117 @@ public class Questions {
         inorder(root,arr); //traversing inorder and storing it in arr
         preorder(root,arr);
     }
+
+    //kth largest sum in a contigious sub array
+    //https://practice.geeksforgeeks.org/problems/k-th-largest-sum-contiguous-subarray/1
+    public static int kthLargest(int N, int K, int[] Arr) {
+        ArrayList<Integer> list=new ArrayList<>();
+
+        for(int i=0;i<N;i++){
+            int sum=0;
+            for(int j=i;j<N;j++){ //for traversing sub array in each traversal
+                sum+=Arr[j];
+                list.add(sum);
+            }
+        }
+        int[] arr=new int[list.size()];
+        for(int i=0;i<list.size();i++){
+            arr[i]=list.get(i);
+        }
+        Arrays.sort(arr);
+        return arr[arr.length-K];
+    }
+
+    public static int kthLargest1(int N, int K, int[] Arr) {
+        PriorityQueue<Integer> pq=new PriorityQueue<>();
+        for(int i=0;i<N;i++) {
+            int sum = 0;
+            for (int j = i; j < N; j++) { //for traversing sub array in each traversal
+                sum += Arr[j];
+                if (pq.size() < K) {
+                    pq.offer(sum);
+                } else {
+                    if (sum > pq.peek()) {
+                        pq.poll();
+                        pq.offer(sum);
+                    }
+                }
+            }
+        }
+        return pq.peek();
+    }
+
+    //merge k sorted arrays
+    //https://www.interviewbit.com/problems/merge-k-sorted-arrays/
+    //brute force: merge all arrays into one, sort that array and return
+
+    //optimised (using min heap)
+    class NodeComparator implements Comparator<TreeNode> {
+        public int compare(TreeNode s1, TreeNode s2) {
+            return 0;
+        }
+    }
+    public ArrayList<Integer> solve(ArrayList<ArrayList<Integer>> A) {
+        PriorityQueue<TreeNode> pq=new PriorityQueue<>(new NodeComparator());
+        ArrayList<Integer> ans=new ArrayList<>();
+        for(int i=0;i<A.size();i++){
+            TreeNode node=new TreeNode(A.get(i).get(0),i,0);
+            pq.offer(node);
+        }
+        while(pq.size()>0){
+            TreeNode temp=pq.poll();
+            ans.add(temp.val);
+            int i=temp.i;
+            int j=temp.j;
+            if((j+1)<A.get(i).size()){ //inserting element next of the smallest element in all sub arrays
+                TreeNode next=new TreeNode(A.get(i).get(j+1),i,j+1);
+                pq.offer(next);
+            }
+        }
+        return ans;
+    }
+
+    //smallest range in a sorted list
+    public int[] smallestRange(List<List<Integer>> nums) {
+        int min=Integer.MAX_VALUE;
+        int max=Integer.MIN_VALUE;
+        PriorityQueue<TreeNode> pq=new PriorityQueue<>();
+        for (int i=0;i<nums.size();i++){ //pushing 1st element of all the lists into the min heap
+            int element=nums.get(i).get(0);
+            min=Math.min(min,element);  //tracking max and min
+            max=Math.max(max,element);
+            pq.offer(new TreeNode(element,i,0));
+        }
+        int ansStart=min;
+        int ansEnd=max;
+        while (pq.isEmpty()) {
+            TreeNode temp=pq.poll(); //min node
+            min=temp.val;
+            if(max-min<ansEnd-ansStart){ //update ansEnd and ansStart
+                ansEnd=max;
+                ansStart=min;
+            }
+            if(temp.j<nums.get(0).size()){ //next of min exists
+                //update max
+                max=Math.max(max,nums.get(temp.i).get(temp.j+1)); //moving to element next of min
+                pq.offer(new TreeNode(nums.get(temp.i).get(temp.j+1),temp.i,temp.j+1));
+
+            }
+            else {
+                break;
+            }
+        }
+
+        return new int[]{ansStart,ansEnd};
+    }
+
+
+
+
+
+
+
+
+
 
 }
