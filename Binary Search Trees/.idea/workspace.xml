@@ -7,6 +7,10 @@
     <list default="true" id="4e07f98a-bdf8-4667-b316-e4d57c4540bf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BST.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Questions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Traversals.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Traversals.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Heaps/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Heaps/src/Questions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Stacks/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Stacks/src/Main.java" afterDir="false" />
