@@ -712,8 +712,101 @@ public class Questions {
             }
         }
         for(int i:list){
-            ans+=(char)(i+(int)('a')); //typing casting char 'a' to int and then type casting the whole integer to char
+            ans+=(char)(i+(int)('a'));
         }
         return ans;
     }
+
+    //shortest path in an acyclic graph
+    //https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1
+    public int[] shortestPath(int N,int M, int[][] edges) {
+        int[] dist = new int[N];
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
+        boolean[] vis = new boolean[N];
+        for (int i = 0; i < N; i++) { //initializing the adj list
+            adj.add(new ArrayList<Pair>());
+        }
+
+        for (int i = 0; i < dist.length; i++) {
+            dist[i] = (int)(1e9);
+        }
+        dist[0] = 0; //0 is the source node
+        for (int i = 0; i <M; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int wt = edges[i][2];
+            adj.get(u).add(new Pair(v, wt));
+        }
+        Stack<Integer> st = new Stack<>();
+        for (int i = 0; i < N; i++) { //storing toposort in the stack
+            if (!vis[i]) {
+                dfs9(i, adj, vis, st);
+            }
+        }
+        while (!st.isEmpty()) {
+            int node = st.pop();
+            for (int i = 0; i < adj.get(node).size(); i++) {
+                int v = adj.get(node).get(i).first;
+                int wt = adj.get(node).get(i).second;
+                if (dist[node] + wt < dist[v]) {
+                    dist[v] = dist[node] + wt; //update distance if it is smaller than current
+                }
+            }
+        }
+        for (int i = 0; i < N; i++) {
+            if (dist[i] == (int)(1e9)) { //case when a node is unreachable from source
+                dist[i] = -1;
+            }
+        }
+        return dist;
+    }
+    public void dfs9(int node, ArrayList<ArrayList<Pair>> adj, boolean[] vis, Stack<Integer> st) {
+        vis[node] = true;
+        for (int i = 0; i < adj.get(node).size(); i++) {
+            int v = adj.get(node).get(i).first;
+            if (!vis[v]) {
+                dfs9(v, adj, vis, st);
+            }
+        }
+        st.push(node);
+    }
+
+    //shortest path in a directed graph having unit distance
+    //https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1
+    public int[] shortestPath(int[][] edges,int n,int m ,int src) {
+        int[] dist=new int[n];
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<m;i++){
+            int u=edges[i][0];
+            int v=edges[i][1];
+            adj.get(u).add(v);
+            adj.get(v).add(u);
+        }
+        Queue<Integer> q=new LinkedList<>();
+        for(int i=0;i<n;i++){
+            dist[i]=(int)(1e9);
+        }
+        dist[src]=0;
+        q.add(src);
+        while(!q.isEmpty()){
+            int node=q.poll();
+            for(int i:adj.get(node)) {
+                if (dist[node] + 1 < dist[i]) {
+                    dist[i] = dist[node] + 1;
+                    q.add(i);
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            if(dist[i]==(int)(1e9)){
+                dist[i]=-1;
+            }
+        }
+        return dist;
+    }
+
+
 }
