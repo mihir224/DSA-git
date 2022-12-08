@@ -149,6 +149,32 @@ public class Algorithms {
         return ans;
     }
 
+    //Dijkstra
+    static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S)
+    {
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        int[] dist=new int[V];
+        for(int i=0;i<V;i++){
+            dist[i]=(int)(1e9);
+        }
+        dist[S]=0;
+        pq.add(new Pair(0,S)); //(dist,node)
+        while(!pq.isEmpty()){
+            int node=pq.peek().second;
+            int dis=pq.peek().first;
+            pq.poll();
+            for(int i=0;i<adj.get(node).size();i++){
+                int v=adj.get(node).get(i).get(0);
+                int wt=adj.get(node).get(i).get(1);
+                if((dis+wt)<dist[v]){
+                    dist[v]=dis+wt;
+                    pq.add(new Pair(dist[v],v));
+                }
+            }
+        }
+        return dist;
+    }
+
 
 
 
