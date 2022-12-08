@@ -1,18 +1,24 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 public class BucketSort {
-    static void bucketSort(float arr[], int n) {
+    public static void main(String[] args) {
+        double[] arr={0.7,0.2,0.3,0.1,0.6,0.4,0.5};
+        bucketSort(arr,arr.length);
+        System.out.println(Arrays.toString(arr));
+    }
+    static void bucketSort(double arr[], int n) {
         if(n<=0){
             return;
         }
-        ArrayList<Float> [] buckets=new ArrayList[n]; //creating n empty buckets
+        ArrayList<Double> [] buckets=new ArrayList[n]; //creating n empty buckets
         for(int i=0;i<n;i++){
-            buckets[i]=new ArrayList<Float>(); //initialising an empty list in each bucket
+            buckets[i]=new ArrayList<Double>(); //initialising an empty list in each bucket
         }
         for(int i=0;i<n;i++){
-            float index=arr[i]*n; //we insert each element of arr at the floor of this index in the bucket list
+            double index=arr[i]*n; //we insert each element of arr at the floor of this index in the bucket list
             buckets[(int) index].add(arr[i]);
         }
         for(int i=0;i<n;i++){

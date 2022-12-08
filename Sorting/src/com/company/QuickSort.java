@@ -15,7 +15,7 @@ public class QuickSort {
         int start=low;
         int end=hi;
         int mid=start+(end-start)/2;
-        int pivot=arr[mid];
+        int pivot= (int) Math.random()*9;
         while(start<=end){
             //if already sorted it won't swap
             while(arr[start]<pivot){
