@@ -4,7 +4,7 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class BST {
-    public class TreeNode {
+    public static class TreeNode {
         private int value;
         private TreeNode left;
         private TreeNode right;
@@ -21,7 +21,23 @@ public class BST {
     }
 
     public static void main(String[] args) {
-
+        BST bst=new BST();
+        TreeNode root=new TreeNode();
+        bst.insertIntoBST(root, 13);
+        bst.insertIntoBST(root, 3);
+        bst.insertIntoBST(root, 4);
+        bst.insertIntoBST(root, 12);
+        bst.insertIntoBST(root, 14);
+        bst.insertIntoBST(root, 10);
+        bst.insertIntoBST(root, 5);
+        bst.insertIntoBST(root, 1);
+        bst.insertIntoBST(root, 8);
+        bst.insertIntoBST(root, 2);
+        bst.insertIntoBST(root, 7);
+        bst.insertIntoBST(root, 9);
+        bst.insertIntoBST(root, 11);
+        bst.insertIntoBST(root, 6);
+        bst.insertIntoBST(root, 18);
     }
 
     //search in bst
@@ -399,6 +415,8 @@ public class BST {
         }
         return pq.peek();
     }
+
+
 
 }
 
