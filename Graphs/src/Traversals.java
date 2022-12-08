@@ -28,7 +28,8 @@ public class Traversals {
         boolean[] vis=new boolean[V];
         vis[0]=true;
         ArrayList<Integer> ans=new ArrayList<>();
-        dfs(0, vis, adj, ans);
+        dfs(0, vis, adj, ans); //to cover all separate components in a graph, we can use a for loop to check for
+         // all non visited nodes, and call dfs on them
         return ans;
     }
     public void dfs(int node, boolean[] vis, ArrayList<ArrayList<Integer>> adj, ArrayList<Integer> ans){
