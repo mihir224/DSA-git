@@ -204,6 +204,33 @@ public class Algorithms {
         }
         return dist;
     }
+    //Floyd Warshall
+    //https://practice.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1
+    public void shortest_distance(int[][] matrix)
+    {
+        for(int i=0;i<matrix.length;i++){
+            for(int j=0;j<matrix[i].length;j++){
+                if(matrix[i][j]==-1){
+                    matrix[i][j]=(int)(1e9);
+                }
+            }
+        }
+        for(int via=0;via<matrix.length;via++){ //doing the traversals via each node
+            for(int i=0;i<matrix.length;i++){
+                for(int j=0;j<matrix[i].length;j++){
+                    matrix[i][j]=Math.min(matrix[i][j],matrix[i][via]+matrix[via][j]);
+                }
+            }
+        }
+        for(int i=0;i<matrix.length;i++){
+            for(int j=0;j<matrix[i].length;j++){
+                if(matrix[i][j]==(int)(1e9)){
+                    matrix[i][j]=-1;
+                }
+            }
+        }
+
+    }
 
 
 
