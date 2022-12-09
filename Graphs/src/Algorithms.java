@@ -150,6 +150,7 @@ public class Algorithms {
     }
 
     //Dijkstra
+    //https://practice.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1
     static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S)
     {
         PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
@@ -170,6 +171,35 @@ public class Algorithms {
                     dist[v]=dis+wt;
                     pq.add(new Pair(dist[v],v));
                 }
+            }
+        }
+        return dist;
+    }
+
+    //Bellman Ford
+    //https://practice.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1
+    static int[] bellman_ford(int V, ArrayList<ArrayList<Integer>> edges, int S) {
+        int[] dist=new int[V];
+        for(int i=0;i<V;i++){ //setting up initial config
+            dist[i]=(int)(1e8);
+        }
+        dist[S]=0;
+        for(int i=0;i<V-1;i++){ //running for N-1 iterations where N is the no. of nodes
+            for(ArrayList<Integer> it:edges){
+                int u=it.get(0);
+                int v=it.get(1);
+                int wt=it.get(2);
+                if(dist[u]+wt<dist[v]){
+                    dist[v]=dist[u]+wt;
+                }
+            }
+        }   //nth iteration
+        for(ArrayList<Integer> it:edges){
+            int u=it.get(0);
+            int v=it.get(1);
+            int wt=it.get(2);
+            if(dist[u]+wt<dist[v]){ //case when relaxation can still be done
+                return new int[] {-1};
             }
         }
         return dist;
