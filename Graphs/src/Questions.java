@@ -808,5 +808,106 @@ public class Questions {
         return dist;
     }
 
+    //word ladder
+    //https://practice.geeksforgeeks.org/problems/word-ladder/1
+    class Pair1 {
+        String first;
+        int second;
+
+        public Pair1(String first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+    public int wordLadderLength(String startWord, String targetWord, String[] wordList)
+    {
+        Queue<Pair1> q=new LinkedList<>();
+        q.add(new Pair1(startWord,1)); //initial config
+        Set<String> set=new HashSet<>();
+        for(int i=0;i<wordList.length;i++){
+            set.add(wordList[i]);
+        }
+        set.remove(startWord); //removing the start word from set, thus marking its visit
+        while(!q.isEmpty()){
+            String word=q.peek().first;
+            int length=q.peek().second;
+            q.poll();
+            if(word.equals(targetWord)) { //found target word
+                return length;
+            }
+            for(int i=0;i<word.length();i++){
+                for(char ch='a';ch<='z';ch++){
+                    char[] replacedCharArr=word.toCharArray();
+                    replacedCharArr[i]=ch;
+                    String replacedWord=new String(replacedCharArr);
+                    if(set.contains(replacedWord)){
+                        set.remove(replacedWord);
+                        q.add(new Pair1(replacedWord,length+1));
+                    }
+                }
+            }
+        }
+        return 0; //return 0 if q is empty
+    }
+
+    //word ladder 2
+    //https://practice.geeksforgeeks.org/problems/word-ladder-ii/1
+    //this soln works on gfg but not on leetcode
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        //initial config
+        Set<String> set=new HashSet<>();
+        for(int i=0;i<wordList.size();i++){
+               set.add(wordList.get(i));
+           }
+        Queue<ArrayList<String>> q=new LinkedList<>();
+        ArrayList<String> ls=new ArrayList<>();
+        ls.add(beginWord);
+        q.add(ls);
+        List<List<String>> ans=new ArrayList<>();
+        List<String> used=new ArrayList<>(); //to keep track of words that have been used in previous levels for transformations
+        used.add(beginWord);
+        int level=0;
+        while(!q.isEmpty()){
+            ArrayList<String> list=q.poll();
+            //remove all words that have been previously used for transformation
+            if(list.size()>level){ //when the new sequence has a size greater than current level
+                level++;
+                for(String s:used){
+                    set.remove(s);
+                }
+            }
+            String word=list.get(list.size()-1);
+            if(word.equals(endWord)){ //found end word
+                if(ans.size()==0){ //first ans sequence
+                    ans.add(list);
+                }
+                else if(list.size()==ans.get(0).size()){ //storing only those sequences which match the length of the first ans sequence
+                    ans.add(list);
+                }
+            }
+            for(int i=0;i<word.length();i++){
+                for(char ch='a';ch<='z';ch++){
+                    char[] replacedCharArr=word.toCharArray();
+                    replacedCharArr[i]=ch;
+                    String replacedWord=new String(replacedCharArr);
+                    if(set.contains(replacedWord)){
+                        list.add(replacedWord);
+                        ArrayList<String> temp=new ArrayList<>(list); //we store list in temp coz when we delete the last
+                        // element from the list, it would be deleted everywhere
+                        q.add(temp);
+                        used.add(replacedWord); //marking the new replaced word as used after adding it to the sequence
+                        // and adding that sequence to queue
+                        list.remove(list.size()-1); //this is to remove the last element from the list that is to
+                        // be added to the queue so that the new word can be inserted in place of the previous word
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    //leetcode soln (optimised)
+
+
 
 }
