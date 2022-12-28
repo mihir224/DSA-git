@@ -906,8 +906,103 @@ public class Questions {
         return ans;
     }
 
-    //leetcode soln (optimised)
+    //shortest distance in a binary maze
+    //https://practice.geeksforgeeks.org/problems/shortest-path-in-a-binary-maze-1655453161/1
+    class triad1{
+        int dist;
+        int row;
+        int col;
+        public triad1(int dist, int row, int col){
+            this.dist=dist;
+            this.row=row;
+            this.col=col;
+        }
+    }
+    int shortestPath(int[][] grid, int[] source, int[] destination) {
+        if(source[0]==destination[0]&&source[1]==destination[1]){ //case when the source is the destination
+            return 0;
+        }
+        int n=grid.length;
+        int m=grid[0].length;
+        Queue<triad1> q=new LinkedList<>();
+        int[][] dest=new int[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                dest[i][j]=(int)(1e9);
+            }
+        }
+        dest[source[0]][source[1]]=0;
+        q.add(new triad1(0,source[0],source[1]));
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        while(!q.isEmpty()){
+            int dis=q.peek().dist;
+            int row=q.peek().row;
+            int col=q.peek().col;
+            q.poll();
+            for(int i=0;i<4;i++){ //moving 4-directionally
+                int newRow=row+delRow[i];
+                int newCol=col+delCol[i];
+                if(newRow>=0&&newRow<n&&
+                        newCol>=0&&newCol<m&&
+                        grid[newRow][newCol]==1&&
+                        dis+1<dest[newRow][newCol]){
+                    dest[newRow][newCol]=dis+1;
+                    if(newRow==destination[0]&&newCol==destination[1]){
+                        return dis+1;
+                    }
+                    q.add(new triad1(dis+1, newRow, newCol));
+                }
+            }
+        }
+        return -1;
+    }
 
+    //leetcode soln(8-directional)
+    //https://leetcode.com/problems/shortest-path-in-binary-matrix/description/
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        int n=grid.length;
+        int[] source={0,0};
+        int[] destination={n-1,n-1};
+        if(grid[0][0]==1||grid[n-1][n-1]==1){
+            return -1;
+        }
+        if(source[0]==destination[0]&&source[1]==destination[1]){ //case when the source is the destination
+            return 1;
+        }
+        Queue<triad1> q=new LinkedList<>();
+        int[][] dest=new int[n][n];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                dest[i][j]=(int)(1e9);
+            }
+        }
+        dest[source[0]][source[1]]=0;
+        q.add(new triad1(1,source[0],source[1]));
+        int[] delRow={-1,-1,0,1,1,1,0,-1};
+        int[] delCol={0,1,1,1,0,-1,-1,-1};
+        while(!q.isEmpty()){
+            int dis=q.peek().dist;
+            int row=q.peek().row;
+            int col=q.peek().col;
+            q.poll();
+            for(int i=0;i<8;i++){
+                int newRow=row+delRow[i];
+                int newCol=col+delCol[i];
+                if(newRow>=0&&newRow<n&&
+                        newCol>=0&&newCol<n&&
+                        grid[newRow][newCol]==0&&
+                        dis+1<dest[newRow][newCol]){
+                    dest[newRow][newCol]=dis+1;
+                    if(newRow==destination[0]&&newCol==destination[1]){
+                        return dis+1;
+                    }
+                    q.add(new triad1(dis+1, newRow, newCol));
+                }
+            }
+        }
+        return -1;
+    }
 
 
 }
