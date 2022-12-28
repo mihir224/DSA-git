@@ -925,13 +925,13 @@ public class Questions {
         int n=grid.length;
         int m=grid[0].length;
         Queue<triad1> q=new LinkedList<>();
-        int[][] dest=new int[n][m];
+        int[][] dist=new int[n][m];
         for(int i=0;i<n;i++){
             for(int j=0;j<m;j++){
-                dest[i][j]=(int)(1e9);
+                dist[i][j]=(int)(1e9);
             }
         }
-        dest[source[0]][source[1]]=0;
+        dist[source[0]][source[1]]=0;
         q.add(new triad1(0,source[0],source[1]));
         int[] delRow={-1,0,1,0};
         int[] delCol={0,1,0,-1};
@@ -946,8 +946,8 @@ public class Questions {
                 if(newRow>=0&&newRow<n&&
                         newCol>=0&&newCol<m&&
                         grid[newRow][newCol]==1&&
-                        dis+1<dest[newRow][newCol]){
-                    dest[newRow][newCol]=dis+1;
+                        dis+1<dist[newRow][newCol]){
+                    dist[newRow][newCol]=dis+1;
                     if(newRow==destination[0]&&newCol==destination[1]){
                         return dis+1;
                     }
@@ -971,13 +971,13 @@ public class Questions {
             return 1;
         }
         Queue<triad1> q=new LinkedList<>();
-        int[][] dest=new int[n][n];
+        int[][] dist=new int[n][n];
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
-                dest[i][j]=(int)(1e9);
+                dist[i][j]=(int)(1e9);
             }
         }
-        dest[source[0]][source[1]]=0;
+        dist[source[0]][source[1]]=0;
         q.add(new triad1(1,source[0],source[1]));
         int[] delRow={-1,-1,0,1,1,1,0,-1};
         int[] delCol={0,1,1,1,0,-1,-1,-1};
@@ -992,8 +992,8 @@ public class Questions {
                 if(newRow>=0&&newRow<n&&
                         newCol>=0&&newCol<n&&
                         grid[newRow][newCol]==0&&
-                        dis+1<dest[newRow][newCol]){
-                    dest[newRow][newCol]=dis+1;
+                        dis+1<dist[newRow][newCol]){
+                    dist[newRow][newCol]=dis+1;
                     if(newRow==destination[0]&&newCol==destination[1]){
                         return dis+1;
                     }
@@ -1002,6 +1002,108 @@ public class Questions {
             }
         }
         return -1;
+    }
+
+    //path with minimum effort
+    //https://leetcode.com/problems/path-with-minimum-effort/
+    class triad2{
+        int diff;
+        int row;
+        int col;
+        public triad2(int diff, int row, int col){
+            this.diff=diff;
+            this.row=row;
+            this.col=col;
+        }
+    }
+    public int minimumEffortPath(int[][] heights) {
+        int n=heights.length;
+        int m=heights[0].length;
+        //initial config
+        int[][] dist=new int[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                dist[i][j]=(int)(1e9);
+            }
+        }
+        dist[0][0]=0;
+        PriorityQueue<triad2> pq=new PriorityQueue<>((x,y)->x.diff-y.diff);
+        pq.add(new triad2(0,0,0));
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        while(!pq.isEmpty()){
+            triad2 t=pq.poll();
+            int diff=t.diff;
+            int row=t.row;
+            int col=t.col;
+            if(row==n-1&&col==m-1){ //reached bottom right
+                return diff; //this will return min effort
+            }
+            for(int i=0;i<4;i++){
+                int nrow=row+delRow[i];
+                int ncol=col+delCol[i];
+                if(nrow>=0&&nrow<n&&
+                        ncol>=0&&ncol<m){
+                    int newEffort=Math.max(Math.abs(heights[row][col]-heights[nrow][ncol]),diff);
+                    if(newEffort<dist[nrow][ncol]){
+                        dist[nrow][ncol]=newEffort;
+                        pq.add(new triad2(newEffort,nrow,ncol));
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    //cheapest flights within k stops
+    //https://leetcode.com/problems/cheapest-flights-within-k-stops/
+    class triad3{
+        int stops;
+        int city;
+        int cost;
+        public triad3(int stops,int city,int cost){
+            this.stops=stops;
+            this.city=city;
+            this.cost=cost;
+        }
+    }
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        //building the graph
+        for(int i=0;i<n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i< flights.length;i++){
+            adj.get(flights[i][0]).add(new Pair(flights[i][1],flights[i][2]));
+        }
+        Queue<triad3> q=new LinkedList<>();
+        q.add(new triad3(0,src,0));
+        int[] dist=new int[n];
+        for(int i=0;i<n;i++){
+            dist[i]=(int)(1e9);
+        }
+        dist[src]=0;
+        while(!q.isEmpty()){
+            triad3 t=q.poll();
+            int stops=t.stops;
+            int city=t.city;
+            int cost=t.cost;
+            if(stops>k){
+                continue;
+            }
+            for(Pair p:adj.get(city)){
+                int adjCity=p.first;
+                int cst=p.second;
+                if(cost+cst<dist[adjCity]&&stops<=k){
+                    dist[adjCity]=cost+cst;
+                    q.add(new triad3(stops+1,adjCity,cost+cst));
+                }
+            }
+        }
+        if(dist[dst]==1e9){
+            return -1;
+        }
+        return dist[dst];
     }
 
 
