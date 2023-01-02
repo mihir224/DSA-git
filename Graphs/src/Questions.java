@@ -1088,13 +1088,13 @@ public class Questions {
             int stops=t.stops;
             int city=t.city;
             int cost=t.cost;
-            if(stops>k){
+            if(stops>k){ //reject path if stops exceed k
                 continue;
             }
             for(Pair p:adj.get(city)){
                 int adjCity=p.first;
                 int cst=p.second;
-                if(cost+cst<dist[adjCity]&&stops<=k){
+                if(cost+cst<dist[adjCity]){
                     dist[adjCity]=cost+cst;
                     q.add(new triad3(stops+1,adjCity,cost+cst));
                 }
@@ -1104,6 +1104,35 @@ public class Questions {
             return -1;
         }
         return dist[dst];
+    }
+
+    //
+    //
+    int minimumMultiplications(int[] arr, int start, int end) {
+        //initial config
+        Queue<Pair> pq=new LinkedList<>();
+        pq.add(new Pair(0,start));
+        int[] dist=new int[100000];
+        for(int i=0;i<dist.length;i++){
+            dist[i]=(int)(1e9);
+        }
+        dist[start]=0;
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int steps=p.first;
+            int num=p.second;
+            for(int i=0;i<arr.length;i++){
+                int newStart=(num*arr[i])%100000;
+                if(steps+1<dist[newStart]){
+                    dist[newStart]=steps+1;
+                    if(newStart==end){
+                        return steps+1;
+                    }
+                   pq.add(new Pair(steps+1,newStart));
+                }
+            }
+        }
+        return -1;
     }
 
 
