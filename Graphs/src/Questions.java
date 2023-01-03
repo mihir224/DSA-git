@@ -559,30 +559,30 @@ public class Questions {
 
     //bfs (using topological sort - bfs (kahn's algo))
     public boolean isCyclic1(int V, ArrayList<ArrayList<Integer>> adj) {
-        int[] inDegree=new int[V];
-        Queue<Integer> q=new LinkedList<>();
-        List<Integer> list=new ArrayList<>();
-       for(int i=0;i<V;i++){
-           for(int j:adj.get(i)){
-               inDegree[j]++;
-           }
-       }
-        for(int i=0;i<V;i++){
-            if(inDegree[i]==0){ //pushing all nodes with indegree zero into the queue
+        int[] inDegree = new int[V];
+        Queue<Integer> q = new LinkedList<>();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            for (int j : adj.get(i)) {
+                inDegree[j]++;
+            }
+        }
+        for (int i = 0; i < V; i++) {
+            if (inDegree[i] == 0) { //pushing all nodes with indegree zero into the queue
                 q.add(i);
             }
         }
-        while(!q.isEmpty()){
-            int node=q.poll();
+        while (!q.isEmpty()) {
+            int node = q.poll();
             list.add(node);
-            for(int i:adj.get(node)){
+            for (int i : adj.get(node)) {
                 inDegree[i]--;
-                if(inDegree[i]==0){
+                if (inDegree[i] == 0) {
                     q.add(i);
                 }
             }
         }
-        if(list.size()<V){
+        if (list.size() < V) {
             return true;
         }
         return false;
@@ -630,37 +630,37 @@ public class Questions {
     //course schedule
     //https://leetcode.com/problems/course-schedule/
     public boolean canFinish(int N, int[][] prerequisites) {
-        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
-        int[] inDegree=new int[N];
-        Queue<Integer> q=new LinkedList<>();
-        List<Integer> list=new ArrayList<>();
-        for(int i=0;i<N;i++){
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        int[] inDegree = new int[N];
+        Queue<Integer> q = new LinkedList<>();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i<prerequisites.length;i++){
+        for (int i = 0; i < prerequisites.length; i++) {
             adj.get(prerequisites[i][1]).add(prerequisites[i][0]);
         }
-        for(int i=0;i<adj.size();i++){
-            for(int j=0;j<adj.get(i).size();j++){
+        for (int i = 0; i < adj.size(); i++) {
+            for (int j = 0; j < adj.get(i).size(); j++) {
                 inDegree[adj.get(i).get(j)]++; //marking in-degree of all nodes
             }
         }
-        for(int i=0;i<N;i++){
-            if(inDegree[i]==0){
+        for (int i = 0; i < N; i++) {
+            if (inDegree[i] == 0) {
                 q.add(i);
             }
         }
-        while(!q.isEmpty()){
-            int node=q.poll();
+        while (!q.isEmpty()) {
+            int node = q.poll();
             list.add(node);
-            for(int i:adj.get(node)){
+            for (int i : adj.get(node)) {
                 inDegree[i]--;
-                if(inDegree[i]==0){
+                if (inDegree[i] == 0) {
                     q.add(i);
                 }
             }
         }
-        if(list.size()<N){
+        if (list.size() < N) {
             return false;
         }
         return true;
@@ -668,58 +668,57 @@ public class Questions {
 
     //alien dictionary
     //https://practice.geeksforgeeks.org/problems/alien-dictionary/1
-    public String findOrder(String [] dict, int N, int K)
-    {
-        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
-        for(int i=0;i<K;i++){
+    public String findOrder(String[] dict, int N, int K) {
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < K; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i<N-1;i++){ //traversing the dictionary till N-1 as we have to work in pairs and thus we have to access (i+1) element
-            String s1=dict[i];
-            String s2=dict[i+1];
-            int len=Math.min(s1.length(),s2.length()); //checking the pair of strings till the length of the smaller string
-            for(int ptr=0;ptr<len;ptr++){
-                if(s1.charAt(ptr)!=s2.charAt(ptr)) { //an alphabet comes before the other, thus there is an edge between the two,
+        for (int i = 0; i < N - 1; i++) { //traversing the dictionary till N-1 as we have to work in pairs and thus we have to access (i+1) element
+            String s1 = dict[i];
+            String s2 = dict[i + 1];
+            int len = Math.min(s1.length(), s2.length()); //checking the pair of strings till the length of the smaller string
+            for (int ptr = 0; ptr < len; ptr++) {
+                if (s1.charAt(ptr) != s2.charAt(ptr)) { //an alphabet comes before the other, thus there is an edge between the two,
                     // implying that the first alphabet is directed to the second, therefore adding it to the adjacency
                     adj.get(s1.charAt(ptr) - 'a').add(s2.charAt(ptr) - 'a'); //adding the numeric value of the alphabets
                     break;
                 }
             }
         }
-        List<Integer> list=new ArrayList<>();
-        Queue<Integer> q=new LinkedList<>();
-        int[] inDegree=new int[K];
+        List<Integer> list = new ArrayList<>();
+        Queue<Integer> q = new LinkedList<>();
+        int[] inDegree = new int[K];
 
-        String ans="";
-        for(int i=0;i<adj.size();i++){
-            for(int j=0;j<adj.get(i).size();j++){
+        String ans = "";
+        for (int i = 0; i < adj.size(); i++) {
+            for (int j = 0; j < adj.get(i).size(); j++) {
                 inDegree[adj.get(i).get(j)]++;
             }
         }
-        for(int i=0;i<inDegree.length;i++){
-            if(inDegree[i]==0){
+        for (int i = 0; i < inDegree.length; i++) {
+            if (inDegree[i] == 0) {
                 q.add(i);
             }
         }
-        while(!q.isEmpty()){
-            int node=q.poll();
+        while (!q.isEmpty()) {
+            int node = q.poll();
             list.add(node);
-            for(int i:adj.get(node)){
+            for (int i : adj.get(node)) {
                 inDegree[i]--;
-                if(inDegree[i]==0){
+                if (inDegree[i] == 0) {
                     q.add(i);
                 }
             }
         }
-        for(int i:list){
-            ans+=(char)(i+(int)('a'));
+        for (int i : list) {
+            ans += (char) (i + (int) ('a'));
         }
         return ans;
     }
 
     //shortest path in an acyclic graph
     //https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1
-    public int[] shortestPath(int N,int M, int[][] edges) {
+    public int[] shortestPath(int N, int M, int[][] edges) {
         int[] dist = new int[N];
         ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
         boolean[] vis = new boolean[N];
@@ -728,10 +727,10 @@ public class Questions {
         }
 
         for (int i = 0; i < dist.length; i++) {
-            dist[i] = (int)(1e9);
+            dist[i] = (int) (1e9);
         }
         dist[0] = 0; //0 is the source node
-        for (int i = 0; i <M; i++) {
+        for (int i = 0; i < M; i++) {
             int u = edges[i][0];
             int v = edges[i][1];
             int wt = edges[i][2];
@@ -754,12 +753,13 @@ public class Questions {
             }
         }
         for (int i = 0; i < N; i++) {
-            if (dist[i] == (int)(1e9)) { //case when a node is unreachable from source
+            if (dist[i] == (int) (1e9)) { //case when a node is unreachable from source
                 dist[i] = -1;
             }
         }
         return dist;
     }
+
     public void dfs9(int node, ArrayList<ArrayList<Pair>> adj, boolean[] vis, Stack<Integer> st) {
         vis[node] = true;
         for (int i = 0; i < adj.get(node).size(); i++) {
@@ -773,36 +773,36 @@ public class Questions {
 
     //shortest path in a directed graph having unit distance
     //https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1
-    public int[] shortestPath(int[][] edges,int n,int m ,int src) {
-        int[] dist=new int[n];
-        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
-        for(int i=0;i<n;i++){
+    public int[] shortestPath(int[][] edges, int n, int m, int src) {
+        int[] dist = new int[n];
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i<m;i++){
-            int u=edges[i][0];
-            int v=edges[i][1];
+        for (int i = 0; i < m; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
             adj.get(u).add(v);
             adj.get(v).add(u);
         }
-        Queue<Integer> q=new LinkedList<>();
-        for(int i=0;i<n;i++){
-            dist[i]=(int)(1e9);
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            dist[i] = (int) (1e9);
         }
-        dist[src]=0;
+        dist[src] = 0;
         q.add(src);
-        while(!q.isEmpty()){
-            int node=q.poll();
-            for(int i:adj.get(node)) {
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            for (int i : adj.get(node)) {
                 if (dist[node] + 1 < dist[i]) {
                     dist[i] = dist[node] + 1;
                     q.add(i);
                 }
             }
         }
-        for(int i=0;i<n;i++){
-            if(dist[i]==(int)(1e9)){
-                dist[i]=-1;
+        for (int i = 0; i < n; i++) {
+            if (dist[i] == (int) (1e9)) {
+                dist[i] = -1;
             }
         }
         return dist;
@@ -819,30 +819,30 @@ public class Questions {
             this.second = second;
         }
     }
-    public int wordLadderLength(String startWord, String targetWord, String[] wordList)
-    {
-        Queue<Pair1> q=new LinkedList<>();
-        q.add(new Pair1(startWord,1)); //initial config
-        Set<String> set=new HashSet<>();
-        for(int i=0;i<wordList.length;i++){
+
+    public int wordLadderLength(String startWord, String targetWord, String[] wordList) {
+        Queue<Pair1> q = new LinkedList<>();
+        q.add(new Pair1(startWord, 1)); //initial config
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < wordList.length; i++) {
             set.add(wordList[i]);
         }
         set.remove(startWord); //removing the start word from set, thus marking its visit
-        while(!q.isEmpty()){
-            String word=q.peek().first;
-            int length=q.peek().second;
+        while (!q.isEmpty()) {
+            String word = q.peek().first;
+            int length = q.peek().second;
             q.poll();
-            if(word.equals(targetWord)) { //found target word
+            if (word.equals(targetWord)) { //found target word
                 return length;
             }
-            for(int i=0;i<word.length();i++){
-                for(char ch='a';ch<='z';ch++){
-                    char[] replacedCharArr=word.toCharArray();
-                    replacedCharArr[i]=ch;
-                    String replacedWord=new String(replacedCharArr);
-                    if(set.contains(replacedWord)){
+            for (int i = 0; i < word.length(); i++) {
+                for (char ch = 'a'; ch <= 'z'; ch++) {
+                    char[] replacedCharArr = word.toCharArray();
+                    replacedCharArr[i] = ch;
+                    String replacedWord = new String(replacedCharArr);
+                    if (set.contains(replacedWord)) {
                         set.remove(replacedWord);
-                        q.add(new Pair1(replacedWord,length+1));
+                        q.add(new Pair1(replacedWord, length + 1));
                     }
                 }
             }
@@ -855,49 +855,48 @@ public class Questions {
     //this soln works on gfg but not on leetcode
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
         //initial config
-        Set<String> set=new HashSet<>();
-        for(int i=0;i<wordList.size();i++){
-               set.add(wordList.get(i));
-           }
-        Queue<ArrayList<String>> q=new LinkedList<>();
-        ArrayList<String> ls=new ArrayList<>();
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < wordList.size(); i++) {
+            set.add(wordList.get(i));
+        }
+        Queue<ArrayList<String>> q = new LinkedList<>();
+        ArrayList<String> ls = new ArrayList<>();
         ls.add(beginWord);
         q.add(ls);
-        List<List<String>> ans=new ArrayList<>();
-        List<String> used=new ArrayList<>(); //to keep track of words that have been used in previous levels for transformations
+        List<List<String>> ans = new ArrayList<>();
+        List<String> used = new ArrayList<>(); //to keep track of words that have been used in previous levels for transformations
         used.add(beginWord);
-        int level=0;
-        while(!q.isEmpty()){
-            ArrayList<String> list=q.poll();
+        int level = 0;
+        while (!q.isEmpty()) {
+            ArrayList<String> list = q.poll();
             //remove all words that have been previously used for transformation
-            if(list.size()>level){ //when the new sequence has a size greater than current level
+            if (list.size() > level) { //when the new sequence has a size greater than current level
                 level++;
-                for(String s:used){
+                for (String s : used) {
                     set.remove(s);
                 }
             }
-            String word=list.get(list.size()-1);
-            if(word.equals(endWord)){ //found end word
-                if(ans.size()==0){ //first ans sequence
+            String word = list.get(list.size() - 1);
+            if (word.equals(endWord)) { //found end word
+                if (ans.size() == 0) { //first ans sequence
                     ans.add(list);
-                }
-                else if(list.size()==ans.get(0).size()){ //storing only those sequences which match the length of the first ans sequence
+                } else if (list.size() == ans.get(0).size()) { //storing only those sequences which match the length of the first ans sequence
                     ans.add(list);
                 }
             }
-            for(int i=0;i<word.length();i++){
-                for(char ch='a';ch<='z';ch++){
-                    char[] replacedCharArr=word.toCharArray();
-                    replacedCharArr[i]=ch;
-                    String replacedWord=new String(replacedCharArr);
-                    if(set.contains(replacedWord)){
+            for (int i = 0; i < word.length(); i++) {
+                for (char ch = 'a'; ch <= 'z'; ch++) {
+                    char[] replacedCharArr = word.toCharArray();
+                    replacedCharArr[i] = ch;
+                    String replacedWord = new String(replacedCharArr);
+                    if (set.contains(replacedWord)) {
                         list.add(replacedWord);
-                        ArrayList<String> temp=new ArrayList<>(list); //we store list in temp coz when we delete the last
+                        ArrayList<String> temp = new ArrayList<>(list); //we store list in temp coz when we delete the last
                         // element from the list, it would be deleted everywhere
                         q.add(temp);
                         used.add(replacedWord); //marking the new replaced word as used after adding it to the sequence
                         // and adding that sequence to queue
-                        list.remove(list.size()-1); //this is to remove the last element from the list that is to
+                        list.remove(list.size() - 1); //this is to remove the last element from the list that is to
                         // be added to the queue so that the new word can be inserted in place of the previous word
                     }
                 }
@@ -908,50 +907,52 @@ public class Questions {
 
     //shortest distance in a binary maze
     //https://practice.geeksforgeeks.org/problems/shortest-path-in-a-binary-maze-1655453161/1
-    class triad1{
+    class triad1 {
         int dist;
         int row;
         int col;
-        public triad1(int dist, int row, int col){
-            this.dist=dist;
-            this.row=row;
-            this.col=col;
+
+        public triad1(int dist, int row, int col) {
+            this.dist = dist;
+            this.row = row;
+            this.col = col;
         }
     }
+
     int shortestPath(int[][] grid, int[] source, int[] destination) {
-        if(source[0]==destination[0]&&source[1]==destination[1]){ //case when the source is the destination
+        if (source[0] == destination[0] && source[1] == destination[1]) { //case when the source is the destination
             return 0;
         }
-        int n=grid.length;
-        int m=grid[0].length;
-        Queue<triad1> q=new LinkedList<>();
-        int[][] dist=new int[n][m];
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                dist[i][j]=(int)(1e9);
+        int n = grid.length;
+        int m = grid[0].length;
+        Queue<triad1> q = new LinkedList<>();
+        int[][] dist = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dist[i][j] = (int) (1e9);
             }
         }
-        dist[source[0]][source[1]]=0;
-        q.add(new triad1(0,source[0],source[1]));
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        while(!q.isEmpty()){
-            int dis=q.peek().dist;
-            int row=q.peek().row;
-            int col=q.peek().col;
+        dist[source[0]][source[1]] = 0;
+        q.add(new triad1(0, source[0], source[1]));
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        while (!q.isEmpty()) {
+            int dis = q.peek().dist;
+            int row = q.peek().row;
+            int col = q.peek().col;
             q.poll();
-            for(int i=0;i<4;i++){ //moving 4-directionally
-                int newRow=row+delRow[i];
-                int newCol=col+delCol[i];
-                if(newRow>=0&&newRow<n&&
-                        newCol>=0&&newCol<m&&
-                        grid[newRow][newCol]==1&&
-                        dis+1<dist[newRow][newCol]){
-                    dist[newRow][newCol]=dis+1;
-                    if(newRow==destination[0]&&newCol==destination[1]){
-                        return dis+1;
+            for (int i = 0; i < 4; i++) { //moving 4-directionally
+                int newRow = row + delRow[i];
+                int newCol = col + delCol[i];
+                if (newRow >= 0 && newRow < n &&
+                        newCol >= 0 && newCol < m &&
+                        grid[newRow][newCol] == 1 &&
+                        dis + 1 < dist[newRow][newCol]) {
+                    dist[newRow][newCol] = dis + 1;
+                    if (newRow == destination[0] && newCol == destination[1]) {
+                        return dis + 1;
                     }
-                    q.add(new triad1(dis+1, newRow, newCol));
+                    q.add(new triad1(dis + 1, newRow, newCol));
                 }
             }
         }
@@ -961,43 +962,43 @@ public class Questions {
     //leetcode soln(8-directional)
     //https://leetcode.com/problems/shortest-path-in-binary-matrix/description/
     public int shortestPathBinaryMatrix(int[][] grid) {
-        int n=grid.length;
-        int[] source={0,0};
-        int[] destination={n-1,n-1};
-        if(grid[0][0]==1||grid[n-1][n-1]==1){
+        int n = grid.length;
+        int[] source = {0, 0};
+        int[] destination = {n - 1, n - 1};
+        if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1) {
             return -1;
         }
-        if(source[0]==destination[0]&&source[1]==destination[1]){ //case when the source is the destination
+        if (source[0] == destination[0] && source[1] == destination[1]) { //case when the source is the destination
             return 1;
         }
-        Queue<triad1> q=new LinkedList<>();
-        int[][] dist=new int[n][n];
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                dist[i][j]=(int)(1e9);
+        Queue<triad1> q = new LinkedList<>();
+        int[][] dist = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dist[i][j] = (int) (1e9);
             }
         }
-        dist[source[0]][source[1]]=0;
-        q.add(new triad1(1,source[0],source[1]));
-        int[] delRow={-1,-1,0,1,1,1,0,-1};
-        int[] delCol={0,1,1,1,0,-1,-1,-1};
-        while(!q.isEmpty()){
-            int dis=q.peek().dist;
-            int row=q.peek().row;
-            int col=q.peek().col;
+        dist[source[0]][source[1]] = 0;
+        q.add(new triad1(1, source[0], source[1]));
+        int[] delRow = {-1, -1, 0, 1, 1, 1, 0, -1};
+        int[] delCol = {0, 1, 1, 1, 0, -1, -1, -1};
+        while (!q.isEmpty()) {
+            int dis = q.peek().dist;
+            int row = q.peek().row;
+            int col = q.peek().col;
             q.poll();
-            for(int i=0;i<8;i++){
-                int newRow=row+delRow[i];
-                int newCol=col+delCol[i];
-                if(newRow>=0&&newRow<n&&
-                        newCol>=0&&newCol<n&&
-                        grid[newRow][newCol]==0&&
-                        dis+1<dist[newRow][newCol]){
-                    dist[newRow][newCol]=dis+1;
-                    if(newRow==destination[0]&&newCol==destination[1]){
-                        return dis+1;
+            for (int i = 0; i < 8; i++) {
+                int newRow = row + delRow[i];
+                int newCol = col + delCol[i];
+                if (newRow >= 0 && newRow < n &&
+                        newCol >= 0 && newCol < n &&
+                        grid[newRow][newCol] == 0 &&
+                        dis + 1 < dist[newRow][newCol]) {
+                    dist[newRow][newCol] = dis + 1;
+                    if (newRow == destination[0] && newCol == destination[1]) {
+                        return dis + 1;
                     }
-                    q.add(new triad1(dis+1, newRow, newCol));
+                    q.add(new triad1(dis + 1, newRow, newCol));
                 }
             }
         }
@@ -1006,48 +1007,50 @@ public class Questions {
 
     //path with minimum effort
     //https://leetcode.com/problems/path-with-minimum-effort/
-    class triad2{
+    class triad2 {
         int diff;
         int row;
         int col;
-        public triad2(int diff, int row, int col){
-            this.diff=diff;
-            this.row=row;
-            this.col=col;
+
+        public triad2(int diff, int row, int col) {
+            this.diff = diff;
+            this.row = row;
+            this.col = col;
         }
     }
+
     public int minimumEffortPath(int[][] heights) {
-        int n=heights.length;
-        int m=heights[0].length;
+        int n = heights.length;
+        int m = heights[0].length;
         //initial config
-        int[][] dist=new int[n][m];
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                dist[i][j]=(int)(1e9);
+        int[][] dist = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dist[i][j] = (int) (1e9);
             }
         }
-        dist[0][0]=0;
-        PriorityQueue<triad2> pq=new PriorityQueue<>((x,y)->x.diff-y.diff);
-        pq.add(new triad2(0,0,0));
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        while(!pq.isEmpty()){
-            triad2 t=pq.poll();
-            int diff=t.diff;
-            int row=t.row;
-            int col=t.col;
-            if(row==n-1&&col==m-1){ //reached bottom right
+        dist[0][0] = 0;
+        PriorityQueue<triad2> pq = new PriorityQueue<>((x, y) -> x.diff - y.diff);
+        pq.add(new triad2(0, 0, 0));
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        while (!pq.isEmpty()) {
+            triad2 t = pq.poll();
+            int diff = t.diff;
+            int row = t.row;
+            int col = t.col;
+            if (row == n - 1 && col == m - 1) { //reached bottom right
                 return diff; //this will return min effort
             }
-            for(int i=0;i<4;i++){
-                int nrow=row+delRow[i];
-                int ncol=col+delCol[i];
-                if(nrow>=0&&nrow<n&&
-                        ncol>=0&&ncol<m){
-                    int newEffort=Math.max(Math.abs(heights[row][col]-heights[nrow][ncol]),diff);
-                    if(newEffort<dist[nrow][ncol]){
-                        dist[nrow][ncol]=newEffort;
-                        pq.add(new triad2(newEffort,nrow,ncol));
+            for (int i = 0; i < 4; i++) {
+                int nrow = row + delRow[i];
+                int ncol = col + delCol[i];
+                if (nrow >= 0 && nrow < n &&
+                        ncol >= 0 && ncol < m) {
+                    int newEffort = Math.max(Math.abs(heights[row][col] - heights[nrow][ncol]), diff);
+                    if (newEffort < dist[nrow][ncol]) {
+                        dist[nrow][ncol] = newEffort;
+                        pq.add(new triad2(newEffort, nrow, ncol));
                     }
                 }
             }
@@ -1057,50 +1060,52 @@ public class Questions {
 
     //cheapest flights within k stops
     //https://leetcode.com/problems/cheapest-flights-within-k-stops/
-    class triad3{
+    class triad3 {
         int stops;
         int city;
         int cost;
-        public triad3(int stops,int city,int cost){
-            this.stops=stops;
-            this.city=city;
-            this.cost=cost;
+
+        public triad3(int stops, int city, int cost) {
+            this.stops = stops;
+            this.city = city;
+            this.cost = cost;
         }
     }
+
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
-        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
         //building the graph
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i< flights.length;i++){
-            adj.get(flights[i][0]).add(new Pair(flights[i][1],flights[i][2]));
+        for (int i = 0; i < flights.length; i++) {
+            adj.get(flights[i][0]).add(new Pair(flights[i][1], flights[i][2]));
         }
-        Queue<triad3> q=new LinkedList<>();
-        q.add(new triad3(0,src,0));
-        int[] dist=new int[n];
-        for(int i=0;i<n;i++){
-            dist[i]=(int)(1e9);
+        Queue<triad3> q = new LinkedList<>();
+        q.add(new triad3(0, src, 0));
+        int[] dist = new int[n];
+        for (int i = 0; i < n; i++) {
+            dist[i] = (int) (1e9);
         }
-        dist[src]=0;
-        while(!q.isEmpty()){
-            triad3 t=q.poll();
-            int stops=t.stops;
-            int city=t.city;
-            int cost=t.cost;
-            if(stops>k){ //reject path if stops exceed k
+        dist[src] = 0;
+        while (!q.isEmpty()) {
+            triad3 t = q.poll();
+            int stops = t.stops;
+            int city = t.city;
+            int cost = t.cost;
+            if (stops > k) { //reject path if stops exceed k
                 continue;
             }
-            for(Pair p:adj.get(city)){
-                int adjCity=p.first;
-                int cst=p.second;
-                if(cost+cst<dist[adjCity]){
-                    dist[adjCity]=cost+cst;
-                    q.add(new triad3(stops+1,adjCity,cost+cst));
+            for (Pair p : adj.get(city)) {
+                int adjCity = p.first;
+                int cst = p.second;
+                if (cost + cst < dist[adjCity]) {
+                    dist[adjCity] = cost + cst;
+                    q.add(new triad3(stops + 1, adjCity, cost + cst));
                 }
             }
         }
-        if(dist[dst]==1e9){
+        if (dist[dst] == 1e9) {
             return -1;
         }
         return dist[dst];
@@ -1110,25 +1115,25 @@ public class Questions {
     //https://practice.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1
     int minimumMultiplications(int[] arr, int start, int end) {
         //initial config
-        Queue<Pair> pq=new LinkedList<>();
-        pq.add(new Pair(0,start));
-        int[] dist=new int[100000];
-        for(int i=0;i<dist.length;i++){
-            dist[i]=(int)(1e9);
+        Queue<Pair> pq = new LinkedList<>();
+        pq.add(new Pair(0, start));
+        int[] dist = new int[100000];
+        for (int i = 0; i < dist.length; i++) {
+            dist[i] = (int) (1e9);
         }
-        dist[start]=0;
-        while(!pq.isEmpty()){
-            Pair p=pq.poll();
-            int steps=p.first;
-            int num=p.second;
-            for(int i=0;i<arr.length;i++){
-                int newStart=(num*arr[i])%100000;
-                if(steps+1<dist[newStart]){
-                    dist[newStart]=steps+1;
-                    if(newStart==end){
-                        return steps+1;
+        dist[start] = 0;
+        while (!pq.isEmpty()) {
+            Pair p = pq.poll();
+            int steps = p.first;
+            int num = p.second;
+            for (int i = 0; i < arr.length; i++) {
+                int newStart = (num * arr[i]) % 100000;
+                if (steps + 1 < dist[newStart]) {
+                    dist[newStart] = steps + 1;
+                    if (newStart == end) {
+                        return steps + 1;
                     }
-                   pq.add(new Pair(steps+1,newStart));
+                    pq.add(new Pair(steps + 1, newStart));
                 }
             }
         }
@@ -1139,41 +1144,40 @@ public class Questions {
     //https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/
     public int countPaths(int n, int[][] roads) {
         //building the graph
-        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
-        for(int i=0;i<n;i++){
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i<roads.length;i++){
-            adj.get(roads[i][0]).add(new Pair(roads[i][1],roads[i][2]));
-            adj.get(roads[i][1]).add(new Pair(roads[i][0],roads[i][2]));// since we're dealing with an undirected graph
+        for (int i = 0; i < roads.length; i++) {
+            adj.get(roads[i][0]).add(new Pair(roads[i][1], roads[i][2]));
+            adj.get(roads[i][1]).add(new Pair(roads[i][0], roads[i][2]));// since we're dealing with an undirected graph
         }
         //initial config
-        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
-        pq.add(new Pair(0,0));
-        long[] dist=new long[n]; //long is taken to pass the larger test cases
-        long[] ways=new long[n];
+        PriorityQueue<Pair> pq = new PriorityQueue<>((x, y) -> x.first - y.first);
+        pq.add(new Pair(0, 0));
+        long[] dist = new long[n]; //long is taken to pass the larger test cases
+        long[] ways = new long[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[0]=0;
-        ways[0]=1;
-        long mod= (long) (Math.pow(10,9)+7);
-        while(!pq.isEmpty()){
-            Pair p=pq.poll();
-            int time=p.first;
-            int intersection=p.second;
-            for(Pair pr:adj.get(intersection)){
-                int adjIntersection=pr.first;
-                int tm=pr.second;
-                if(time+tm<dist[adjIntersection]){
-                    dist[adjIntersection]=time+tm;
-                    pq.add(new Pair((int)dist[adjIntersection],adjIntersection));
-                    ways[adjIntersection]=ways[intersection];
-                }
-                else if(time+tm==dist[adjIntersection]){
-                    ways[adjIntersection]=(ways[intersection]+ways[adjIntersection])%mod;
+        dist[0] = 0;
+        ways[0] = 1;
+        long mod = (long) (Math.pow(10, 9) + 7);
+        while (!pq.isEmpty()) {
+            Pair p = pq.poll();
+            int time = p.first;
+            int intersection = p.second;
+            for (Pair pr : adj.get(intersection)) {
+                int adjIntersection = pr.first;
+                int tm = pr.second;
+                if (time + tm < dist[adjIntersection]) {
+                    dist[adjIntersection] = time + tm;
+                    pq.add(new Pair((int) dist[adjIntersection], adjIntersection));
+                    ways[adjIntersection] = ways[intersection];
+                } else if (time + tm == dist[adjIntersection]) {
+                    ways[adjIntersection] = (ways[intersection] + ways[adjIntersection]) % mod;
                 }
             }
         }
-        return (int)(ways[n-1]%mod);
+        return (int) (ways[n - 1] % mod);
     }
 
     //all paths from source to target
@@ -1181,42 +1185,43 @@ public class Questions {
     //using dfs
     public List<List<Integer>> allPathsSourceTarget1(int[][] graph) {
         //initial config
-        List<List<Integer>> ans=new ArrayList<>();
-        List<Integer> current=new ArrayList<>();
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> current = new ArrayList<>();
         current.add(0);
-        dfs10(0,graph.length-1,graph,current,ans);
+        dfs10(0, graph.length - 1, graph, current, ans);
         return ans;
     }
-    public void dfs10(int src,int dst,int[][] graph, List<Integer> current, List<List<Integer>> ans){
-        if(src==dst){
+
+    public void dfs10(int src, int dst, int[][] graph, List<Integer> current, List<List<Integer>> ans) {
+        if (src == dst) {
             ans.add(new ArrayList<>(current)); //since the value of current list is changing, it would also be changed
             // in the ans list and thus instead of directly adding the current list to the ans list, we add a new
             // instance of array list and pass the current list to that instance each time we encounter a new path from
             // src to dst
             return;
         }
-        for(int i:graph[src]){
+        for (int i : graph[src]) {
             current.add(i);
-            dfs10(i,dst,graph,current,ans);
-            current.remove(current.size()-1);
+            dfs10(i, dst, graph, current, ans);
+            current.remove(current.size() - 1);
         }
     }
 
     //using bfs
     public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
         //initial config
-        List<List<Integer>> ans=new ArrayList<>();
-        Queue<List<Integer>> q=new LinkedList<>();
+        List<List<Integer>> ans = new ArrayList<>();
+        Queue<List<Integer>> q = new LinkedList<>();
         q.add(Arrays.asList(0));
-        int dst=graph.length-1;
-        while(!q.isEmpty()){
-            List<Integer> current=q.poll();
-            int node=current.get(current.size()-1);
-            if(node==dst){
+        int dst = graph.length - 1;
+        while (!q.isEmpty()) {
+            List<Integer> current = q.poll();
+            int node = current.get(current.size() - 1);
+            if (node == dst) {
                 ans.add(new ArrayList<>(current));
             }
-            for(int adjNode:graph[node]){
-                List<Integer> newPath=current;
+            for (int adjNode : graph[node]) {
+                List<Integer> newPath = current;
                 newPath.add(adjNode);
                 q.add(new ArrayList<>(newPath));
             }
@@ -1225,4 +1230,48 @@ public class Questions {
 
     }
 
+    //course schedule 2
+    //https://leetcode.com/problems/course-schedule-ii/
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        //building the graph
+        List<List<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<numCourses;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<prerequisites.length;i++){
+            adj.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+        //initial config
+        List<Integer> list=new ArrayList<>();
+        int[] ans=new int[numCourses];
+        int[] inDegree=new int[numCourses];
+        Queue<Integer> q=new LinkedList<>();
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                inDegree[adj.get(i).get(j)]++;
+            }
+        }
+        for(int i=0;i<inDegree.length;i++){
+            if(inDegree[i]==0){
+                q.add(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            list.add(node);
+            for(int i:adj.get(node)){
+                inDegree[i]--;
+                if(inDegree[i]==0){
+                    q.add(i);
+                }
+            }
+        }
+        if(list.size()<numCourses){
+            return new int[] {};
+        }
+        for(int i=0;i<list.size();i++){
+            ans[i]=list.get(i);
+        }
+        return ans;
+    }
 }
