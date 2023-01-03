@@ -1106,8 +1106,8 @@ public class Questions {
         return dist[dst];
     }
 
-    //
-    //
+    //minimum multiplications to reach end
+    //https://practice.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1
     int minimumMultiplications(int[] arr, int start, int end) {
         //initial config
         Queue<Pair> pq=new LinkedList<>();
@@ -1135,5 +1135,94 @@ public class Questions {
         return -1;
     }
 
+    //number of ways to arrive at a destination
+    //https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/
+    public int countPaths(int n, int[][] roads) {
+        //building the graph
+        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        for(int i=0;i<n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<roads.length;i++){
+            adj.get(roads[i][0]).add(new Pair(roads[i][1],roads[i][2]));
+            adj.get(roads[i][1]).add(new Pair(roads[i][0],roads[i][2]));// since we're dealing with an undirected graph
+        }
+        //initial config
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        pq.add(new Pair(0,0));
+        long[] dist=new long[n]; //long is taken to pass the larger test cases
+        long[] ways=new long[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[0]=0;
+        ways[0]=1;
+        long mod= (long) (Math.pow(10,9)+7);
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int time=p.first;
+            int intersection=p.second;
+            for(Pair pr:adj.get(intersection)){
+                int adjIntersection=pr.first;
+                int tm=pr.second;
+                if(time+tm<dist[adjIntersection]){
+                    dist[adjIntersection]=time+tm;
+                    pq.add(new Pair((int)dist[adjIntersection],adjIntersection));
+                    ways[adjIntersection]=ways[intersection];
+                }
+                else if(time+tm==dist[adjIntersection]){
+                    ways[adjIntersection]=(ways[intersection]+ways[adjIntersection])%mod;
+                }
+            }
+        }
+        return (int)(ways[n-1]%mod);
+    }
+
+    //all paths from source to target
+    //https://leetcode.com/problems/all-paths-from-source-to-target/
+    //using dfs
+    public List<List<Integer>> allPathsSourceTarget1(int[][] graph) {
+        //initial config
+        List<List<Integer>> ans=new ArrayList<>();
+        List<Integer> current=new ArrayList<>();
+        current.add(0);
+        dfs10(0,graph.length-1,graph,current,ans);
+        return ans;
+    }
+    public void dfs10(int src,int dst,int[][] graph, List<Integer> current, List<List<Integer>> ans){
+        if(src==dst){
+            ans.add(new ArrayList<>(current)); //since the value of current list is changing, it would also be changed
+            // in the ans list and thus instead of directly adding the current list to the ans list, we add a new
+            // instance of array list and pass the current list to that instance each time we encounter a new path from
+            // src to dst
+            return;
+        }
+        for(int i:graph[src]){
+            current.add(i);
+            dfs10(i,dst,graph,current,ans);
+            current.remove(current.size()-1);
+        }
+    }
+
+    //using bfs
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        //initial config
+        List<List<Integer>> ans=new ArrayList<>();
+        Queue<List<Integer>> q=new LinkedList<>();
+        q.add(Arrays.asList(0));
+        int dst=graph.length-1;
+        while(!q.isEmpty()){
+            List<Integer> current=q.poll();
+            int node=current.get(current.size()-1);
+            if(node==dst){
+                ans.add(new ArrayList<>(current));
+            }
+            for(int adjNode:graph[node]){
+                List<Integer> newPath=current;
+                newPath.add(adjNode);
+                q.add(new ArrayList<>(newPath));
+            }
+        }
+        return ans;
+
+    }
 
 }
