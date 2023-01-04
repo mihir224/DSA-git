@@ -1374,4 +1374,44 @@ public class Questions {
         }
         return ans;
     }
+
+    //redundant connection (Disjoint set)
+    //https://leetcode.com/problems/redundant-connection/
+    public int[] findRedundantConnection(int[][] edges) {
+        ArrayList<Integer> parent =new ArrayList<>();
+        ArrayList<Integer> size=new ArrayList<>();
+        int n=edges.length;
+        for(int i=0;i<=n;i++){
+            parent.add(i);
+            size.add(1);
+        }
+        for(int i=0;i< edges.length;i++){
+            int u=edges[i][0];
+            int v=edges[i][1];
+            int pu=findUltimateParent(parent,u);
+            int pv=findUltimateParent(parent,v);
+            if(pu!=pv){ //union by size
+                if(size.get(pu)<size.get(pv)) {
+                    parent.set(pu, pv);
+                    size.set(pv,size.get(pv)+size.get(pu));
+                }
+                else{
+                    parent.set(pv,pu);
+                    size.set(pu,size.get(pv)+size.get(pu));
+                }
+            }
+            else{
+                return edges[i];
+            }
+        }
+        return new int[] {0};
+    }
+    public int findUltimateParent(ArrayList<Integer> parent, int node){
+        if(node==parent.get(node)){
+            return node;
+        }
+        int up=findUltimateParent(parent, parent.get(node));
+        parent.set(node, up); //path compression
+        return parent.get(node);
+    }
 }
