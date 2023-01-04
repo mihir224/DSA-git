@@ -1234,43 +1234,143 @@ public class Questions {
     //https://leetcode.com/problems/course-schedule-ii/
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         //building the graph
-        List<List<Integer>> adj=new ArrayList<>();
-        for(int i=0;i<numCourses;i++){
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < numCourses; i++) {
             adj.add(new ArrayList<>());
         }
-        for(int i=0;i<prerequisites.length;i++){
+        for (int i = 0; i < prerequisites.length; i++) {
             adj.get(prerequisites[i][1]).add(prerequisites[i][0]);
         }
         //initial config
-        List<Integer> list=new ArrayList<>();
-        int[] ans=new int[numCourses];
-        int[] inDegree=new int[numCourses];
-        Queue<Integer> q=new LinkedList<>();
-        for(int i=0;i<adj.size();i++){
-            for(int j=0;j<adj.get(i).size();j++){
+        List<Integer> list = new ArrayList<>();
+        int[] ans = new int[numCourses];
+        int[] inDegree = new int[numCourses];
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < adj.size(); i++) {
+            for (int j = 0; j < adj.get(i).size(); j++) {
                 inDegree[adj.get(i).get(j)]++;
             }
         }
-        for(int i=0;i<inDegree.length;i++){
-            if(inDegree[i]==0){
+        for (int i = 0; i < inDegree.length; i++) {
+            if (inDegree[i] == 0) {
                 q.add(i);
             }
         }
-        while(!q.isEmpty()){
-            int node=q.poll();
+        while (!q.isEmpty()) {
+            int node = q.poll();
             list.add(node);
-            for(int i:adj.get(node)){
+            for (int i : adj.get(node)) {
                 inDegree[i]--;
-                if(inDegree[i]==0){
+                if (inDegree[i] == 0) {
                     q.add(i);
                 }
             }
         }
-        if(list.size()<numCourses){
-            return new int[] {};
+        if (list.size() < numCourses) {
+            return new int[]{};
         }
-        for(int i=0;i<list.size();i++){
-            ans[i]=list.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+
+    //minimum height trees
+    //https://leetcode.com/problems/minimum-height-trees/
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        //building the graph
+        List<List<Integer>> adj = new ArrayList<>();
+        List<Integer> ans = new ArrayList<>();
+        Queue<Integer> q = new LinkedList<>();
+        int[] inDegree=new int[n];
+        if(n==1){
+            return Arrays.asList(0);
+        }
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int i = 0; i < edges.length; i++) {
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+            inDegree[edges[i][1]]++;
+            inDegree[edges[i][0]]++;
+        }
+        //adding all leaf nodes to queue
+        for (int i = 0; i <inDegree.length; ++i) {
+            if(inDegree[i]==1){
+                q.add(i);
+            }
+        }
+
+        while (n > 2) { //because there can be atmost 2 nodes which can be taken as root to give minimum height
+            int len=q.size();
+            n -= len; //reducing n accordingly as number of nodes reduce
+            for(int i=0;i<len;i++){
+                int node=q.poll();
+                //removing leaf node from all its adj neighbours
+                for (int it : adj.get(node)) {
+                    inDegree[it]--;
+                    if (inDegree[it] == 1) {
+                        q.add(it);
+                    }
+                }
+            }
+        }
+        while (!q.isEmpty()) {
+            ans.add(q.poll());
+        }
+        return ans;
+    }
+
+    //evaluate division
+    //https://leetcode.com/problems/evaluate-division/
+    class Edge{
+        String adjNode;
+        double val;
+        public Edge(String adjNode, double val){
+            this.adjNode=adjNode;
+            this.val=val;
+        }
+    }
+    public void addEdge(Map<String, List<Edge>> map, String u, String v, double wt){
+        if(!map.containsKey(u)){
+            map.put(u,new ArrayList<>());
+        }
+        map.get(u).add(new Edge(v,wt));
+    }
+    public double dfs(Map<String, List<Edge>> map, Set<String> set, String u, String v){
+        if(!map.containsKey(u)||!map.containsKey(v)){
+            return -1;
+        }
+        if(u.equals(v)){ //same strings
+            return 1;
+        }
+        for(Edge e:map.get(u)){
+            if(set.contains(e.adjNode)){ //already visited this adj node
+                continue;
+            }
+            if(e.adjNode==v){ //reached destination
+                return e.val;
+            }
+            set.add(u);
+            double val=dfs(map,set,e.adjNode,v); //recursively reaching v from adjacent nodes of u
+            if(val!=-1){
+                return val*e.val; //this is similar to a/b * b/c. here 'a' is the current u and 'b' is its adjacent neighbour and 'c' is the destination
+            }
+        }
+        return -1;
+    }
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        double[] ans=new double[queries.size()];
+        Map<String, List<Edge>> map=new HashMap<>(); //we use a map as a adj list because we need to check if a string
+        // in the query is among the given equation of strings or not
+        //building the graph
+        for(int i=0;i<values.length;i++){;
+            addEdge(map,equations.get(i).get(0),equations.get(i).get(1),values[i]);
+            addEdge(map,equations.get(i).get(1),equations.get(i).get(0),1/values[i]);
+        }
+        for(int i=0;i<ans.length;i++){
+            ans[i]=dfs(map, new HashSet<>(), queries.get(i).get(0), queries.get(i).get(1));
         }
         return ans;
     }
