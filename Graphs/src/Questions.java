@@ -1282,8 +1282,8 @@ public class Questions {
         List<List<Integer>> adj = new ArrayList<>();
         List<Integer> ans = new ArrayList<>();
         Queue<Integer> q = new LinkedList<>();
-        int[] inDegree=new int[n];
-        if(n==1){
+        int[] inDegree = new int[n];
+        if (n == 1) {
             return Arrays.asList(0);
         }
         for (int i = 0; i < n; i++) {
@@ -1296,17 +1296,17 @@ public class Questions {
             inDegree[edges[i][0]]++;
         }
         //adding all leaf nodes to queue
-        for (int i = 0; i <inDegree.length; ++i) {
-            if(inDegree[i]==1){
+        for (int i = 0; i < inDegree.length; ++i) {
+            if (inDegree[i] == 1) {
                 q.add(i);
             }
         }
 
-        while (n > 2) { //because there can be atmost 2 nodes which can be taken as root to give minimum height
-            int len=q.size();
+        while (n > 2) { //because there can be at  most 2 nodes which can be taken as root to give minimum height
+            int len = q.size();
             n -= len; //reducing n accordingly as number of nodes reduce
-            for(int i=0;i<len;i++){
-                int node=q.poll();
+            for (int i = 0; i < len; i++) {
+                int node = q.poll();
                 //removing leaf node from all its adj neighbours
                 for (int it : adj.get(node)) {
                     inDegree[it]--;
@@ -1322,96 +1322,201 @@ public class Questions {
         return ans;
     }
 
-    //evaluate division
+    //evaluate division (imp)
     //https://leetcode.com/problems/evaluate-division/
-    class Edge{
+    class Edge {
         String adjNode;
         double val;
-        public Edge(String adjNode, double val){
-            this.adjNode=adjNode;
-            this.val=val;
+
+        public Edge(String adjNode, double val) {
+            this.adjNode = adjNode;
+            this.val = val;
         }
     }
-    public void addEdge(Map<String, List<Edge>> map, String u, String v, double wt){
-        if(!map.containsKey(u)){
-            map.put(u,new ArrayList<>());
+
+    public void addEdge(Map<String, List<Edge>> map, String u, String v, double wt) {
+        if (!map.containsKey(u)) {
+            map.put(u, new ArrayList<>());
         }
-        map.get(u).add(new Edge(v,wt));
+        map.get(u).add(new Edge(v, wt));
     }
-    public double dfs(Map<String, List<Edge>> map, Set<String> set, String u, String v){
-        if(!map.containsKey(u)||!map.containsKey(v)){
+
+    public double dfs(Map<String, List<Edge>> map, Set<String> set, String u, String v) {
+        if (!map.containsKey(u) || !map.containsKey(v)) {
             return -1;
         }
-        if(u.equals(v)){ //same strings
+        if (u.equals(v)) { //same strings
             return 1;
         }
-        for(Edge e:map.get(u)){
-            if(set.contains(e.adjNode)){ //already visited this adj node
+        for (Edge e : map.get(u)) {
+            if (set.contains(e.adjNode)) { //already visited this adj node
                 continue;
             }
-            if(e.adjNode==v){ //reached destination
+            if (e.adjNode == v) { //reached destination
                 return e.val;
             }
             set.add(u);
-            double val=dfs(map,set,e.adjNode,v); //recursively reaching v from adjacent nodes of u
-            if(val!=-1){
-                return val*e.val; //this is similar to a/b * b/c. here 'a' is the current u and 'b' is its adjacent neighbour and 'c' is the destination
+            double val = dfs(map, set, e.adjNode, v); //recursively reaching v from adjacent nodes of u
+            if (val != -1) {
+                return val * e.val; //this is similar to a/b * b/c. here 'a' is the current u and 'b' is its adjacent neighbour and 'c' is the destination
             }
         }
         return -1;
     }
+
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-        double[] ans=new double[queries.size()];
-        Map<String, List<Edge>> map=new HashMap<>(); //we use a map as a adj list because we need to check if a string
+        double[] ans = new double[queries.size()];
+        Map<String, List<Edge>> map = new HashMap<>(); //we use a map as a adj list because we need to check if a string
         // in the query is among the given equation of strings or not
         //building the graph
-        for(int i=0;i<values.length;i++){;
-            addEdge(map,equations.get(i).get(0),equations.get(i).get(1),values[i]);
-            addEdge(map,equations.get(i).get(1),equations.get(i).get(0),1/values[i]);
+        for (int i = 0; i < values.length; i++) {
+            ;
+            addEdge(map, equations.get(i).get(0), equations.get(i).get(1), values[i]);
+            addEdge(map, equations.get(i).get(1), equations.get(i).get(0), 1 / values[i]);
         }
-        for(int i=0;i<ans.length;i++){
-            ans[i]=dfs(map, new HashSet<>(), queries.get(i).get(0), queries.get(i).get(1));
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = dfs(map, new HashSet<>(), queries.get(i).get(0), queries.get(i).get(1));
         }
         return ans;
     }
 
-    //redundant connection (Disjoint set)
+    //redundant connection (Disjoint set) (imp)
     //https://leetcode.com/problems/redundant-connection/
     public int[] findRedundantConnection(int[][] edges) {
-        ArrayList<Integer> parent =new ArrayList<>();
-        ArrayList<Integer> size=new ArrayList<>();
-        int n=edges.length;
-        for(int i=0;i<=n;i++){
+        ArrayList<Integer> parent = new ArrayList<>();
+        ArrayList<Integer> size = new ArrayList<>();
+        int n = edges.length;
+        for (int i = 0; i <= n; i++) {
             parent.add(i);
             size.add(1);
         }
-        for(int i=0;i< edges.length;i++){
-            int u=edges[i][0];
-            int v=edges[i][1];
-            int pu=findUltimateParent(parent,u);
-            int pv=findUltimateParent(parent,v);
-            if(pu!=pv){ //union by size
-                if(size.get(pu)<size.get(pv)) {
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int pu = findUltimateParent(parent, u);
+            int pv = findUltimateParent(parent, v);
+            if (pu != pv) { //union by size
+                if (size.get(pu) < size.get(pv)) {
                     parent.set(pu, pv);
-                    size.set(pv,size.get(pv)+size.get(pu));
+                    size.set(pv, size.get(pv) + size.get(pu));
+                } else {
+                    parent.set(pv, pu);
+                    size.set(pu, size.get(pv) + size.get(pu));
                 }
-                else{
-                    parent.set(pv,pu);
-                    size.set(pu,size.get(pv)+size.get(pu));
-                }
-            }
-            else{
+            } else {
                 return edges[i];
             }
         }
-        return new int[] {0};
+        return new int[]{0};
     }
-    public int findUltimateParent(ArrayList<Integer> parent, int node){
-        if(node==parent.get(node)){
+
+    public int findUltimateParent(ArrayList<Integer> parent, int node) {
+        if (node == parent.get(node)) {
             return node;
         }
-        int up=findUltimateParent(parent, parent.get(node));
+        int up = findUltimateParent(parent, parent.get(node));
         parent.set(node, up); //path compression
         return parent.get(node);
+    }
+
+    //longest increasing path (imp)
+    //https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+
+    //this is solved through kahn's algo
+    //optimised soln is through dfs and memoization
+    public int longestIncreasingPath(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] longest = new int[m][n]; //to store the longest path for each element as a source
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        int ans = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                ans = Math.max(ans, dfs11(i, j, delRow, delCol, -1, matrix, longest, m, n));
+            }
+        }
+        return ans;
+    }
+
+    public int dfs11(int row, int col, int[] delRow, int[] delCol, int parent, int[][] matrix, int[][] longest, int m, int n) {
+        if (row < 0 || row >= m || col < 0 || col >= n || matrix[row][col] <= parent) {
+            return 0;
+        }
+        int longestPath = 0;
+        if (longest[row][col] != 0) { //case when longest path from a node is already known
+            return longest[row][col];
+        }
+        for (int i = 0; i < 4; i++) {
+            int nrow = row + delRow[i];
+            int ncol = col + delCol[i];
+            longestPath = Math.max(longestPath, 1 + dfs11(nrow, ncol, delRow, delCol, matrix[row][col], matrix, longest, m, n));
+        }
+        longest[row][col] = longestPath;
+        return longestPath;
+    }
+
+    public int networkDelayTime(int[][] times, int n, int k) {
+        //building the graph
+        List<List<Pair>> adj=new ArrayList<>();
+        for(int i=0;i<=n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<times.length;i++){
+            adj.get(times[i][0]).add(new Pair(times[i][1],times[i][2]));
+        }
+        //initial config
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        int[] dist=new int[n+1];
+        Arrays.fill(dist, (int) (1e9));
+        dist[0]=-1;
+        dist[k]=0;
+        pq.add(new Pair(0,k));
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int time=p.first;
+            int node=p.second;
+            for(Pair pr:adj.get(node)){
+                int adjNode=pr.first;
+                int tm=pr.second;
+                if(time+tm<dist[adjNode]){
+                    dist[adjNode]=time+tm;
+                    pq.add(new Pair(dist[adjNode],adjNode));
+                }
+            }
+        }
+        int ans=0;
+        for(int i=1;i<dist.length;i++){ //if any node is unreachable
+            if(dist[i]==(int)1e9){
+                return -1;
+            }
+        }
+        for(int i:dist){
+            ans=Math.max(ans,i);
+        }
+        return ans;
+    }
+
+    //keys and rooms (simple bfs or dfs)
+    //https://leetcode.com/problems/keys-and-rooms/
+    public boolean canVisitAllRooms(List<List<Integer>> rooms) {
+        List<Integer> ans=new ArrayList<>();
+        boolean[] vis=new boolean[rooms.size()];
+        vis[0]=true;
+        dfs(0,vis,rooms,ans);
+        if(ans.size()!=rooms.size()){
+            return false;
+        }
+        return true;
+    }
+
+    public void dfs(int node, boolean[] vis, List<List<Integer>> adj, List<Integer> ans){
+        vis[node]=true;
+        ans.add(node);
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                dfs(i,vis,adj,ans);
+            }
+        }
     }
 }
