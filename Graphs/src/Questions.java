@@ -1519,4 +1519,50 @@ public class Questions {
             }
         }
     }
+
+    //possible bipartition
+    //https://leetcode.com/problems/possible-bipartition/
+
+    public boolean possibleBipartition(int n, int[][] dislikes) {
+        List<List<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<=n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<dislikes.length;i++){
+            adj.get(dislikes[i][0]).add(dislikes[i][1]);
+            adj.get(dislikes[i][1]).add(dislikes[i][0]);
+        }
+        int[] color=new int[n+1];
+        for(int i=0;i<=n;i++){
+            color[i]=-1;
+        }
+        for(int i=1;i<=n;i++){
+            if(color[i]==-1){
+                if(!checkBipartite1(i,n,adj,color)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean checkBipartite1(int node, int n, List<List<Integer>> adj, int[] color){
+        Queue<Integer> q=new LinkedList<>();
+        color[node]=0;
+        q.add(node);
+        while(!q.isEmpty()){
+            int src=q.poll();
+            for(int i:adj.get(src)){
+                if(color[i]==-1){
+                    color[i]=1-color[src];
+                    q.add(i);
+                }
+                else if(color[i]==color[src]){ //two adjacent nodes have same color
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
 }
