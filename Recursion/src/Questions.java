@@ -53,4 +53,38 @@ public class Questions {
         }
     }
 
+    //subset sum
+    //https://practice.geeksforgeeks.org/problems/subset-sums2234/1
+    ArrayList<Integer> subsetSums(ArrayList<Integer> arr, int N){
+        ArrayList<Integer> ans=new ArrayList<>();
+        helper3(0,0,arr,N,ans);
+        Collections.sort(ans);
+        return ans;
+    }
+    public void helper3(int i, int sum, ArrayList<Integer> arr, int n, ArrayList<Integer> ans){
+        if(i==n){ //found a sum
+            ans.add(sum);
+        }
+        helper3(i+1,sum+arr.get(i),arr,n,ans); //picked
+        helper3(i+1,sum,arr,n,ans); //not picked
+    }
+
+    //subsets
+    //https://leetcode.com/problems/subsets/
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> ans=new ArrayList<>();
+        List<Integer> list=new ArrayList<>();
+        helper4(0,list,nums,ans);
+        return ans;
+    }
+    public void helper4(int i,List<Integer> list, int[] nums,List<List<Integer>> ans){
+        if(i>= nums.length){
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        list.add(nums[i]); //pick
+        helper4(i+1,list,nums,ans);
+        list.remove(list.size()-1); //not pick
+        helper4(i+1,list,nums,ans);
+    }
 }
