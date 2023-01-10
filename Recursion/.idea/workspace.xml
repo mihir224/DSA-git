@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d64b959f-2aa6-44fa-b18c-922471e4f7d5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/AlgsCoursera.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/src/HelloGoodbye.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/src/HelloWorld.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/src/RandomWord.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AlgsCoursera/src/hello.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Course.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/ListOfEmployees.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/MatrixMultiplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/ParagraphToTokens.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Payment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Q1-7.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/ReversedString.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Student.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment - 5/Substance.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Challenges/src" beforeDir="false" afterPath="$PROJECT_DIR$/../Challenges/src" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/description.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/project-template.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/CodeChef.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Badminton.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/CardGame.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Draw.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Elections.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Eureka.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Hostel.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Hunger.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/KeplersLaw.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/Salon.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/codeF.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/out/production/CodeChef/com/company/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Badminton.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/CardGame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Draw.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Elections.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Eureka.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Hostel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Hunger.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/KeplersLaw.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/Salon.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/codeF.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/com/company/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeChef/src/gfg.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/description.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/.idea/project-template.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/CodeForces.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CodeForces/src/com/company/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms$Edge.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms$Edge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms$Pair.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms$Pair.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Algorithms.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions$Pair.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions$Pair.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions$triad.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions$triad.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Questions.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Traversals.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/out/production/Graphs/Traversals.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Questions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Graphs/src/Traversals.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Traversals.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/description.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/project-template.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/LabTest.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/out/production/LabTest/com/company/Contact.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/out/production/LabTest/com/company/Employee.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/out/production/LabTest/com/company/Faculty.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/out/production/LabTest/com/company/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/out/production/LabTest/com/company/Staff.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/9920102054_MIHIR SAINI_LabTest1.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/Contact.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/Employee.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/Faculty.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LabTest/src/com/company/Staff.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LeetCode/EvenDigits.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LeetCode/MaxWealth.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Recursion.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/LinearSearch.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/NoOfSteps.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/NoOfZeros.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/Palindrome.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/ReturnArrayList.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/RotatedBinarySearch.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Recursion/SortedArray.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LinearSearch.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NoOfSteps.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NoOfZeros.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Palindrome.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Questions.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ReturnArrayList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RotatedBinarySearch.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SortedArray.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/Test.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/src/Contact.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Test/src/Employee.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/src/main/java/LinkedList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/src/main/java/com/example/demo/HelloApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/src/main/java/com/example/demo/HelloController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo/src/main/resources/com/example/demo/hello-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/src/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test1/test1.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../untitled/untitled.iml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2BT1wR3Z5Qd3oknRzGw80RYPxSC" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Application.RotatedBinarySearch">
+    <configuration name="LinearSearch" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="LinearSearch" />
+      <module name="Recursion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NoOfZeros" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="NoOfZeros" />
+      <module name="Recursion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ReturnArrayList" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ReturnArrayList" />
+      <module name="Recursion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RotatedBinarySearch" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="RotatedBinarySearch" />
+      <module name="Recursion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SortedArray" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="SortedArray" />
+      <module name="Recursion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.RotatedBinarySearch" />
+        <item itemvalue="Application.ReturnArrayList" />
+        <item itemvalue="Application.LinearSearch" />
+        <item itemvalue="Application.SortedArray" />
+        <item itemvalue="Application.NoOfZeros" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d64b959f-2aa6-44fa-b18c-922471e4f7d5" name="Changes" comment="" />
+      <created>1656915501048</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1656915501048</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
