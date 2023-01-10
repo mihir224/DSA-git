@@ -1221,7 +1221,7 @@ public class Questions {
                 ans.add(new ArrayList<>(current));
             }
             for (int adjNode : graph[node]) {
-                List<Integer> newPath = current;
+                List<Integer> newPath = new ArrayList<>(current);
                 newPath.add(adjNode);
                 q.add(new ArrayList<>(newPath));
             }
@@ -1520,7 +1520,7 @@ public class Questions {
         }
     }
 
-    //possible bipartition
+    //possible bipartition (bipartite graph)
     //https://leetcode.com/problems/possible-bipartition/
 
     public boolean possibleBipartition(int n, int[][] dislikes) {
@@ -1563,6 +1563,29 @@ public class Questions {
         }
         return true;
     }
+
+    //combination sum
+    //
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> ans=new ArrayList<>();
+        helper(0,candidates,target,ans,new ArrayList<>());
+        return ans;
+    }
+    public void helper(int i, int[] candidates, int target, List<List<Integer>> ans, List<Integer> list){
+        if(i==candidates.length){
+            if(target==0){
+                ans.add(new ArrayList<>(list));
+            }
+            return;
+        }
+        if(candidates[i]<=target){
+            list.add(candidates[i]);
+            helper(i,candidates,target-candidates[i],ans,list);
+            list.remove(list.size()-1);
+        }
+        helper(i+1,candidates,target,ans,list);
+    }
+
 
 
 }
