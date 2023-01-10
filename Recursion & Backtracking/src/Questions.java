@@ -136,4 +136,68 @@ public class Questions {
             }
         }
     }
+
+    //N-Queens
+    //https://leetcode.com/problems/n-queens/
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> ans=new ArrayList<>();
+        char[][] chessB=new char[n][n];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                chessB[i][j]='.';
+            }
+        }
+        helperQueen(0,chessB,ans);
+        return ans;
+    }
+    public void helperQueen(int col,char[][] chessB, List<List<String>> ans){
+        if(col==chessB.length){
+            ans.add(convertToListOfStrings(chessB));
+            return;
+        }
+        for(int i=0;i<chessB.length;i++){
+            if(isPossible(chessB,i,col)){
+                chessB[i][col]='Q'; //place queen if possible
+                helperQueen(col+1,chessB,ans);
+                chessB[i][col]='.'; //remove queen after recursion call is over
+            }
+        }
+    }
+    public boolean isPossible(char[][] chessB, int row, int col ){
+        int rowCopy=row;
+        int colCopy=col;
+        while(row>=0&&col>=0){ //checking upper left diagonal
+            if(chessB[row][col]=='Q'){
+                return false;
+            }
+            row--;
+            col--;
+        }
+        row=rowCopy;
+        col=colCopy;
+        while(row>=0&&col>=0) {
+            if (chessB[row][col] == 'Q') { //checking left
+                return false;
+            }
+            col--;
+        }
+        row=rowCopy;
+        col=colCopy;
+        while(row<chessB.length&&col>=0){ //checking lower left diagonal
+            if(chessB[row][col]=='Q'){
+                return false;
+            }
+            row++;
+            col--;
+        }
+        return true; //all conditions satisfied
+    }
+    public List<String> convertToListOfStrings(char[][] chessB){
+        List<String> list=new ArrayList<>();
+        for(int i=0;i< chessB.length;i++){
+            String s=new String(chessB[i]);
+            list.add(s);
+        }
+        return list;
+    }
 }
