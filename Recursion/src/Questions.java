@@ -87,4 +87,53 @@ public class Questions {
         list.remove(list.size()-1); //not pick
         helper4(i+1,list,nums,ans);
     }
+
+    //subsets 2
+    //https://leetcode.com/problems/subsets-ii/
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> ans=new ArrayList<>();
+        //inorder to have all the duplicates side by side, we need to sort the given array
+        Arrays.sort(nums);
+        helper5(0,nums,new ArrayList<>(),ans);
+        return ans;
+    }
+    public void helper5(int currentIndex, int[] nums, List<Integer> list, List<List<Integer>> ans){
+        //we store the subset obtained in each recursive call
+        ans.add(new ArrayList<>(list));
+        //as soon as current index reaches n, the for loop below will not run and that particular recursion call will just
+        //return to where it was called after adding the particular subset stored in the list at that time to the ans
+        //thus we don't need to explicitly specify the base condition ie what happens when i>=n
+        for(int i=currentIndex;i<nums.length;i++){
+            if(i>currentIndex&&nums[i]==nums[i-1]) { //check for duplicates
+                continue;
+            }
+            list.add(nums[i]);
+            helper5(i+1,nums,list,ans);
+            list.remove(list.size()-1);
+        }
+    }
+
+    //permutations
+    //https://leetcode.com/problems/permutations/
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> ans=new ArrayList<>();
+        boolean[] vis=new boolean[nums.length];
+        helper6(new ArrayList<>(), vis, ans,nums);
+        return ans;
+    }
+    public void helper6(List<Integer> list, boolean[] vis, List<List<Integer>> ans,int[] nums){
+        if(list.size()==nums.length){
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        for(int i=0;i< nums.length;i++){
+            if(!vis[i]){
+                list.add(nums[i]);
+                vis[i]=true;
+                helper6(list,vis,ans,nums);
+                list.remove(list.size()-1);
+                vis[i]=false;
+            }
+        }
+    }
 }
