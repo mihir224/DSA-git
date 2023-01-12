@@ -279,24 +279,124 @@ public class Questions {
             return true;
         }
         for (int i = 1; i <= m; i++) {
-            if (isPossible2(currentNode,adj,i,color)) {
-                color[currentNode]=i;
-                if(helper7(currentNode+1,adj,color,m,n)){
+            if (isPossible2(currentNode, adj, i, color)) {
+                color[currentNode] = i;
+                if (helper7(currentNode + 1, adj, color, m, n)) {
                     return true;
                 }
-                color[currentNode]=0; //not possible to color further nodes with this color, thus removing it and trying
+                color[currentNode] = 0; //not possible to color further nodes with this color, thus removing it and trying
                 // out other colors
             }
         }
         return false; //not possible to color the graph
     }
-    public boolean isPossible2(int node,List<List<Integer>> adj,int clr,int[] color){
-        for(int i:adj.get(node)){
-            if(color[i]==clr){
+
+    public boolean isPossible2(int node, List<List<Integer>> adj, int clr, int[] color) {
+        for (int i : adj.get(node)) {
+            if (color[i] == clr) {
                 return false;
             }
         }
         return true;
     }
 
+    //palindrome partitioning
+    //https://leetcode.com/problems/palindrome-partitioning/
+    public List<List<String>> partition(String s) {
+        List<List<String>> ans = new ArrayList<>();
+        List<String> list = new ArrayList<>();
+        helper8(0, s, list, ans);
+        return ans;
+    }
+
+    public void helper8(int currentIndex, String s, List<String> list, List<List<String>> ans) {
+        if (currentIndex == s.length()) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        for (int i = currentIndex; i < s.length(); i++) {
+            if (isPalindrome(s, currentIndex, i)) {
+                list.add(s.substring(currentIndex, i + 1));
+                helper8(i + 1, s, list, ans);
+                list.remove(list.size() - 1); //removing current partition to check for other possible partitions
+            }
+        }
+    }
+
+    public boolean isPalindrome(String s, int currentIndex, int i) {
+        while (currentIndex <= i) {
+            if (s.charAt(currentIndex) != s.charAt(i)) {
+                return false;
+            }
+            currentIndex++;
+            i--;
+        }
+        return true;
+    }
+
+    //rat in a maze
+    //https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/1
+    public static ArrayList<String> findPath(int[][] m, int n) {
+        boolean[][] vis = new boolean[n][n];
+        ArrayList<String> ans = new ArrayList<>();
+        if (m[0][0] == 1) {
+            helperRat(0, 0, vis, "", ans, m, n);
+        }
+        return ans;
+    }
+
+    public static void helperRat(int row, int col, boolean[][] vis, String s, List<String> ans, int[][] m, int n) {
+        if (row == n - 1 && col == n - 1) {
+            ans.add(s);
+            return;
+        }
+        //down
+        if (row + 1 < n && !vis[row + 1][col] && m[row + 1][col] == 1) {
+            vis[row][col] = true;
+            helperRat(row + 1, col, vis, s + "D", ans, m, n);
+            vis[row][col] = false;
+        }
+        //left
+        if (col - 1 >= 0 && !vis[row][col - 1] && m[row][col - 1] == 1) {
+            vis[row][col] = true;
+            helperRat(row, col - 1, vis, s + "L", ans, m, n);
+            vis[row][col] = false;
+        }
+        //right
+        if (col + 1 < n && !vis[row][col + 1] && m[row][col + 1] == 1) {
+            vis[row][col] = true;
+            helperRat(row, col + 1, vis, s + "R", ans, m, n);
+            vis[row][col] = false;
+        }
+        //up
+        if (row - 1 >= 0 && !vis[row - 1][col] && m[row - 1][col] == 1) {
+            vis[row][col] = true;
+            helperRat(row - 1, col, vis, s + "U", ans, m, n);
+            vis[row][col] = false;
+        }
+    }
+
+    //kth permutation sequence
+    //https://leetcode.com/problems/permutation-sequence/
+    public String getPermutation(int n, int k) {
+        String ans="";
+        List<Integer> list=new ArrayList<>(); //to store list of n integers
+        int fact=1;
+        for(int i=1;i<n;i++){
+            fact=fact*i; //calculating factorial of 1st n-1 numbers
+            list.add(i);
+        }
+        list.add(n); //adding nth number
+        k=k-1; //following 0 based indexing
+        while(true){
+            ans+=list.get(k/fact);
+            list.remove(k/fact); //removing the first element of the kth permutation sequence from the list of n integers
+            if(list.size()==0){ //all elements of the kth sequence have been identified
+                break;
+            }
+            k=k%fact; //updating k
+            fact=fact/list.size(); //updating factorial
+        }
+        return ans;
+    }
 }
