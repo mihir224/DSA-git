@@ -399,4 +399,61 @@ public class Questions {
         }
         return ans;
     }
+
+    //letter combinations of a phone number
+    //https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+    public List<String> letterCombinations(String digits) {
+        List<String> ans=new ArrayList<>();
+        Map<Character,String> map=new HashMap<>();
+        if(digits.length()==0){
+            return ans;
+        }
+        map.put('2',"abc");
+        map.put('3',"def");
+        map.put('4',"ghi");
+        map.put('5',"jkl");
+        map.put('6',"mno");
+        map.put('7',"pqrs");
+        map.put('8',"tuv");
+        map.put('9',"wxyz");
+        helperPhone(0,new StringBuilder(),map,ans,digits);
+        return ans;
+    }
+    public void helperPhone(int currentIndex, StringBuilder s, Map<Character,String> map, List<String> ans, String digits){
+        if(currentIndex==digits.length()){
+            ans.add(s.toString());
+            return;
+        }
+        String currentString=map.get(digits.charAt(currentIndex));
+        for(int i=0;i<currentString.length();i++){
+            s.append(currentString.charAt(i));
+            helperPhone(currentIndex+1,s,map,ans,digits);
+            s.deleteCharAt(s.length()-1);
+        }
+    }
+
+    //generate parenthesis
+    //https://leetcode.com/problems/generate-parentheses/
+    public List<String> generateParenthesis(int n) {
+        List<String> ans=new ArrayList<>();
+        int open=n;
+        int close=n;
+
+        helperParent(open,close,"",ans);
+        return ans;
+    }
+    public void helperParent(int open, int close, String s,List<String> ans){
+        if(open==0&&close==0){
+            ans.add(s.toString());
+            return;
+        }
+        if(open!=0){
+            String s2=new String(s+"(");
+            helperParent(open-1,close,s2,ans);
+        }
+        if(close>open){
+            String s2=new String(s+")");
+            helperParent(open,close-1,s2,ans);
+        }
+    }
 }
