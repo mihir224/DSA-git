@@ -143,6 +143,35 @@ public class Questions {
         }
     }
 
+    //permutations-ii
+    //https://leetcode.com/problems/permutations-ii/
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> ans=new ArrayList<>();
+        boolean[] vis=new boolean[nums.length];
+        Arrays.sort(nums); //to place duplicates side by side
+        helperF(new ArrayList<>(),vis,ans,nums);
+        return ans;
+    }
+    public void helperF(List<Integer> list,boolean[] vis,List<List<Integer>> ans,int[] nums){
+        if(list.size()==nums.length){
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        for(int i=0;i<nums.length;i++){
+            if(i>0&&!vis[i-1]&&nums[i]==nums[i-1]){ //to avoid duplicate
+                continue;
+            }
+            if(!vis[i]){
+                list.add(nums[i]);
+                vis[i]=true;
+                helperF(list,vis,ans,nums);
+                list.remove(list.size()-1);
+                vis[i]=false;
+            }
+        }
+
+    }
+
     //N-Queens
     //https://leetcode.com/problems/n-queens/
     public List<List<String>> solveNQueens(int n) {
@@ -200,7 +229,6 @@ public class Questions {
         }
         return true; //all conditions satisfied
     }
-
     public List<String> convertToListOfStrings(char[][] chessB) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < chessB.length; i++) {
@@ -438,22 +466,19 @@ public class Questions {
         List<String> ans=new ArrayList<>();
         int open=n;
         int close=n;
-
         helperParent(open,close,"",ans);
         return ans;
     }
     public void helperParent(int open, int close, String s,List<String> ans){
         if(open==0&&close==0){
-            ans.add(s.toString());
+            ans.add(s);
             return;
         }
         if(open!=0){
-            String s2=new String(s+"(");
-            helperParent(open-1,close,s2,ans);
+            helperParent(open-1,close,s+"(",ans);
         }
         if(close>open){
-            String s2=new String(s+")");
-            helperParent(open,close-1,s2,ans);
+            helperParent(open,close-1,s+")",ans);
         }
     }
 }
