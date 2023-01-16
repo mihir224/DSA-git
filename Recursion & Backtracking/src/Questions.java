@@ -481,4 +481,53 @@ public class Questions {
             helperParent(open,close-1,s+")",ans);
         }
     }
+
+    //combinations
+    //https://leetcode.com/problems/combinations/
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> ans=new ArrayList<>();
+        helpers(1,ans,new ArrayList<>(),n,k);
+        return ans;
+    }
+    public void helpers(int currentIndex, List<List<Integer>> ans, List<Integer> list,int n,int k){
+        if(k==0){ //we set this as a base condition instead of currentIndex==k coz we want it to go till n
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        for(int i=currentIndex;i<=n;i++){
+            list.add(i);
+            helpers(i+1,ans,list,n,k-1);
+            list.remove(list.size()-1);
+        }
+    }
+
+    //word search
+    //https://leetcode.com/problems/word-search/
+    public boolean exist(char[][] board, String word) {
+        int n=board.length;
+        boolean[][] vis=new boolean[n][n];
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        vis[0][0]=true;
+        return helperWord(0,0,0,vis, board, n,word,delRow,delCol);
+
+    }
+    public boolean helperWord(int index, int row,int col, boolean[][] vis, char[][] board, int n, String word,int[] delRow, int[] delCol){
+        for(int i=0;i<4;i++){
+            if(index==word.length()){
+                return true;
+            }
+            int nrow=row+delRow[i];
+            int ncol=col+delCol[i];
+            if(row>=0&&row<n&&
+                col>=0&&col<n&&
+                !vis[nrow][ncol]&&board[nrow][ncol]==word.charAt(index)){
+                vis[nrow][ncol]=true;
+                if(helperWord(index+1,nrow,ncol,vis,board,n,word,delRow,delCol)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
