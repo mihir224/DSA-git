@@ -58,7 +58,7 @@ public class Questions {
     static Boolean isSubsetSum(int N, int arr[], int sum){
         boolean[][] dp=new boolean[N+1][sum+1];
         for(int i=0;i<N+1;i++){
-            for(int j=0;j<N+1;j++){
+            for(int j=0;j<sum+1;j++){
                 if(i==0){
                     dp[i][j]=false; //initialising row n=0 as false initially
                 }
@@ -79,4 +79,19 @@ public class Questions {
         return dp[N][sum];
     }
 
+    //equal sum partition
+    //https://leetcode.com/problems/partition-equal-subset-sum/
+
+    public boolean canPartition(int[] nums) {
+        int sum=0;
+        for(int i=0;i<nums.length;i++){
+            sum+=nums[i];
+        }
+        if(sum%2!=0){
+            return false;
+        }
+        return isSubsetSum(nums.length, nums, sum/2);
+    }
+
+    
 }
