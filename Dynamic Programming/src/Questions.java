@@ -57,6 +57,7 @@ public class Questions {
     }
 
     //subset sum problem
+    //a variation of 0/1 knapsack
     //https://practice.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1
     static Boolean isSubsetSum(int N, int arr[], int sum){
         boolean[][] dp=new boolean[N+1][sum+1];
@@ -83,6 +84,7 @@ public class Questions {
     }
 
     //equal sum partition
+    //a variation of 0/1 knapsack
     //https://leetcode.com/problems/partition-equal-subset-sum/
     public boolean canPartition(int[] nums) {
         int sum=0;
@@ -97,6 +99,7 @@ public class Questions {
 
     //count subsets with given sum
     //https://practice.geeksforgeeks.org/problems/perfect-sum-problem5633/1
+    //a variation of 0/1 knapsack
     public int perfectSum(int arr[],int N, int sum)
     {
         int[][] dp=new int[N+1][sum+1];
@@ -127,6 +130,7 @@ public class Questions {
     //minimum subset difference
     //https://practice.geeksforgeeks.org/problems/minimum-sum-partition3317/1
     //leetcode link- https://leetcode.com/problems/last-stone-weight-ii/
+    //a variation of 0/1 knapsack
     public int minDifference(int arr[], int n)
     {
         int sum=0;
@@ -206,21 +210,9 @@ public class Questions {
         return dp[row][col];
     }
 
-    //count number of subset pairs with given difference
-    //https://practice.geeksforgeeks.org/problems/partitions-with-given-difference/1
-    public int countPartitions(int N, int d, int arr[]){
-        int range=0;
-        if((d+range)%2!=0||range<Math.abs(d)){ //edge cases
-            return 0;
-        }
-        for(int i:arr){
-            range+=i;
-        }
-        int sum=(d+range)/2;
-        return perfectSum(arr,arr.length,sum);
-    }
-
-    //target sum
+    //count the number of subset sum pairs with given difference
+    //target sum on leetcode
+    //a variation of 0/1 knapsack
     //https://leetcode.com/problems/target-sum/
     public int findTargetSumWays(int[] arr, int d) {
         int range=0;
@@ -235,6 +227,119 @@ public class Questions {
             return 0;
         }
         return perfectSum(arr,arr.length,sum1);
+    }
+
+    //unbounded knapsack
+    //https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1
+    static int knapSack(int N, int W, int val[], int wt[])
+    {
+        int[][] dp=new int[N+1][W+1];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<W+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<N+1;i++){
+            for(int j=1;j<W+1;j++){
+                if(wt[i-1]<=j){
+                    dp[i][j]=Math.max(val[i-1]+dp[i][j-wt[i-1]],dp[i-1][j]);
+                }
+                else
+                    dp[i][j]=dp[i-1][j];
+            }
+        }
+        return dp[N][W];
+    }
+
+    //rod-cutting problem
+    //a variation of unbounded knapsack
+    //https://practice.geeksforgeeks.org/problems/rod-cutting0840/1
+    public int cutRod(int price[], int n) {
+        int length[]=new int[n];
+        int[][] dp=new int[n+1][n+1];
+        for(int i=1;i<n+1;i++){
+            length[i-1]=i;
+        }
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<n+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(length[i-1]<=j){
+                    dp[i][j]=Math.max(price[i-1]+dp[i][j-length[i-1]],dp[i-1][j]);
+                }
+                else
+                    dp[i][j]=dp[i-1][j];
+            }
+        }
+        return dp[n][n];
+    }
+
+    //coin change
+    //number of ways
+    //https://practice.geeksforgeeks.org/problems/coin-change2448/1
+    public long count(int coins[], int N, int sum) {
+        long[][] dp=new long[N+1][sum+1];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<sum+1;j++){
+                if(i==0){
+                    dp[i][j]=0;
+                }
+                if(j==0){
+                    dp[i][j]=1;
+                }
+            }
+        }
+        for(int i=1;i<N+1;i++){
+            for(int j=1;j<sum+1;j++){
+                if(coins[i-1]<=j){
+                    dp[i][j]=dp[i][j-coins[i-1]]+dp[i-1][j];
+                }
+                else
+                    dp[i][j]=dp[i-1][j];
+            }
+        }
+        return dp[N][sum];
+    }
+
+    //min number of coins
+    public int coinChange(int[] coins, int amount){
+        int N=coins.length;
+        int[][] dp=new int[N+1][amount+1];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<amount+1;j++){
+                if(i==0){
+                    dp[i][j]=Integer.MAX_VALUE-1;
+                }
+                if(j==0){
+                    dp[i][j]=0;
+                }
+                if(i==1){
+                    if(j%coins[0]==0){
+                        dp[i][j]=j/coins[0];
+                    }
+                    else{
+                        dp[i][j]=Integer.MAX_VALUE-1;
+                    }
+                }
+            }
+        }
+        for(int i=2;i<N+1;i++){
+            for(int j=1;j<amount+1;j++){
+                if(coins[i-1]<=j){
+                    dp[i][j]=Math.min(1+dp[i][j-coins[i-1]],dp[i-1][j]);
+                }
+                else
+                    dp[i][j]=dp[i-1][j];
+            }
+        }
+        return dp[N][amount]<Integer.MAX_VALUE-1?dp[N][amount]:-1;
     }
 
 
