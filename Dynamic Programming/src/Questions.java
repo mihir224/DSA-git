@@ -282,7 +282,9 @@ public class Questions {
     }
 
     //coin change
-    //number of ways
+    //a variation of unbounded knapsack
+
+    //count number of ways
     //https://practice.geeksforgeeks.org/problems/coin-change2448/1
     public long count(int coins[], int N, int sum) {
         long[][] dp=new long[N+1][sum+1];
@@ -341,6 +343,28 @@ public class Questions {
         }
         return dp[N][amount]<Integer.MAX_VALUE-1?dp[N][amount]:-1;
     }
+
+    //longest common subsequence
+    //https://leetcode.com/problems/longest-common-subsequence/
+
+    //recursive
+    public int longestCommonSubsequence(String a, String b) {
+        return lcs(a,b,a.length(),b.length());
+    }
+    public int lcs(String a,String b, int m, int n){
+        if(m==0||n==0){
+            return 0;
+        }
+        if(a.charAt(m-1)==b.charAt(n-1)){
+            return 1+lcs(a,b,m-1,n-1);
+        }
+        else{
+            return Math.max(lcs(a,b,m-1,n),lcs(a,b,m,n-1));
+        }
+    }
+
+    //memoization or bottom up
+
 
 
 
