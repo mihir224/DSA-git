@@ -363,9 +363,129 @@ public class Questions {
         }
     }
 
-    //memoization or bottom up
+    //memoization
+    public int longestCommonSubsequence2(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                dp[i][j]=-1;
+            }
+        }
+        return lcsMem(a,b,m,n,dp);
+    }
+    public int lcsMem(String a,String b, int m, int n,int[][] dp) {
+        if (m == 0 || n == 0) {
+            return 0;
+        }
+        if (dp[m][n] != -1) {
+            return dp[m][n];
+        }
+        if (a.charAt(m - 1) == b.charAt(n - 1)) {
+            return dp[m][n] = 1 + lcsMem(a, b, m - 1, n - 1, dp);
+        } else {
+            return dp[m][n] = Math.max(lcsMem(a, b, m - 1, n, dp), lcsMem(a, b, m, n - 1, dp));
+        }
+    }
 
+    //tabulation
+    public int longestCommonSubsequence3(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
 
+    ///longest common substring
+    //a variation of lcs
+    int longestCommonSubstr(String a, String b, int m, int n){
+        int[][] dp=new int[m+1][n+1];
+        int length=0;
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                }
+                if(dp[i][j]>length){
+                    length=dp[i][j];
+                }
 
+            }
+        }
+        return length;
+    }
 
+    //shortest common supersequence
+    public String shortestCommonSupersequence(String a, String b) {
+        int m = a.length();
+        int n = b.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 0; i < m + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < m + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        int i = m;
+        int j = n;
+        StringBuilder sb = new StringBuilder();
+        while (i > 0 && j > 0) {
+            if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                sb.append(a.charAt(i - 1));
+                i--;
+                j--;
+            } else if (dp[i][j - 1] > dp[i - 1][j]) {
+                sb.append(b.charAt(j - 1));
+                j--;
+            } else {
+                sb.append(a.charAt(i - 1));
+                i--;
+            }
+        }
+        while (i > 0) {
+            sb.append(a.charAt(i - 1));
+            i--;
+        }
+        while (j > 0) {
+            sb.append(b.charAt(j - 1));
+            j--;
+        }
+        sb.reverse();
+        return sb.toString();
+    }
 }
