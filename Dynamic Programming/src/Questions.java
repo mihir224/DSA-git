@@ -428,7 +428,7 @@ public class Questions {
     }
 
     //print lcs
-    public String printLcs(String a,String b){
+    public String printLcs(String a, String b) {
         int m = a.length();
         int n = b.length();
         int[][] dp = new int[m + 1][n + 1];
@@ -519,6 +519,7 @@ public class Questions {
     }
 
     //min number of insertion & deletions to convert string a to b
+    //a variation of lcs
     //https://leetcode.com/problems/delete-operation-for-two-strings/
     public int minDistance(String a, String b) {
         int m = a.length();
@@ -540,35 +541,110 @@ public class Questions {
                 }
             }
         }
-        int del=m-dp[m][n];
-        int insert=n-dp[m][n];
-        return insert+del;
+        int del = m - dp[m][n];
+        int insert = n - dp[m][n];
+        return insert + del;
     }
 
     //longest palindromic subsequence
+    //a variation of lcs
     //https://leetcode.com/problems/longest-palindromic-subsequence/
     public int longestPalindromeSubseq(String a) {
-        StringBuilder sb=new StringBuilder(a);
-        String b=sb.reverse().toString();
-        int n=a.length();
-        int[][] dp=new int[n+1][n+1];
-        for(int i=0;i<n+1;i++){
-            for(int j=0;j<n+1;j++){
-                if(i==0||j==0){
-                    dp[i][j]=0;
+        StringBuilder sb = new StringBuilder(a);
+        String b = sb.reverse().toString();
+        int n = a.length();
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
                 }
             }
         }
-        for(int i=1;i<n+1;i++){
-            for(int j=1;j<n+1;j++){
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
                 if (a.charAt(i - 1) == b.charAt(j - 1)) {
-                    dp[i][j]=1+dp[i-1][j-1];
-                }
-                else
-                    dp[i][j]=Math.max(dp[i][j-1],dp[i-1][j]);
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
             }
         }
         return dp[n][n];
     }
 
+    //min number of insertions or deletions to make string palindromic
+    //a variation of lcs
+    //https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/
+    public int minInsertions(String a) {
+        StringBuilder sb = new StringBuilder(a);
+        String b = sb.reverse().toString();
+        int n = a.length();
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+            }
+        }
+        return n - dp[n][n];
+    }
+
+    //longest repeating subsequence
+    //https://practice.geeksforgeeks.org/problems/longest-repeating-subsequence2004/1
+    public int LongestRepeatingSubsequence(String a) {
+        String b = a;
+        int n = a.length();
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1) && i != j) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[n][n];
+    }
+
+    //sequence pattern matching or is 'a' a subsequence of 'b'
+    //https://leetcode.com/problems/is-subsequence/
+    public boolean isSubsequence(String a, String b) {
+        int m = a.length();
+        int n = b.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 0; i < m + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < m + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[m][n] == a.length();
+    }
 }
