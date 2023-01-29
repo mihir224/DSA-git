@@ -599,6 +599,7 @@ public class Questions {
     }
 
     //longest repeating subsequence
+    //a variation of lcs
     //https://practice.geeksforgeeks.org/problems/longest-repeating-subsequence2004/1
     public int LongestRepeatingSubsequence(String a) {
         String b = a;
@@ -624,6 +625,7 @@ public class Questions {
     }
 
     //sequence pattern matching or is 'a' a subsequence of 'b'
+    //a variation of lcs
     //https://leetcode.com/problems/is-subsequence/
     public boolean isSubsequence(String a, String b) {
         int m = a.length();
@@ -647,4 +649,235 @@ public class Questions {
         }
         return dp[m][n] == a.length();
     }
+
+    //matrix chain multiplication
+    //https://practice.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1
+
+    //recursive
+    static int matrixMultiplication(int n, int arr[])
+    {
+        return solve(arr,1,n-1);
+    }
+    public static int solve(int[] arr, int i,int j){
+        //base condition
+        if(i>=j){
+            return 0;
+        }
+        int min=Integer.MAX_VALUE;
+        //implementing k scheme
+        for(int k=i;k<j;k++){
+            int tempAns=solve(arr,i,k)+solve(arr,k+1,j)+arr[i-1]*arr[k]*arr[j];
+            min=Math.min(tempAns,min);
+        }
+        return min;
+    }
+
+    //memoization
+    static int matrixMultiplication1(int n, int arr[])
+    {
+        int[][] dp=new int[n+1][n+1];
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<n+1;j++){
+                dp[i][j]=-1;
+            }
+        }
+        return solveMem(arr,1,n-1,dp);
+    }
+    public static int solveMem(int[] arr, int i,int j,int[][] dp){
+        //base condition
+        if(i>=j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int min=Integer.MAX_VALUE;
+        //implementing k scheme
+        for(int k=i;k<j;k++){
+            int tempAns=solveMem(arr,i,k,dp)+solveMem(arr,k+1,j,dp)+arr[i-1]*arr[k]*arr[j];
+            min=Math.min(tempAns,min);
+        }
+        return dp[i][j]=min;
+    }
+
+    //palindrome partitioning (min number of partitions)
+    //a variation of mcm
+    //https://practice.geeksforgeeks.org/problems/palindromic-patitioning4845/1
+
+    //recursive
+    static int palindromicPartition(String str){
+        int n=str.length();
+        return solveP(str,0,n-1);
+    }
+    static int solveP(String s,int i,int j){
+        if(i>=j){
+            return 0;
+        }
+        if(isPalindrome(s.substring(i,j+1))){
+            return 0;
+        }
+        int min=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int tempAns=solveP(s,i,k)+solveP(s,k+1,j)+1;
+            min=Math.min(tempAns,min);
+        }
+        return min;
+    }
+    static boolean isPalindrome(String s){
+        int n=s.length();
+        for(int i=0;i<n/2;i++){
+            if(s.charAt(i)!=s.charAt(n-i-1)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //memoization
+    static int palindromicPartition1(String str){
+        int n=str.length();
+        int[][] dp=new int[n+1][n+1];
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<n+1;j++){
+                dp[i][j]=-1;
+            }
+        }
+        return solveP(str,0,n-1,dp);
+    }
+    static int solveP(String s,int i,int j,int[][] dp){
+        if(i>=j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){ //remember to keep this before isPalindrome() function, to avoid calling isPalindrome if ans is already present
+            return dp[i][j];
+        }
+        if(isPalindrome(s.substring(i,j+1))){
+            return 0;
+        }
+        int min=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int tempAns=solveP(s,i,k,dp)+solveP(s,k+1,j,dp)+1;
+            min=Math.min(tempAns,min);
+        }
+        return dp[i][j]=min;
+    }
+
+    //boolean parenthesization
+    //https://practice.geeksforgeeks.org/problems/boolean-parenthesization5610/1
+
+    //recursive
+    static int countWays(int N, String S){
+        return solve(S,0,N-1,true);
+    }
+    static int solve(String s, int i, int j, boolean isTrue){
+        if(i>j){
+            return 0;
+        }
+        int mod=1003;
+        if(i==j){
+            if(isTrue){
+                return s.charAt(i)=='T'?1:0;
+            }
+            else{
+                return s.charAt(i)=='F'?1:0;
+            }
+        }
+        int ans=0;
+        for(int k=i+1;k<j;k+=2){
+            int lf=solve(s,i,k-1,false);
+            int lt=solve(s,i,k-1,true);
+            int rf=solve(s,k+1,j,false);
+            int rt=solve(s,k+1,j,true);
+            if(s.charAt(k)=='&'){
+                if(isTrue){
+                    ans+=lt*rt;
+                }
+                else{
+                    ans+=(lf*rf)+(lt*rf)+(rt*lf);
+                }
+            }
+            else if(s.charAt(k)=='|'){
+                if(isTrue){
+                    ans+=(lt*rt)+(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=lf*rf;
+                }
+            }
+            else if(s.charAt(k)=='^'){
+                if(isTrue){
+                    ans+=(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=(lf*rf)+(lt*rt);
+                }
+            }
+        }
+        return ans%mod;
+    }
+
+    //memoization
+    static int countWays1(int N, String S){
+        int [][][] dp=new int[N+1][N+1][N+1];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<N+1;j++){
+                for(int k=0;k<N+1;k++){
+                    dp[i][j][k]=-1;
+                }
+            }
+        }
+        return solve(S,0,N-1,1,dp);
+    }
+    static int solve(String s, int i, int j, int isTrue,int [][][] dp){
+        if(i>j){
+            return 0;
+        }
+        int mod=1003;
+        if(i==j){
+            if(isTrue==1){
+                return s.charAt(i)=='T'?1:0;
+            }
+            else{
+                return s.charAt(i)=='F'?1:0;
+            }
+        }
+        if(dp[i][j][isTrue]!=-1){
+            return dp[i][j][isTrue];
+        }
+        int ans=0;
+        for(int k=i+1;k<j;k+=2){
+            int lf=solve(s,i,k-1,0,dp);
+            int lt=solve(s,i,k-1,1,dp);
+            int rf=solve(s,k+1,j,0,dp);
+            int rt=solve(s,k+1,j,1,dp);
+            if(s.charAt(k)=='&'){
+                if(isTrue==1){
+                    ans+=lt*rt;
+                }
+                else{
+                    ans+=(lf*rf)+(lt*rf)+(rt*lf);
+                }
+            }
+            else if(s.charAt(k)=='|'){
+                if(isTrue==1){
+                    ans+=(lt*rt)+(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=lf*rf;
+                }
+            }
+            else if(s.charAt(k)=='^'){
+                if(isTrue==1){
+                    ans+=(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=(lf*rf)+(lt*rt);
+                }
+            }
+        }
+        return dp[i][j][isTrue]=ans%mod;
+    }
+
+
+
 }
