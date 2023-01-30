@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Questions {
 
@@ -818,10 +820,10 @@ public class Questions {
 
     //memoization
     static int countWays1(int N, String S){
-        int [][][] dp=new int[N+1][N+1][N+1];
+        int [][][] dp=new int[N+1][N+1][2];
         for(int i=0;i<N+1;i++){
             for(int j=0;j<N+1;j++){
-                for(int k=0;k<N+1;k++){
+                for(int k=0;k<2;k++){
                     dp[i][j][k]=-1;
                 }
             }
@@ -876,6 +878,73 @@ public class Questions {
             }
         }
         return dp[i][j][isTrue]=ans%mod;
+    }
+
+    //scrambled string
+    //https://leetcode.com/problems/scramble-string/
+
+    //recursive
+    public boolean isScramble(String s1, String s2) {
+        if(s1.length()!=s2.length()){
+            return false;
+        }
+        return solve(s1,s2);
+    }
+    public boolean solve(String a, String b){
+        if(a.equals(b)){
+            return true;
+        }
+        if(a.length()<1){
+            return false;
+        }
+        int n=a.length();
+        boolean flag=false;
+        for(int i=1;i<n;i++){
+            if(solve(a.substring(0,i),b.substring(n-i))&&solve(a.substring(i),b.substring(0,n-i))){ //swap
+                flag=true;
+                break;
+            }
+            else if((solve(a.substring(0,i),b.substring(0,i))&&solve(a.substring(i),b.substring(i)))){ //no swap
+                flag=true;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    //memoization
+    public boolean isScramble1(String s1, String s2) {
+        if(s1.length()!=s2.length()){
+            return false;
+        }
+        Map<String,Boolean> map=new HashMap<>();
+        return solve(s1,s2,map);
+    }
+    public boolean solve(String a, String b, Map<String,Boolean> map){
+        if(a.equals(b)){
+            return true;
+        }
+        if(a.length()<1){
+            return false;
+        }
+        String key=a+" "+b;
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        boolean flag=false;
+        int n=a.length();
+        for(int i=1;i<n;i++){
+            if(solve(a.substring(0,i),b.substring(n-i),map)&&solve(a.substring(i),b.substring(0,n-i),map)){ //swap
+                flag=true;
+                break;
+            }
+            else if((solve(a.substring(0,i),b.substring(0,i),map)&&solve(a.substring(i),b.substring(i),map))){ //no swap
+                flag=true;
+                break;
+            }
+        }
+        map.put(key,flag);
+        return map.get(key);
     }
 
 
