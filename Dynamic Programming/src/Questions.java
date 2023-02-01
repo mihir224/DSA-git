@@ -947,6 +947,87 @@ public class Questions {
         return map.get(key);
     }
 
+    //egg dropping problem
+    //https://leetcode.com/problems/super-egg-drop/
+
+    //recursive
+    public int superEggDrop(int e, int f) {
+        if(f==0||f==1||e==1){
+            return f;
+        }
+        int min=Integer.MAX_VALUE;
+        for(int k=1;k<=f;k++){
+            int tempAns=1+Math.max(superEggDrop(e-1,k-1),superEggDrop(e,f-k)); //max because we have to calculate value for worst possible case
+            min=Math.min(min,tempAns);
+        }
+        return min;
+    }
+
+    //memoization
+    public int superEggDrop1(int e,int f){
+        int[][] dp=new int[e+1][f+1];
+        for(int[] i:dp){
+            Arrays.fill(i,-1);
+        }
+        return solve(e,f,dp);
+    }
+    public int solve(int e, int f,int[][] dp) {
+        if(f==0||f==1||e==1){
+            return f;
+        }
+        if(dp[e][f]!=-1){
+            return dp[e][f];
+        }
+        int min=Integer.MAX_VALUE;
+        int l=1;
+        int h=f;
+        while(l<=h){ //using binary search instead of linear search to find the optimal value (leetcode gives tle with basic linear search)
+            int mid=l+((h-l)/2);
+            int left=solve(e-1,mid-1,dp);
+            int right=solve(e,f-mid,dp);
+            int tempAns=1+Math.max(left,right); //max because we have to calculate value for worst possible case
+            if(left<right){
+                l=mid+1;
+            }
+            else{
+                h=mid-1;
+            }
+            min=Math.min(min,tempAns);
+        }
+        return dp[e][f]=min;
+    }
+
+    //dp on trees
+
+    //diameter of a binary tree
+    //https://leetcode.com/problems/diameter-of-binary-tree/
+    public class TreeNode{
+        private TreeNode left;
+        private TreeNode right;
+        private int val;
+        public TreeNode(int val) {
+            this.val = val;
+        }
+    }
+    class Solution {
+        int res=Integer.MIN_VALUE; //pass by ref not allowed in java
+        public int diameterOfBinaryTree(TreeNode root) {
+            solve(root);
+            return res-1;
+        }
+        public int solve(TreeNode root){
+            if(root==null){
+                return 0;
+            }
+            int left=solve(root.left);
+            int right=solve(root.right);
+            int tempAns=1+Math.max(left,right);
+            int ans=Math.max(tempAns,1+left+right);
+            res=Math.max(ans,res);
+            return tempAns; //we return temp because we generally need 1+max(left,right) to calc heights in each recursion call
+        }
+    }
+
 
 
 }
