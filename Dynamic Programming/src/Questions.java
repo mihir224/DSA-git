@@ -1024,10 +1024,34 @@ public class Questions {
             int tempAns=1+Math.max(left,right);
             int ans=Math.max(tempAns,1+left+right);
             res=Math.max(ans,res);
-            return tempAns; //we return temp because we generally need 1+max(left,right) to calc heights in each recursion call
+            return tempAns; //we return temp because we generally need 1+max(left,right) to calc heights in further recursion calls
         }
     }
 
+    //max path sum from any node to any other node
+    //https://leetcode.com/problems/binary-tree-maximum-path-sum/
+    class Sol {
+        public int res = Integer.MIN_VALUE;
+        public int maxPathSum(TreeNode root) {
+            solve(root);
+            return res;
+        }
 
+        public int solve(TreeNode root) {
+            if (root == null) {
+                return 0;
+            }
+            int left = solve(root.left);
+            int right = solve(root.right);
+            int tempAns = Math.max(Math.max(left, right) + root.val, root.val); //in case any nodes from the left and right
+            // subtrees are negative, we only take value of the current node
+            int ans = Math.max(tempAns, left + right + root.val);
+            res = Math.max(res, ans);
+            return tempAns;
+        }
+    }
+
+    //max path sum from any leaf to leaf node
+    //https://practice.geeksforgeeks.org/problems/maximum-path-sum/1
 
 }
