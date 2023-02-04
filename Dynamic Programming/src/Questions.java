@@ -1044,7 +1044,7 @@ public class Questions {
             int left = solve(root.left);
             int right = solve(root.right);
             int tempAns = Math.max(Math.max(left, right) + root.val, root.val); //in case any nodes from the left and right
-            // subtrees are negative, we only take value of the current node
+            // subtrees are negative, we only take value of the current no de
             int ans = Math.max(tempAns, left + right + root.val);
             res = Math.max(res, ans);
             return tempAns;
