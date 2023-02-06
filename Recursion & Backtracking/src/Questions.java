@@ -505,27 +505,40 @@ public class Questions {
     //https://leetcode.com/problems/word-search/
     public boolean exist(char[][] board, String word) {
         int n=board.length;
-        boolean[][] vis=new boolean[n][n];
+        int m=board[0].length;
+        boolean[][] vis=new boolean[n][m];
         int[] delRow={-1,0,1,0};
         int[] delCol={0,1,0,-1};
-        vis[0][0]=true;
-        return helperWord(0,0,0,vis, board, n,word,delRow,delCol);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(board[i][j]==word.charAt(0)){
+                    vis[i][j]=true;
+                    if(helperWord(1,i,j,vis, board, n,m,word,delRow,delCol)){
+                        return true;
+                    }
+                    vis[i][j]=false;
+                }
+            }
+        }
+        return false;
 
     }
-    public boolean helperWord(int index, int row,int col, boolean[][] vis, char[][] board, int n, String word,int[] delRow, int[] delCol){
+    public boolean helperWord(int index, int row,int col, boolean[][] vis, char[][] board, int n,int m, String word,int[] delRow, int[] delCol){
+        if(index==word.length()){
+            return true;
+        }
         for(int i=0;i<4;i++){
-            if(index==word.length()){
-                return true;
-            }
             int nrow=row+delRow[i];
             int ncol=col+delCol[i];
-            if(row>=0&&row<n&&
-                col>=0&&col<n&&
-                !vis[nrow][ncol]&&board[nrow][ncol]==word.charAt(index)){
+            if(nrow>=0&&nrow<n&&
+                    ncol>=0&&ncol<m&&
+                    !vis[nrow][ncol]&&board[nrow][ncol]==word.charAt(index)){
                 vis[nrow][ncol]=true;
-                if(helperWord(index+1,nrow,ncol,vis,board,n,word,delRow,delCol)){
+                if(helperWord(index+1,nrow,ncol,vis,board,n,m,word,delRow,delCol)){
                     return true;
                 }
+                vis[nrow][ncol]=false;
+
             }
         }
         return false;
