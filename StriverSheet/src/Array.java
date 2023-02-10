@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Arrays {
+public class Array {
     //Set matrix zeroes
     //brute
     public void setZeroes(int[][] matrix) {
@@ -189,5 +189,173 @@ public class Arrays {
             reverse(arr,0,arr.length-1);
         }
     }
-    
+
+    //merge intervals
+    //https://leetcode.com/problems/merge-intervals/
+    public int[][] merge(int[][] intervals) {
+        List<int[]> ans=new ArrayList<>();
+        if(intervals.length==0){
+            return ans.toArray(new int[ans.size()][2]); //this parameter is the initialization of a new array to which
+            // contents of the list are copied to
+        }
+        Arrays.sort(intervals, (a,b)->a[0]-b[0]);
+        int start=intervals[0][0];
+        int end=intervals[0][1];
+        for(int[] i:intervals){
+            if(i[0]<=end){ //merge possible
+                end=Math.max(end,i[1]);
+            }
+            else{ //merge not possible
+                ans.add(new int[]{start,end});
+                start=i[0];
+                end=i[1];
+            }
+        }
+        ans.add(new int[]{start,end});
+        return ans.toArray(new int[ans.size()][2]);
+    }
+
+    //merge sorted array
+    //https://leetcode.com/problems/merge-sorted-array/
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        while(n>0&&m>0){
+            if(nums1[m-1]>nums2[n-1]){
+                nums1[m+n-1]=nums1[m-1];
+                m--;
+            }
+            else{
+                nums1[m+n-1]=nums2[n-1];
+                n--;
+            }
+        }
+        while(n>0){ //case when there is no element in nums1 & nums2 is non empty
+            nums1[m+n-1]=nums2[n-1];
+            n--;
+        }
+    }
+
+    //find duplicates
+    //https://leetcode.com/problems/find-the-duplicate-number/
+
+    //brute (O(n2)tc-O(1)sc)
+    public int findDuplicate(int[] nums) {
+        int i=0;
+        while(i<nums.length) {
+            int correctIndex = nums[i] - 1;
+            if (nums[i] != nums[correctIndex]) {
+                int temp = nums[i];
+                nums[i] = nums[correctIndex];
+                nums[correctIndex] = temp;
+            } else {
+                i++;
+            }
+        }
+        for(int index=0;index< nums.length;index++){
+           if(nums[index]!=index+1){
+               return nums[index];
+           }
+       }
+       return -1;
+    }
+
+    //better - using hashing, storing frequency of all elements and returning the element which appears more than once
+    public int findDuplicate2(int[] nums) {
+        int[] vis=new int[nums.length];
+        for(int i:nums){
+            vis[i-1]++;
+        }
+        for(int i=0;i<vis.length;i++){
+            if(vis[i]>1){
+                return i+1;
+            }
+        }
+        return -1;
+    }
+
+    //optimal - using linked-list cycle
+    public int findDuplicate3(int[] nums) {
+        int slow=nums[0];
+        int fast=nums[0];
+        do{
+            slow=nums[slow];
+            fast=nums[nums[fast]];
+        }while(slow!=fast);
+        fast=nums[0];
+        while(slow!=fast){
+            slow=nums[slow];
+            fast=nums[fast];
+        }
+        return slow; //duplicate is bound to be here
+    }
+
+    //set-mismatch (duplicate and missing element)
+    //https://www.interviewbit.com/problems/repeat-and-missing-number-array/
+
+    //brute (O(N) both)
+    public ArrayList<Integer> repeatedNumber(final List<Integer> A) {
+        int[] vis=new int[A.size()];
+        ArrayList<Integer> list=new ArrayList<>();
+        for(int i:A){
+            vis[i-1]++;
+        }
+        for(int index=0;index<vis.length;index++){
+            if(vis[index]>1){
+                list.add(0,index+1);
+            }
+            if(vis[index]==0){
+                list.add(index+1);
+            }
+        }
+        return list;
+    }
+
+    //optimal (O(N)tc-O(1)sc)
+    //larger testcase stuck
+    public ArrayList<Integer> repeatedNumber2(final List<Integer> A) {
+        ArrayList<Integer> list=new ArrayList<>();
+        long n=A.size();
+        long s=(n*(n+1))/2;
+        long p=(n*(n+1)*(2*n+1))/6;
+        long x=0;
+        long y=0;
+        for(int i=0;i<A.size();i++){
+            s-=A.get(i);
+            p-=A.get(i)*A.get(i);
+        }
+        x=(p/s+s)/2;
+        y=x-s;
+        list.add((int)y);
+        list.add((int)x);
+        return list;
+    }
+
+    //count inversions
+    //https://www.codingninjas.com/codestudio/problems/615?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website
+
+    //brute (O(n2)tc,O(1)sc)
+    //just check if any element is greater than elements on its right, if it is, increase count
+    public static long getInversions(long arr[], int n){
+        int count=0;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if(arr[i]>arr[j]){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //optimal-merge sort variation (O(nlogn)tc,O(n)sc)
+    public static long getInversions2(long arr[], int n){
+        int count=0;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if(arr[i]>arr[j]){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 }
