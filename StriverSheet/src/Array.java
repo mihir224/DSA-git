@@ -24,29 +24,29 @@ public class Array {
     }
 
     //optimal
-    public void setZeroes1(int[][] matrix){
-        boolean col=true;
-        int rows=matrix.length;
-        int cols=matrix[0].length;
-        for(int i=0;i<rows;i++){
-            if(matrix[i][0]==0){
-                col=false;
+    public void setZeroes1(int[][] matrix) {
+        boolean col = true;
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        for (int i = 0; i < rows; i++) {
+            if (matrix[i][0] == 0) {
+                col = false;
             }
-            for(int j=1;j<cols;j++){
-                if(matrix[i][j]==0){
-                    matrix[i][0]=0;
-                    matrix[0][j]=0;
+            for (int j = 1; j < cols; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
                 }
             }
         }
-        for(int i=rows-1;i>=0;i--){
-            for(int j=cols-1;j>=1;j--){
-                if(matrix[i][0]==0||matrix[0][j]==0){
-                    matrix[i][j]=0;
+        for (int i = rows - 1; i >= 0; i--) {
+            for (int j = cols - 1; j >= 1; j--) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
                 }
             }
-            if(!col){
-                matrix[i][0]=0;
+            if (!col) {
+                matrix[i][0] = 0;
             }
         }
     }
@@ -69,19 +69,18 @@ public class Array {
         //        }
         //        return ans;
         //    }
-        List<List<Integer>> ans=new ArrayList<>();
-        List<Integer> temp=new ArrayList<>();
-        for(int i=0;i<numRows;i++){
-            List<Integer> list=new ArrayList<>();
-            for(int j=0;j<=i;j++){ //for each row, the number of cols==current row number
-                if(j==0||j==i){ //initialize first col and last col to 1
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
+        for (int i = 0; i < numRows; i++) {
+            List<Integer> list = new ArrayList<>();
+            for (int j = 0; j <= i; j++) { //for each row, the number of cols==current row number
+                if (j == 0 || j == i) { //initialize first col and last col to 1
                     list.add(1);
-                }
-                else{
-                    list.add(temp.get(j-1)+temp.get(j));
+                } else {
+                    list.add(temp.get(j - 1) + temp.get(j));
                 }
             }
-            temp=list; //to use previous row in next iteration
+            temp = list; //to use previous row in next iteration
             ans.add(list);
         }
         return ans;
@@ -90,30 +89,32 @@ public class Array {
     //Next permutation
     //https://leetcode.com/problems/next-permutation/
     public void nextPermutation(int[] nums) {
-        if(nums.length==1||nums.length==0){
+        if (nums.length == 1 || nums.length == 0) {
             return;
         }
-        int i=nums.length-2; //the breakpoint might be at secondlast index
-        while(i>=0&&nums[i]>=nums[i+1]){ //iterating backwards till we find the break point
+        int i = nums.length - 2; //the breakpoint might be at secondlast index
+        while (i >= 0 && nums[i] >= nums[i + 1]) { //iterating backwards till we find the break point
             i--;
         }
-        if(i>=0){ //case when breakpoint exists
-            int j=nums.length-1;
-            while(nums[j]<=nums[i]){ //iterating backwards to find someone greater than breakpoint
+        if (i >= 0) { //case when breakpoint exists
+            int j = nums.length - 1;
+            while (nums[j] <= nums[i]) { //iterating backwards to find someone greater than breakpoint
                 j--;
             }
-            swap(nums,i,j); //swapping breakpoint & someone greater than it
+            swap(nums, i, j); //swapping breakpoint & someone greater than it
         }
-        reverse(nums,i+1,nums.length-1); //reversing right half
+        reverse(nums, i + 1, nums.length - 1); //reversing right half
     }
-    public void swap(int[] nums, int i, int j){
-        int temp=nums[i];
-        nums[i]=nums[j];
-        nums[j]=temp;
+
+    public void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
-    public void reverse(int[] nums, int i,int j){
-        while(i<j){
-            swap(nums,i,j);
+
+    public void reverse(int[] nums, int i, int j) {
+        while (i < j) {
+            swap(nums, i, j);
             i++;
             j--;
         }
@@ -121,13 +122,13 @@ public class Array {
 
     //kadane's algo
     public int maxSubArray(int[] nums) {
-        int maxSum=Integer.MIN_VALUE;
-        int sum=0;
-        for(int i=0;i<nums.length;i++){
-            sum+=nums[i];
-            maxSum=Math.max(sum,maxSum);
-            if(sum<0){
-                sum=0;
+        int maxSum = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            maxSum = Math.max(sum, maxSum);
+            if (sum < 0) {
+                sum = 0;
             }
         }
         return maxSum;
@@ -135,40 +136,39 @@ public class Array {
 
     //sort colors
     public void sortColors(int[] nums) {
-        int low=0;
-        int mid=0;
-        int hi=nums.length-1;
-        while(mid<=hi){
-            if(nums[mid]==0){
-                swap2(nums,mid++,low++);
-            }
-            else if(nums[mid]==1){
+        int low = 0;
+        int mid = 0;
+        int hi = nums.length - 1;
+        while (mid <= hi) {
+            if (nums[mid] == 0) {
+                swap2(nums, mid++, low++);
+            } else if (nums[mid] == 1) {
                 mid++;
-            }
-            else{
-                swap2(nums,mid,hi--);
+            } else {
+                swap2(nums, mid, hi--);
             }
         }
     }
-    public void swap2(int[] nums,int a,int b){
-        int temp=nums[a];
-        nums[a]=nums[b];
-        nums[b]=temp;
+
+    public void swap2(int[] nums, int a, int b) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
     }
 
     //best time to buy or sell stock
     //https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
     public int maxProfit(int[] prices) {
-        int currentProfit=0;
-        int netProfit=0;
-        int lp=Integer.MAX_VALUE;
-        for(int i:prices){
-            if(i<lp){
-                lp=i;
+        int currentProfit = 0;
+        int netProfit = 0;
+        int lp = Integer.MAX_VALUE;
+        for (int i : prices) {
+            if (i < lp) {
+                lp = i;
             }
-            currentProfit=i-lp;
-            if(currentProfit>netProfit){
-                netProfit=currentProfit;
+            currentProfit = i - lp;
+            if (currentProfit > netProfit) {
+                netProfit = currentProfit;
             }
         }
         return netProfit;
@@ -177,59 +177,57 @@ public class Array {
     //rotate matrix
     //https://leetcode.com/problems/rotate-image/
     public void rotate(int[][] matrix) {
-        int n=matrix.length;
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                int temp=matrix[i][j];
-                matrix[i][j]=matrix[j][i];
-                matrix[j][i]=temp;
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
             }
         }
-        for(int arr[]:matrix){
-            reverse(arr,0,arr.length-1);
+        for (int arr[] : matrix) {
+            reverse(arr, 0, arr.length - 1);
         }
     }
 
     //merge intervals
     //https://leetcode.com/problems/merge-intervals/
     public int[][] merge(int[][] intervals) {
-        List<int[]> ans=new ArrayList<>();
-        if(intervals.length==0){
+        List<int[]> ans = new ArrayList<>();
+        if (intervals.length == 0) {
             return ans.toArray(new int[ans.size()][2]); //this parameter is the initialization of a new array to which
             // contents of the list are copied to
         }
-        Arrays.sort(intervals, (a,b)->a[0]-b[0]);
-        int start=intervals[0][0];
-        int end=intervals[0][1];
-        for(int[] i:intervals){
-            if(i[0]<=end){ //merge possible
-                end=Math.max(end,i[1]);
-            }
-            else{ //merge not possible
-                ans.add(new int[]{start,end});
-                start=i[0];
-                end=i[1];
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        int start = intervals[0][0];
+        int end = intervals[0][1];
+        for (int[] i : intervals) {
+            if (i[0] <= end) { //merge possible
+                end = Math.max(end, i[1]);
+            } else { //merge not possible
+                ans.add(new int[]{start, end});
+                start = i[0];
+                end = i[1];
             }
         }
-        ans.add(new int[]{start,end});
+        ans.add(new int[]{start, end});
         return ans.toArray(new int[ans.size()][2]);
     }
 
     //merge sorted array
     //https://leetcode.com/problems/merge-sorted-array/
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        while(n>0&&m>0){
-            if(nums1[m-1]>nums2[n-1]){
-                nums1[m+n-1]=nums1[m-1];
+        while (n > 0 && m > 0) {
+            if (nums1[m - 1] > nums2[n - 1]) {
+                nums1[m + n - 1] = nums1[m - 1];
                 m--;
-            }
-            else{
-                nums1[m+n-1]=nums2[n-1];
+            } else {
+                nums1[m + n - 1] = nums2[n - 1];
                 n--;
             }
         }
-        while(n>0){ //case when there is no element in nums1 & nums2 is non empty
-            nums1[m+n-1]=nums2[n-1];
+        while (n > 0) { //case when there is no element in nums1 & nums2 is non empty
+            nums1[m + n - 1] = nums2[n - 1];
             n--;
         }
     }
@@ -239,8 +237,8 @@ public class Array {
 
     //brute (O(n2)tc-O(1)sc)
     public int findDuplicate(int[] nums) {
-        int i=0;
-        while(i<nums.length) {
+        int i = 0;
+        while (i < nums.length) {
             int correctIndex = nums[i] - 1;
             if (nums[i] != nums[correctIndex]) {
                 int temp = nums[i];
@@ -250,23 +248,23 @@ public class Array {
                 i++;
             }
         }
-        for(int index=0;index< nums.length;index++){
-           if(nums[index]!=index+1){
-               return nums[index];
-           }
-       }
-       return -1;
+        for (int index = 0; index < nums.length; index++) {
+            if (nums[index] != index + 1) {
+                return nums[index];
+            }
+        }
+        return -1;
     }
 
     //better - using hashing, storing frequency of all elements and returning the element which appears more than once
     public int findDuplicate2(int[] nums) {
-        int[] vis=new int[nums.length];
-        for(int i:nums){
-            vis[i-1]++;
+        int[] vis = new int[nums.length];
+        for (int i : nums) {
+            vis[i - 1]++;
         }
-        for(int i=0;i<vis.length;i++){
-            if(vis[i]>1){
-                return i+1;
+        for (int i = 0; i < vis.length; i++) {
+            if (vis[i] > 1) {
+                return i + 1;
             }
         }
         return -1;
@@ -274,16 +272,16 @@ public class Array {
 
     //optimal - using linked-list cycle
     public int findDuplicate3(int[] nums) {
-        int slow=nums[0];
-        int fast=nums[0];
-        do{
-            slow=nums[slow];
-            fast=nums[nums[fast]];
-        }while(slow!=fast);
-        fast=nums[0];
-        while(slow!=fast){
-            slow=nums[slow];
-            fast=nums[fast];
+        int slow = nums[0];
+        int fast = nums[0];
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+        fast = nums[0];
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
         }
         return slow; //duplicate is bound to be here
     }
@@ -293,39 +291,39 @@ public class Array {
 
     //brute (O(N) both)
     public ArrayList<Integer> repeatedNumber(final List<Integer> A) {
-        int[] vis=new int[A.size()];
-        ArrayList<Integer> list=new ArrayList<>();
-        for(int i:A){
-            vis[i-1]++;
+        int[] vis = new int[A.size()];
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i : A) {
+            vis[i - 1]++;
         }
-        for(int index=0;index<vis.length;index++){
-            if(vis[index]>1){
-                list.add(0,index+1);
+        for (int index = 0; index < vis.length; index++) {
+            if (vis[index] > 1) {
+                list.add(0, index + 1);
             }
-            if(vis[index]==0){
-                list.add(index+1);
+            if (vis[index] == 0) {
+                list.add(index + 1);
             }
         }
         return list;
     }
 
-    //optimal (O(N)tc-O(1)sc)
+    //optimal (O(N)tc,O(1)sc)
     //larger testcase stuck
     public ArrayList<Integer> repeatedNumber2(final List<Integer> A) {
-        ArrayList<Integer> list=new ArrayList<>();
-        long n=A.size();
-        long s=(n*(n+1))/2;
-        long p=(n*(n+1)*(2*n+1))/6;
-        long x=0;
-        long y=0;
-        for(int i=0;i<A.size();i++){
-            s-=A.get(i);
-            p-=A.get(i)*A.get(i);
+        ArrayList<Integer> list = new ArrayList<>();
+        long n = A.size();
+        long s = (n * (n + 1)) / 2;
+        long p = (n * (n + 1) * (2 * n + 1)) / 6;
+        long x = 0;
+        long y = 0;
+        for (int i = 0; i < A.size(); i++) {
+            s -= A.get(i);
+            p -= A.get(i) * A.get(i);
         }
-        x=(p/s+s)/2;
-        y=x-s;
-        list.add((int)y);
-        list.add((int)x);
+        x = (p / s + s) / 2;
+        y = x - s;
+        list.add((int) y);
+        list.add((int) x);
         return list;
     }
 
@@ -334,11 +332,11 @@ public class Array {
 
     //brute (O(n2)tc,O(1)sc)
     //just check if any element is greater than elements on its right, if it is, increase count
-    public static long getInversions(long arr[], int n){
-        int count=0;
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                if(arr[i]>arr[j]){
+    public static long getInversions(long arr[], int n) {
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (arr[i] > arr[j]) {
                     count++;
                 }
             }
@@ -347,15 +345,304 @@ public class Array {
     }
 
     //optimal-merge sort variation (O(nlogn)tc,O(n)sc)
-    public static long getInversions2(long arr[], int n){
-        int count=0;
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                if(arr[i]>arr[j]){
-                    count++;
-                }
-            }
+    public static long getInversions2(long arr[], int n) {
+        int[] temp = new int[n];
+        return mergeSort(arr, temp, 0, arr.length - 1);
+    }
+
+    public static int mergeSort(long[] arr, int[] temp, int low, int hi) {
+        int count = 0;
+        int mid = 0;
+        if (low < hi) {
+            mid = (low + hi) / 2;
+            count += mergeSort(arr, temp, low, mid);
+            count += mergeSort(arr, temp, mid + 1, hi);
+            count += merge(arr, temp, low, mid + 1, hi);
         }
         return count;
     }
+
+    public static int merge(long[] arr, int[] temp, int left, int mid, int right) {
+        int i = left;
+        int j = mid;
+        int k = left;
+        int count = 0;
+        while (i <= mid - 1 && j <= right) {
+            if (arr[i] <= arr[j]) {
+                temp[k] = (int) arr[i];
+                i++;
+            } else {
+                temp[k] = (int) arr[j];
+                count += mid - i;
+                j++;
+            }
+            k++;
+        }
+        while (i <= mid - 1) {
+            temp[k] = (int) arr[i];
+            i++;
+            k++;
+        }
+        while (j <= right) {
+            temp[k] = (int) arr[j];
+            j++;
+            k++;
+        }
+        for (i = left; i <= right; i++) {
+            arr[i] = temp[i];
+        }
+        return count;
+    }
+
+    //search in 2d matrix
+    //https://leetcode.com/problems/search-a-2d-matrix/
+
+    //brute - traverse the whole matrix and return true if found element - O(n*m),O(1)
+
+    //better-O(n),O(1)
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int row = 0;
+        int col = matrix[0].length - 1;
+        while (row < matrix.length && col >= 0) {
+            if (matrix[row][col] == target) {
+                return true;
+            } else if (matrix[row][col] > target) {
+                col--;
+            } else {
+                row++;
+            }
+        }
+        return false;
+    }
+
+    //optimal-binary search O(log(m*n)),O(1)
+    public boolean searchMatrix1(int[][] matrix, int target) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        if (matrix.length == 0) {
+            return false;
+        }
+        int start = 0;
+        int end = (n * m) - 1;
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (matrix[mid / m][mid % m] == target) {
+                return true;
+            } else if (matrix[mid / m][mid % m] > target) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    //pow(x,n)
+    //https://leetcode.com/problems/powx-n/
+
+    //brute-iterate till n and keep multiplying x with itself (O(N),O(1))
+
+    //optimal O(logbase2(n),O(1)
+    //if n is odd, ans*=x & n=n-1, if n is even, x*=x & n=n/2. When n==0, return ans
+    public double myPow(double x, int n) {
+        long num = n;
+        if (num < 0) {
+            num = -1 * num;
+        }
+        double ans = 1.00;
+        while (num > 0) {
+            if (num % 2 == 1) { //odd power
+                ans = ans * x;
+                num -= 1;
+            } else if (num % 2 == 0) {
+                x = x * x;
+                num /= 2;
+            }
+        }
+        if (n < 0) {
+            ans = 1 / ans;
+        }
+        return ans;
+    }
+
+    //majority element (appears > n/2 times) and there's only one
+    //https://leetcode.com/problems/majority-element
+
+    //brute O(N2) - iterate over the given array in a nested manner, for each iteration checking if element in the inner loop
+    //equals the one in the outer loop and increasing the count everytime it happens. Then return the element for which count>s
+    public int majorityElement(int[] nums) {
+        int s = nums.length / 2;
+        for (int i : nums) {
+            int count = 0;
+            for (int j : nums) {
+                if (i == j) {
+                    count++;
+                }
+            }
+            if (count > s) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //better - storing frequency in hashmap (O(1) best, O(logn) worst - since for more than 8 entries, jdk 8 has tweaked the
+    // hashmap structure to be implemented as a tree)tc, O(n) sc where n is the size of hash map
+    public int majorityElement2(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int s = nums.length / 2;
+        for (int i : nums) {
+            if (map.containsKey(i)) {
+                map.put(i, map.get(i) + 1);
+            } else {
+                map.put(i, 1);
+            }
+            if (map.get(i) > s) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //optimal - Moore's voting algorithm (O(n),O(1))
+    public int majorityElement3(int[] nums) {
+        int count = 0;
+        int candidate = 0;
+        for (int i : nums) {
+            if (count == 0) {
+                candidate = i;
+            }
+            if (i == candidate) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return candidate;
+    }
+
+    //majority element 2 - find all elements appearing > n/3 times
+    //https://leetcode.com/problems/majority-element-ii/
+
+    //brute O(N2) - pick one element, compare with the rest and add to list if appears > n/3 times
+
+
+    //better - storing frequency in hashmap (O(1) best, O(logn) worst - since for more than 8 entries, jdk 8 has tweaked the
+    // hashmap structure to be implemented as a tree)tc, O(n) sc where n is the size of hash map
+    public List<Integer> majorityElement4(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int s = nums.length / 3;
+        for (int i : nums) {
+            if (map.containsKey(i)) {
+                map.put(i, map.get(i) + 1);
+            } else {
+                map.put(i, 1);
+            }
+        }
+        for (int key : map.keySet()) {
+            if (map.get(key) > s) {
+                list.add(key);
+            }
+        }
+        return list;
+    }
+
+    //optimal
+    //we see that at max we can have only two majority elements, thus we apply moore's algo to two elements and
+    // add them to the ans in the end
+    public List<Integer> majorityElement6(int[] nums) {
+        int count1 = 0;
+        int count2 = 0;
+        int candidate1 = -1;
+        int candidate2 = -1;
+        List<Integer> list = new ArrayList<>();
+        for (int i : nums) {
+            if (i == candidate1) {
+                count1++;
+            } else if (i == candidate2) {
+                count2++;
+            } else if (count1 == 0) {
+                candidate1 = i;
+                count1 = 1; //here we have to explicitly set count to 1 whenever it reaches 1 because here we cannot use
+                // multiple if statements as we are dealing with 2 elements
+            } else if (count2 == 0) {
+                candidate2 = i;
+                count2 = 1;
+            } else {
+                count1--;
+                count2--;
+            }
+        }
+        count1 = 0;
+        count2 = 0;
+        //it is not ensured that candidate1 and 2 will always be majority elements as it is not given in the question
+        // that there will always be majority elements. There might be a case where each element appears equal number of times
+        // & thus we make sure that they actually are in majority
+
+        for (int i : nums) {
+            if (i == candidate1) {
+                count1++;
+            } else if (i == candidate2) {
+                count2++;
+            }
+        }
+        if (count1 > nums.length / 3)
+            list.add(candidate1);
+        if (count2 > nums.length / 3)
+            list.add(candidate2);
+        return list;
+    }
+
+    //unique paths
+    //https://leetcode.com/problems/unique-paths/
+
+    //brute - recursive (O(2^n))
+    public int uniquePaths(int m, int n){
+        return helper(0,0,m,n);
+    }
+    public int helper(int i,int j, int m, int n){
+        if(i>=m||j>=n){
+            return 0;
+        }
+        if(i==m-1&&j==n-1){
+            return 1;
+        }
+        return helper(i+1,j,m,n)+helper(i,j+1,m,n);
+    }
+
+    //better - memoization (O(n*m) both)
+    public int uniquePaths2(int m, int n){
+        int[][] dp=new int[m+1][n+1];
+        for(int[] i:dp){
+            Arrays.fill(i,-1);
+        }
+        return helper(0,0,m,n,dp);
+    }
+    public int helper(int i,int j, int m, int n, int[][] dp){
+        if(i>=m||j>=n){
+            return 0;
+        }
+        if(i==m-1&&j==n-1){
+            return 1;
+        }
+        if(dp[i][j]!=-1)
+        {
+            return dp[i][j];
+        }
+        return dp[i][j]=helper(i+1,j,m,n,dp)+helper(i,j+1,m,n,dp);
+    }
+
+    //optimal - using combinations approach (O(m-1) or n-1 depending on whether we try to find the possible paths with
+    // the possible number of row directions or column directions) tc, O(1) space
+    public int uniquePaths3(int m, int n){
+        double ans=1;
+        int N=m+n-2; //total number of directions we can move to reach end
+        int r=m-1; //total number of possible row directions
+        for(int i=1;i<=r;i++){
+            ans=ans*(N-r+i)/i; //formula to calculate ncr
+        }
+        return (int)ans;
+    }
+
 }
