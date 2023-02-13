@@ -235,7 +235,7 @@ public class Array {
     //find duplicates
     //https://leetcode.com/problems/find-the-duplicate-number/
 
-    //brute (O(n2)tc-O(1)sc)
+    //brute (O(n2)tc,O(1)sc)
     public int findDuplicate(int[] nums) {
         int i = 0;
         while (i < nums.length) {
@@ -308,22 +308,21 @@ public class Array {
     }
 
     //optimal (O(N)tc,O(1)sc)
-    //larger testcase stuck
     public ArrayList<Integer> repeatedNumber2(final List<Integer> A) {
-        ArrayList<Integer> list = new ArrayList<>();
-        long n = A.size();
-        long s = (n * (n + 1)) / 2;
-        long p = (n * (n + 1) * (2 * n + 1)) / 6;
-        long x = 0;
-        long y = 0;
-        for (int i = 0; i < A.size(); i++) {
-            s -= A.get(i);
-            p -= A.get(i) * A.get(i);
+        ArrayList<Integer> list=new ArrayList<>();
+        long n=A.size();
+        long s=(n*(n+1))/2;
+        long p=(n*(n+1)*(2*n+1))/6;
+        long x=0;
+        long y=0;
+        for(int i=0;i<A.size();i++){
+            s-=A.get(i);
+            p-=(long)A.get(i)*(long)A.get(i);
         }
-        x = (p / s + s) / 2;
-        y = x - s;
-        list.add((int) y);
-        list.add((int) x);
+        x=(p/s+s)/2;
+        y=x-s;
+        list.add((int)y);
+        list.add((int)x);
         return list;
     }
 
@@ -443,6 +442,7 @@ public class Array {
     //brute-iterate till n and keep multiplying x with itself (O(N),O(1))
 
     //optimal O(logbase2(n),O(1)
+    //using binary exponentiation
     //if n is odd, ans*=x & n=n-1, if n is even, x*=x & n=n/2. When n==0, return ans
     public double myPow(double x, int n) {
         long num = n;
@@ -452,7 +452,8 @@ public class Array {
         double ans = 1.00;
         while (num > 0) {
             if (num % 2 == 1) { //odd power
-                ans = ans * x;
+                ans = ans * x; //instead of doing all possible calculations, we just use the data from when n is even
+                // and multiply it to the ans
                 num -= 1;
             } else if (num % 2 == 0) {
                 x = x * x;
@@ -645,4 +646,128 @@ public class Array {
         return (int)ans;
     }
 
+    //reverse pairs
+    //https://leetcode.com/problems/reverse-pairs/
+
+    //brute
+    public int reversePairs(int[] nums) {
+        int count=0;
+        for(int i=0;i<nums.length;i++){
+            for(int j=i+1;j<nums.length;j++){
+                if(nums[i]>nums[j]*2){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //optimal  (O(nlogn)+O(n)+O(n))- merge sort variation
+    public int reversePairs2(int[] nums) {
+        return helperMerge(nums,0,nums.length-1);
+    }
+    public int helperMerge(int[] nums,int low,int hi){
+        int pairs=0;
+        int mid=0;
+        if(low<hi){
+            mid=(low+hi)/2;
+            pairs+=helperMerge(nums,low,mid);
+            pairs+=helperMerge(nums,mid+1,hi);
+            pairs+=merge2(nums,low,mid+1,hi);
+        }
+        return pairs;
+    }
+
+    public int merge2(int[] nums, int low, int mid, int hi){
+        int pairs=0;
+        int j=mid;
+        for(int i=low;i<mid;i++){
+            while(j<=hi&&nums[i]>2*(long)nums[j]){
+                j++;
+            }
+            pairs+=j-mid;
+        }
+        ArrayList<Integer> temp = new ArrayList<>();
+        int left=low;
+        int right=mid;
+        while(left<=mid-1&&right<=hi){
+            if(nums[left]<=nums[right]){
+                temp.add(nums[left]);
+                left++;
+            }
+            else {
+                temp.add(nums[right]);
+                right++;
+            }
+        }
+        while(left<=mid-1){
+            temp.add(nums[left]);
+            left++;
+        }
+        while(right<=hi){
+            temp.add(nums[right]);
+            right++;
+        }
+        for(int i=low;i<=hi;i++){
+            nums[i]=temp.get(i-low);
+        }
+        return pairs;
+    }
+
+    //two sum
+    //
+
+    //brute
+
+    //better (O(nlogn) for sorting the given array, O(n) space for temp array) - two pointer approach
+    public int[] twoSum(int[] nums, int target) {
+        int[] temp=new int[nums.length];
+        for(int ind=0;ind<temp.length;ind++){
+            temp[ind]=nums[ind];
+        }
+        int[] ans=new int[2];
+        int i=0;
+        int j=nums.length-1;
+        Arrays.sort(nums);
+        while(i<j){
+            if(nums[i]+nums[j]==target){
+                break;
+            }
+            else if(nums[i]+nums[j]<target){
+                i++;
+            }
+            else{
+                j--;
+            }
+        }
+        int l=nums[i];
+        int r=nums[j];
+        for(int ind=0;ind<temp.length;ind++){
+            if(temp[ind]==l){
+                ans[0]=ind;
+                break;
+            }
+        }
+        for(int ind=temp.length-1;ind>=0;ind--){
+            if(temp[ind]==r){
+                ans[1]=ind;
+                break;
+            }
+        }
+        return ans;
+    }
+
+    //using hashmap(hashing) - O(N)- can be n2 in worst case for n collisions but that is quite rare,O(N)
+    public int[] twoSum2(int[] nums, int target) {
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(!map.containsKey(target-nums[i])){
+                map.put(nums[i],i);
+            }
+            else{
+                return new int[] {i,map.get(target-nums[i])};
+            }
+        }
+        return new int[]{-1};
+    }
 }
