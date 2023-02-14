@@ -715,7 +715,7 @@ public class Array {
     }
 
     //two sum
-    //
+    //https://leetcode.com/problems/two-sum/
 
     //brute
 
@@ -770,4 +770,132 @@ public class Array {
         }
         return new int[]{-1};
     }
+
+    //4 sum
+    //https://leetcode.com/problems/4sum/
+
+    //brute (O((N^3)logN)) - three pointer + binary search
+
+    //optimal (O(N3)) - 4 pointer
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> ans=new ArrayList<>();
+        if(nums.length==0){
+            return ans;
+        }
+        Arrays.sort(nums);
+        for(int i=0;i<nums.length;i++){
+            long t1=target-nums[i]; //we take this expression explicitly instead of just writing t=target-nums[i]-nums[j]
+            // because in that case if target and input are very large, subtracting a very large number from target would
+            // exceed the integer range for target and will thus produce a wrong output. Thus we store target-nums[i] in
+            // a long variable to avoid this and then we use it with nums[j]
+            for(int j=i+1;j<nums.length;j++){
+                long t=t1-nums[j];
+                int left=j+1;
+                int right=nums.length-1;
+                while(left<right){ //two pointer
+                    if(nums[left]+nums[right]<t){
+                        left++;
+                    }
+                    else if(nums[left]+nums[right]>t){
+                        right--;
+                    }
+                    else{ //left+right==t
+                        List<Integer> list=new ArrayList<>(); //to store a quadruple
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[left]);
+                        list.add(nums[right]);
+                        ans.add(list);
+                        //avoiding duplicates
+                        while(left<right&&nums[left]==list.get(2)){
+                            left++;
+                        }
+                        while(left<right&&nums[right]==list.get(3)){
+                            right--;
+                        }
+                    }
+                }
+                //avoiding j duplicates
+                while(j+1<nums.length&&nums[j+1]==nums[j]){
+                    j++;
+                }
+            }
+            //avoiding i duplicates
+            while(i+1<nums.length&&nums[i+1]==nums[i]){
+                i++;
+            }
+        }
+        return ans;
+    }
+
+    //longest consecutive subsequence
+    //https://leetcode.com/problems/longest-consecutive-sequence/
+
+    //brute (O(NlogN)) - sort the array and then iterate over it to find length
+    public int longestConsecutive(int[] nums) {
+        int count=1;
+        int ans=1;
+        if(nums.length==0){
+            return 0;
+        }
+        Arrays.sort(nums);
+        for(int i=0;i<nums.length-1;i++){
+            if(nums[i+1]==nums[i]+1){
+                count++;
+            }
+            else if(nums[i+1]!=nums[i]){ //in case we find duplicates, we don't change count
+                count=1;
+            }
+            ans=Math.max(ans,count);
+        }
+        return ans;
+    }
+
+    //optimal (O(3N), O(1))
+    public int longestConsecutive2(int[] nums) {
+        int ans=1;
+        if(nums.length==0){
+            return 0;
+        }
+        Set<Integer> set=new HashSet<>();
+        for(int i: nums){
+            set.add(i);
+        }
+        for(int i:nums){
+            if(!set.contains(i-1)) {
+                int currentNum = i;
+                int count = 1;
+                while (set.contains(currentNum + 1)) {
+                    currentNum++;
+                    count++;
+                }
+                ans = Math.max(count, ans);
+            }
+        }
+        return ans;
+    }
+
+    //largest sub array with zero sum
+    //https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
+
+    //brute (O(N2)) - find all possible sub arrays, then find the ones with sum 0 and store max length.
+    // We can also use a third for loop to track zero sum instead of only two for loops but that would take O(N3), so this is much better than that
+    int maxLen(int arr[], int n)
+    {
+        int ans=0;
+        for(int i=0;i<n;i++){
+            int sum=0;
+            for(int j=i;j<n;j++){
+                sum+=arr[j];
+                if(sum==0){
+                    ans=Math.max(ans,j-i+1);
+                }
+            }
+        }
+        return ans;
+    }
+
+    //optimal (O(N)) - kadane's algo
+    
+
 }
