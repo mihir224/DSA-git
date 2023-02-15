@@ -875,11 +875,11 @@ public class Array {
         return ans;
     }
 
-    //largest sub array with zero sum
+    //largest sub array with zero-sum
     //https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
 
-    //brute (O(N2)) - find all possible sub arrays, then find the ones with sum 0 and store max length.
-    // We can also use a third for loop to track zero sum instead of only two for loops but that would take O(N3), so this is much better than that
+    //brute (O(N3))-better (O(N2)) - find all possible sub arrays, then find the ones with sum 0 and store max length.
+    // We can also use a third for loop to track zero-sum instead of only two for loops but that would take O(N3) and would be considered extremely naive, so this is much better than that.
     int maxLen(int arr[], int n)
     {
         int ans=0;
@@ -895,7 +895,150 @@ public class Array {
         return ans;
     }
 
-    //optimal (O(N)) - kadane's algo
-    
+    //optimal (O(NlogN)-traversal and hashmap)
+    int maxLen2(int arr[], int n)
+    {
+        int ans=0;
+        int sum=0;
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<n;i++){
+            sum+=arr[i];
+            if(sum==0){
+                ans=i+1;
+            }
+            else if(map.containsKey(sum)){
+                ans=Math.max(ans,i-map.get(sum));
+            }
+            else{
+                map.put(sum,i);
+            }
+        }
+        return ans;
+    }
+
+    //count sub-arrays with xor k (really imp problem which clears concepts of xor with sub-arrays)
+    //https://www.interviewbit.com/problems/subarray-with-given-xor/
+
+    //brute - (O(N2))-better(O(N3)) - find all sub-arrays, perform xor in each and see which one equals the given xor, then calculate number of such sub-arrays
+    public int solve(ArrayList<Integer> A, int B) {
+        int count=0;
+        for(int i=0;i<A.size();i++){
+            int current=0;
+            for(int j=i;j<A.size();j++){
+                current=current^A.get(j);
+                if(current==B){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //optimal - (O(NlogN - N for traversing the given array, logN for hashmap worst case), O(N)space)
+    public int solve2(ArrayList<Integer> A, int B) {
+        HashMap<Integer,Integer> map=new HashMap<>();
+        int xor=0;
+        int count=0;
+        for(int i=0;i<A.size();i++){
+            xor=xor^A.get(i);
+            if(map.containsKey(xor^B)){ //map contains the prefix xor
+                count+=map.get(xor^B); //retrieving the number of times prefix xor has appeared - this will be the same number of times the xor B appeared
+            }
+            if(xor==B){ //current xor equals given xor
+                count++;
+            }
+            if(map.containsKey(xor)){
+                map.put(xor,map.get(xor)+1);
+            }
+            else{ //map does not containt the current xor
+                map.put(xor,1);
+            }
+        }
+        return count;
+    }
+
+    //longest substring without repeating characters
+    //https://leetcode.com/problems/longest-substring-without-repeating-characters/
+
+    //brute - O(N2) - find all possible substrings, ie in each iteration add the particular character into a set if it
+    // doesn't already exist and increase the count. If it does, then it means that the character is repeating
+    // & so we break from inner j loop.
+    // Then we check if the length of total characters ie count from previous iteration exceeds the current and return the
+    // max ans accordingly.
+    public static int lengthOfLongestSubstring(String s) {
+        if(s.length()<=1){
+            return s.length();
+        }
+        int count=0;
+        HashSet<Character> set=new HashSet<>();
+        int ans=0;
+        for(int i=0;i<s.length();i++){
+            count=0;
+            for(int j=i;j<s.length();j++){
+                if(set.contains(s.charAt(j))){
+                    break;
+                }
+                else{
+                    set.add(s.charAt(j));
+                    count++;
+                }
+            }
+            set.clear();
+            ans=Math.max(ans,count);
+        }
+        return ans;
+    }
+
+    //optimal 1 - using hashset to store range (between two variables left and right) of all unique sub-arrays with no duplicates.
+    // If we encounter a duplicate, we keep erasing all elements from the set until the duplicate has been removed.  Then we start again with a new range.
+    //(O(2N)tc as we initally loop right pointer from left till we reach a duplicate, then we loop the left pointer till the duplicate has been removed,
+    // O(1)space because the set will at most store 26 characters)
+    public static int lengthOfLongestSubstring2(String s) {
+        if(s.length()<=1){
+            return s.length();
+        }
+        int left=0;
+        int ans=0;
+        HashSet<Character> set=new HashSet<>();
+        for(int right=0;right<s.length();right++){
+            if(set.contains(s.charAt(right))){ //found duplicate
+                while(left<right&&set.contains(s.charAt(right))){
+                    set.remove(s.charAt(left));
+                    left++;
+                }
+            }
+            set.add(s.charAt(right));
+            ans=Math.max(ans,right-left+1);
+        }
+        return ans;
+    }
+
+    //optimal 2 - optimising the prev solution further by storing the index at which we last encountered the duplicate so that
+    // we can just move left by prev duplicate index + 1 instead of having to iterate it over the array till the duplicate has been removed from the set.
+    // we achieve this by using a map instead of set to store the current character along with its index.
+    //This reduces tc to O(N) as we don't have to iterate the left pointer however sc is increased to O(N) as the map might
+    // store all of the elements in the string since we don't remove anything
+
+    public static int lengthOfLongestSubstring3(String s) {
+        if(s.length()<=1){
+            return s.length();
+        }
+        int left=0;
+        int ans=0;
+        HashMap<Character,Integer> map=new HashMap<>();
+        for(int right=0;right<s.length();right++){
+            if(map.containsKey(s.charAt(right))){ //found duplicate
+                left=Math.max(map.get(s.charAt(right))+1,left); //to check whether current left is already ahead of the
+                // new left wish to set it to
+            }
+            map.put(s.charAt(right),right);
+            ans=Math.max(ans,right-left+1);
+        }
+        return ans;
+    }
+
+
+
+
 
 }
