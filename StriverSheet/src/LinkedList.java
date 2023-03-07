@@ -1,11 +1,11 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LinkedList {
     class ListNode {
         int val;
         ListNode next;
         ListNode bottom;
+        ListNode random;
 
         public ListNode() {
         }
@@ -435,4 +435,250 @@ public class LinkedList {
         newLast.next=null;
         return head;
     }
+
+
+    //copy list with random pointer
+    //https://leetcode.com/problems/copy-list-with-random-pointer/
+
+    //brute: create a copy of all nodes in a hashmap, then connect all the next and random pointers of the nodes stored
+    // in the hashmap according to the original list
+    //O(N) time, O(N) space
+
+
+    //optimal: 3 steps - O(3N) ie O(N) time,O(1) space
+    public ListNode copyRandomList(ListNode head) {
+        //step 1
+        //create temp copy of nodes and point them next to original nodes
+        ListNode iter=head;
+        ListNode front=head;
+        while(iter!=null){
+            front=iter.next;
+            ListNode copy=new ListNode(iter.val);
+            iter.next=copy;
+            copy.next=front;
+            iter=front;
+        }
+        iter=head;
+        //step 2
+        //connecting random pointers of deep copy nodes
+        while(iter!=null){
+             if(iter.random!=null){
+                 iter.next.random=iter.random.next; //pointing deep copy of current node to the deep copy of the node
+                 // its original's random is pointing to
+             }
+             else
+                 iter.next.random=null; //original's random pointing to null
+             iter=iter.next.next;
+        }
+
+        //step 3 - connecting next pointers of the deep copy list retrieving the original list
+        iter=head;
+        ListNode pseudoHead=new ListNode(0); //head of deep copy list
+        ListNode copy=pseudoHead;
+        while(iter!=null){
+            front=iter.next.next;
+            copy.next=iter.next;
+            iter.next=front;
+            copy=copy.next;
+            iter=iter.next;
+        }
+        return pseudoHead.next;
+    }
+
+    //3 sum
+    //https://leetcode.com/problems/3sum/
+
+    //brute O(N3logM)tc, (O(M)+O(N))sc - log m to put all the unique triplets that sum up to zero in a set in order to remove duplicates
+
+    //better O(N2logM), logM for inserting in set - store frequency of each element in a hashmap, then take adjacent two pointers i and j where starts
+    // from i+1 till the length of thr array and iterate over the array. In each iteration, check if -(a[i]+a[j]) exists
+    //in the hashmap, if it does, then we have found a triplet, thus we add  a[i],a[j] and the element -(a[i]+a[j]) into a set
+    //to ensure no duplicates are added, we sort the triplet before adding it to the set. In each iteration, we first reduce
+    //the frequency of i and jth elements in the hashmap (this will make sure that we don't add an element in the triplet that does not exist in the array - DRY RUN!!)
+    //and then after each iteration we again increase their frequencies back to normal so that they can be used in further iterations
+
+    //dry run for better understanding
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> list=new ArrayList<>();
+        HashMap<Integer,Integer> map=new HashMap<>(); //storing frequencies
+        List<Integer> t=new ArrayList<>();
+        if(nums.length<3){
+            return list;
+        }
+        for(int i:nums){
+            if(map.containsKey(i)){
+                map.put(i,map.get(i)+1);
+            }
+            else
+                map.put(i,1);
+        }
+        HashSet<List<Integer>> set=new HashSet<>();
+        for(int i=0;i<nums.length;i++){
+
+            map.put(nums[i],map.get(nums[i])-1);
+            for(int j=i+1;j<nums.length;j++){
+                List<Integer> temp=new ArrayList<>();
+                map.put(nums[j],map.get(nums[j])-1);
+                int c=-(nums[i]+nums[j]);
+                if(map.containsKey(c)&&map.get(c)>0){
+                    temp.add(nums[i]);
+                    temp.add(nums[j]);
+                    temp.add(c);
+                    Collections.sort(temp);
+                    set.add(temp);
+                }
+                map.put(nums[j],map.get(nums[j])+1);
+            }
+            map.put(nums[i],map.get(nums[i])+1);
+        }
+        for(List<Integer> l:set ){
+            list.add(l);
+        }
+        return list;
+    }
+
+    //optimal (O(N2))tc - N to iterate pointer a and N to iterate pointers b and c using two sum approach. O(M)space for ans.
+    // O(nlogn) complexity for sorting is very less compared to N2 thus whole complexity rounded off to N2
+    //using 2 pointer approach - sort the array, take three pointers: a, b & c. a is iterated over the array such that
+    // b and c relate to the two pointers of the two sum approach, which iterate over rest of the array from pointer a.
+    // If b+c < -a. we move b otherwise we move c. If at any point their sum is equal to -a, we have found our triplet.
+    // Sorting is done inorder to skip duplicate elements in a particular iteration
+
+    public List<List<Integer>> threeSum2(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> list =new ArrayList<>();
+        for(int i=0;i<nums.length-2;i++){
+            if(i==0||(i>0&&nums[i]!=nums[i-1])){ //skipping duplicates for a
+                int low=i+1;
+                int hi=nums.length-1;
+                int sum=0-nums[i];
+                while(low<hi){
+                    if(nums[low]+nums[hi]==sum){
+                        list.add(List.of(nums[i],nums[low],nums[hi]));
+                        while(low<hi&&nums[low]==nums[low+1]){ //skipping duplicates for b
+                            low++;
+                        }
+                        while(low<hi&&nums[hi]==nums[hi-1]){ //skipping duplicates for c
+                            hi--;
+                        }
+                        low++;
+                        hi--;
+                    }
+                    else if(nums[low]+nums[hi]<sum)
+                        low++;
+                    else
+                        hi--;
+                }
+            }
+        }
+        return list;
+    }
+
+    //trapping rainwater
+    //https://leetcode.com/problems/trapping-rain-water/
+
+    //brute force - find unit of water for every index, sum it all up
+    //for any index i, units of water can be obtained as: min(leftMax(i),rightMax(i))-currentHeight(i)
+    //for every index, we check left and right thus O(N2)tc, O(1)sc
+
+    //better -  using prefix and suffix sum arrays to store left and right max for each element
+    //think of prefix max array as the array which at any index i contains the max element from index 0 till index i.
+    //suffix max array is similar to prefix max array but instead of storing the max from index 0 to i, it stores the maximun for index i to n-1
+    //O(3N)tc - 2N for prefix and suffix max array and N for traversing each index, O(2N)space
+
+    //optimal O(N) time, O(1) space - two pointer
+    //intuition - In each iteration, we check if the left pointer's val is less than the right pointer's val. If it is,
+    // then we check if the left max is smaller than current val of left. If it is, we update the val of left max.
+    // If it isn't we come to the conclusion that on the right there is a value greater than or equal to the left val
+    // and the left val is smaller than the left max, and it is obvious that we have crossed the left max at some point,
+    // and thus there is someone greater than equal to the left max on the right, making it the minimal of the two.
+    // Therefore, we add left max-left[i] to the ans. Similar approach follows for when right val< left val.
+    // Through this, in each case we are sure that we have the minimal among the left and right maxes
+    public int trap(int[] height) {
+        int left=0;
+        int right=height.length-1;
+        int leftMax=0;
+        int rightMax=0;
+        int ans=0;
+        while(left<=right){
+            if(height[left]<=height[right]){
+                if(leftMax<height[left]){
+                    leftMax=height[left];
+                }
+                else{
+                    ans+=leftMax-height[left];
+
+                }
+                left++;
+            }
+            else{
+                if(rightMax<height[right]){
+                    rightMax=height[right];
+                }
+                else{
+                    ans+=rightMax-height[right];
+
+                }
+                right--;
+            }
+        }
+        return ans;
+    }
+
+    //max consecutive ones
+    //https://leetcode.com/problems/max-consecutive-ones
+    public int findMaxConsecutiveOnes(int[] nums) {
+        int count=0;
+        HashSet<Integer> set=new HashSet<>();
+
+        int max=0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]==1){
+                count++;
+            }
+            else{
+                count=0;
+            }
+            max=Math.max(count,max);
+        }
+        return max;
+    }
+
+    //remove duplicates from sorted array
+
+    //brute (O(NlogN)+O(N))
+    //put all elements in a set, then return size of set. We also have to modify the array in place such that its first k
+    // elements are the unique elements where k is the size of the unique elements
+    public int removeDuplicates(int[] nums) {
+        HashSet<Integer> set=new HashSet<>();
+        for(int i:nums){
+            set.add(i);
+        }
+        int k=set.size();
+        int c=0;
+        for(int i:set){
+            nums[c]=i;
+            c++;
+        }
+        return k;
+    }
+
+    //optimal - O(N)
+    //take two pointers i at first position and j at second. If i val==j val, move j by one, otherwise move i by one and make i val= j val
+    //repeat until j goes out of bounds. In the end, i will be at the last unique element and we thus return i+1;
+    public int removeDuplicates2(int[] nums) {
+        int i=0;
+        int j=1;
+        while(j<nums.length){
+            if(nums[i]!=nums[j]){
+                i++;
+                nums[i]=nums[j];
+            }
+            else{
+                j++;
+            }
+        }
+        return i+1;
+    }
+
 }
