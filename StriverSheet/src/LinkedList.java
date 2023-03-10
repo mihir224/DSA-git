@@ -3,7 +3,10 @@ import java.util.*;
 public class LinkedList {
     class ListNode {
         int val;
+        int key;
+        int freq;
         ListNode next;
+        ListNode prev;
         ListNode bottom;
         ListNode random;
 
@@ -17,6 +20,11 @@ public class LinkedList {
         public ListNode(int val, ListNode next) {
             this.val = val;
             this.next = next;
+        }
+        public ListNode(int key,int val){
+            this.key=key;
+            this.val=val;
+            this.freq=1;
         }
     }
 
@@ -665,7 +673,7 @@ public class LinkedList {
 
     //optimal - O(N)
     //take two pointers i at first position and j at second. If i val==j val, move j by one, otherwise move i by one and make i val= j val
-    //repeat until j goes out of bounds. In the end, i will be at the last unique element and we thus return i+1;
+    //repeat until j goes out of bounds. In the end, i will be at the last unique element, and thus we return i+1;
     public int removeDuplicates2(int[] nums) {
         int i=0;
         int j=1;
@@ -680,5 +688,159 @@ public class LinkedList {
         }
         return i+1;
     }
+
+    //LRU cache
+    //https://leetcode.com/problems/lru-cache/
+
+    //least recently used (lru) refers to that recently used key-value pair which is the one we have not quite recently
+    // used and is the oldest one from all the key-value pairs we recently used
+    //both the get() and put() functions must be in O(1) complexity
+
+    //here we use a hashmap to store key value pairs and a doubly linked list to maintain the recently used order
+
+    //complexity of put() and get() functions is O(1). Hashmap in worst case would have (N) tc if there are collisions.
+    //A collision in a map is a situation where two or more key objects produce the same final hash value and hence point
+    // to the same bucket location or array index. In JDK 8, hashmap has been modified such that it is implemented as a
+    // tree if it becomes densely populated and thus wc tc is O(logN)
+    class LRUCache {
+        ListNode head=new ListNode(0,0);
+        ListNode tail=new ListNode(0,0);
+        Map<Integer,ListNode> map=new HashMap<>();
+        int capacity=0;
+        public LRUCache(int capacity) {
+            this.capacity=capacity;
+            head.next=tail;
+            tail.prev=head;
+        }
+        public int get(int key) {
+            if(map.containsKey(key)){
+                ListNode node=map.get(key);
+                remove(node); //updating recently used
+                insert(node);
+                return node.val;
+            }
+            return -1;
+        }
+        public void put(int key, int value) {
+            ListNode newNode=new ListNode(key,value);
+            if(map.containsKey(key)){
+                remove(map.get(key));
+            }
+            if(map.size()==capacity){
+                remove(tail.prev);
+            }
+            insert(newNode);
+        }
+        public void insert(ListNode node){
+            map.put(node.key,node);
+            ListNode temp=head.next;
+            head.next=node;
+            node.prev=head;
+            node.next=temp;
+            temp.prev=node;
+        }
+        public void remove(ListNode node){
+            map.remove(node.key);
+            ListNode p=node.prev;
+            ListNode n=node.next;
+            p.next=n;
+            n.prev=p;
+        }
+    }
+
+    //LFU(least frequently used) cache
+    //This is similar to the lru approach
+    //We have to modify the put function such that when the capacity is full, the least frequently used key is removed.
+    //To keep track of lfu key, we maintain a separate hashmap(frequency,list) to store the map how frequently each key is being used. Each node is put in a separate list depending on its frequency. Min frequency will be set to the min key in the frequency map that does not have an empty list.
+    //If there are multiple nodes in a list for a certain frequency, meaning that multiple nodes have the same frequency, then we apply
+    //the lru logic in the list of that particular frequency
+    class LFUCache {
+        Map<Integer,DoublyLinkedList> freqMap;
+        Map<Integer,ListNode> map;
+        int capacity=0;
+        int currentSize;
+        int minFreq;
+        public LFUCache(int capacity) {
+            this.capacity=capacity;
+            currentSize=0;
+            minFreq=0;
+            this.freqMap=new HashMap<>();
+            this.map=new HashMap<>();
+        }
+
+        public int get(int key) {
+            ListNode node=map.get(key);
+            if(node==null){ //node does not exist
+                return -1;
+            }
+            updateNode(node); //update frequency
+            return node.val;
+        }
+
+        public void put(int key, int value) {
+            ListNode node=new ListNode(key,value);
+            if(capacity==0){
+                return;
+            }
+            if(map.containsKey(key)){ //map already has key, thus no change in size, just update value
+                ListNode temp=map.get(key);
+                temp.val=value;
+                updateNode(temp);
+            }else{ //map doesn't contain key, thus we update size
+                currentSize++;
+                if(map.size()>=capacity){
+                    DoublyLinkedList minFreqList=freqMap.get(minFreq);
+                    map.remove(minFreqList.tail.prev.key);
+                    minFreqList.remove(minFreqList.tail.prev);
+                }
+                minFreq=1; // min freq will be set to 1 as we are adding a new element which has been used only once
+                DoublyLinkedList list=freqMap.getOrDefault(minFreq,new DoublyLinkedList());
+                list.insert(node);
+                freqMap.put(minFreq,list);
+                map.put(key,node);
+            }
+        }
+        public void updateNode(ListNode node){
+            int freq=node.freq;
+            DoublyLinkedList list=freqMap.get(freq); //retrieve old list of the node
+            list.remove(node);
+            if(freq==minFreq&&list.size==0){ //in case the freq was minimum, and now it has an empty list corresponding to it
+                minFreq++;
+            }
+            node.freq++;
+            DoublyLinkedList newList=freqMap.getOrDefault(node.freq,new DoublyLinkedList()); //retrieving new list with the new freq or creating one if it doesn't exist
+            newList.insert(node);
+            freqMap.put(node.freq,newList); //updating list at new freq after inserting the node
+        }
+    }
+    class DoublyLinkedList{
+        ListNode head;
+        ListNode tail;
+        int size;
+        public DoublyLinkedList(){
+            this.head=new ListNode(0,0);
+            this.tail=new ListNode(0,0);
+            head.next=tail;
+            tail.prev=head;
+            this.size=0;
+        }
+        public void insert(ListNode node){
+            ListNode temp=head.next;
+            head.next=node;
+            node.prev=head;
+            node.next=temp;
+            temp.prev=node;
+            size++;
+        }
+
+        public void remove(ListNode node){
+            ListNode p=node.prev;
+            ListNode n=node.next;
+            p.next=n;
+            n.prev=p;
+            size--;
+        }
+    }
+
 
 }
