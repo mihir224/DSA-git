@@ -3,8 +3,47 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class StackQueues {
-    Queue<Integer> q=new LinkedList<>();
 
+    //implement stack using arrays
+
+    public class Stacks {
+        private int[] data;
+        int ptr=-1;
+        private static final int DEFAULT_SIZE=10;
+        public Stacks(){
+            this(DEFAULT_SIZE);
+        }
+        public Stacks(int size){
+            data=new int[size];
+        }
+        void push(int num) throws Exception{
+            if(isFull()==1){
+                throw new Exception("Stack full");
+            }
+            ptr++;
+            data[ptr]=num;
+        }
+        int pop() throws Exception {
+            if(isEmpty()==1){
+               throw new Exception("Stack empty");
+            }
+            int removed=data[ptr];
+            ptr--;
+            return removed;
+        }
+        int top() throws Exception{
+            if(isEmpty()==1){
+            throw new Exception("Stack empty");
+        }
+            return data[ptr];
+        }
+        int isEmpty() {
+            return ptr==-1?1:0;
+        }
+        int isFull() {
+            return ptr==data.length-1?1:0;
+        }
+    }
 
     //implement stack using queues
     //https://leetcode.com/problems/implement-stack-using-queues/
@@ -12,6 +51,7 @@ public class StackQueues {
 
     //using single queue: O(N)time, O(N)space
     public class myStack {
+        Queue<Integer> q=new LinkedList<>();
         public void push(int x) {
             q.add(x);
             for (int i = 0; i < q.size() - 1; i++) {
@@ -31,6 +71,40 @@ public class StackQueues {
             return q.isEmpty();
         }
     }
+
+    //implement queue using arrays
+    //https://practice.geeksforgeeks.org/problems/implement-queue-using-array/1
+    class Q {
+        int front, rear,size;
+        int arr[] = new int[100005];
+        Q()
+        {
+            front=0;
+            size=0;
+            rear=0;
+        }
+
+        void push(int x)
+        {
+            if(size<arr.length){
+                arr[rear%arr.length]=x;
+                size++;
+                rear++;
+            }
+        }
+
+        int pop()
+        {
+            if(front!=rear){
+                int removed=arr[front];
+                front++;
+                size--;
+                return removed;
+            }
+            return -1;
+        }
+    }
+
     //implement queue using stacks
     //https://leetcode.com/problems/implement-queue-using-stacks/
 
@@ -100,7 +174,7 @@ public class StackQueues {
         return st.isEmpty();
     }
 
-    //next greater element-ii
+    //next greater element-ii (O(n)time,space)
     //https://leetcode.com/problems/next-greater-element-ii/
     public int[] nextGreaterElements(int[] nums) {
         Stack<Integer> st=new Stack<>();
@@ -153,4 +227,27 @@ public class StackQueues {
         st.push(top);
         return st;
     }
+
+    //nearest smallest element (index should be smaller than i)
+    //https://www.interviewbit.com/problems/nearest-smaller-element/
+    public int[] prevSmaller(int[] nums) {
+        Stack<Integer> stack = new Stack<>();
+        int[] pse = new int[nums.length];
+        for (int i = 0; i <nums.length; i++) {
+            while(!stack.isEmpty()&&nums[i]<=stack.peek()){
+                stack.pop();
+            }
+            if(!stack.isEmpty()){
+                pse[i]=stack.peek();
+            }
+            else{
+                pse[i]=-1;
+            }
+            stack.push(nums[i]);
+        }
+
+        return pse;
+    }
+
+
 }
