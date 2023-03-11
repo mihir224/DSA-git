@@ -249,5 +249,161 @@ public class StackQueues {
         return pse;
     }
 
+    //celebrity problem
+    //https://practice.geeksforgeeks.org/problems/the-celebrity-problem/1
+    //O(N) solution
+    int celebrity(int M[][], int n)
+    {
+        Stack<Integer> st=new Stack<>();
+        for(int i=0;i<n;i++){
+            st.push(i);
+        }
+        while(st.size()>=2){
+            int b=st.pop();
+            int a=st.pop();
+            if(M[a][b]==1){
+                st.push(b); //a knows b
+            }
+            else{
+                st.push(a); //a doesn't know b
+            }
+        }
+        int potentialCeleb=st.pop();
+        for(int i=0;i<n;i++){
+            if(i!=potentialCeleb){
+                if(M[i][potentialCeleb]==0||M[potentialCeleb][i]!=0){
+                    return -1;
+                }
+            }
+        }
+        return potentialCeleb;
+    }
 
+    //largest rectangle in a histogram
+    //
+    //brute force - O(N2)time, O(1)space - find left and right extremes for each index and simultaneously calculate the area using
+    //(arr[right]-arr[left]-1) * arr[i]
+    public int largestRectangleArea(int[] heights) {
+        int area=0;
+        for(int i=0;i<heights.length;i++){
+            int left=i;
+            int right=i;
+            while(left>=0&&heights[left]>=heights[i]){
+                left--;
+            }
+            while(right<=heights.length-1&&heights[right]>=heights[i]){
+                right++;
+            }
+            area=Math.max(area,(right-left-1)*heights[i]);
+            if(heights.length==1){
+                area=heights[i];
+            }
+        }
+        return area;
+    }
+
+    //optimal - O(N)time, O(3N)space
+    //we simply optimize the brute force by using the next smaller and previous smaller functions to store the nse and pse for each element
+    //and access them later to find the area for each index. Here instead of storing pse and nse's we store their indices
+    public int largestRectangleArea2(int[] heights) {
+        int area=0;
+        int n=heights.length;
+        int[] nse=nextSmallerIndex(heights);
+        int[] pse=prevSmallerIndex(heights);
+        for(int i=0;i<heights.length;i++){
+            area=Math.max(area,(nse[i]-pse[i]-1)*heights[i]);
+        }
+        return area;
+    }
+    public int[] nextSmallerIndex(int[] heights){
+        Stack<Integer> st=new Stack<>();
+        int[] nse=new int[heights.length];
+        for(int i=heights.length-1;i>=0;i--){
+            while(!st.isEmpty()&&heights[i]<=heights[st.peek()]){
+                st.pop();
+            }
+            if(!st.isEmpty()){
+                nse[i]=st.peek();
+            }
+            else{
+                nse[i]=heights.length;
+            }
+            st.push(i);
+        }
+        return nse;
+    }
+    public int[] prevSmallerIndex(int[] heights){
+        Stack<Integer> st=new Stack<>();
+        int[] pse=new int[heights.length];
+        for(int i=0;i<heights.length;i++){
+            while(!st.isEmpty()&&heights[i]<=heights[st.peek()]){
+                st.pop();
+            }
+            if(!st.isEmpty()){
+                pse[i]=st.peek();
+            }
+            else{
+                pse[i]=-1;
+            }
+            st.push(i);
+        }
+        return pse;
+    }
+
+    //rotting oranges
+    //https://leetcode.com/problems/rotting-oranges/
+    class triad{
+        int first;
+        int second;
+        int third;
+        public triad(int first, int second, int third){
+            this.first=first;
+            this.second=second;
+            this.third=third;
+        }
+    }
+    public int orangesRotting(int[][] grid) {
+        Queue<triad> q=new LinkedList<>();
+        int n=grid.length;
+        int m=grid[0].length;
+        int freshOranges=0; //to keep track of all fresh oranges in case some were unreachable
+        int count=0; //to keep track of every fresh orange that has been rotten-ed
+        int time=0; //to keep track of min time
+        int[] delRow={-1,0,1,0};
+        int[] delCol={0,1,0,-1};
+        int[][] vis=new int[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==2){
+                    q.add(new triad(i,j,0));
+                    vis[i][j]=2;
+                }
+                else if(grid[i][j]==1){
+                    freshOranges++;
+                }
+            }
+        }
+        while(!q.isEmpty()){
+            triad t=q.poll();
+            int row=t.first;
+            int col=t.second;
+            time=Math.max(time,t.third);
+            for(int i=0;i<4;i++){
+                int nrow=row+delRow[i];
+                int ncol=col+delCol[i];
+                if(nrow>=0&&nrow<n&&
+                        ncol>=0&&ncol<m&&
+                        vis[nrow][ncol]!=2&&
+                        grid[nrow][ncol]==1){
+                    q.add(new triad(nrow,ncol,t.third+1));
+                    vis[nrow][ncol]=2;
+                    count++;
+                }
+            }
+        }
+        if(count!=freshOranges){ //some fresh oranges were unreachable
+            return -1;
+        }
+        return time;
+    }
 }
