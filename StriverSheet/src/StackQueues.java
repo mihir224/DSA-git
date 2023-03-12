@@ -1,6 +1,5 @@
+import java.util.*;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
 
 public class StackQueues {
 
@@ -8,40 +7,47 @@ public class StackQueues {
 
     public class Stacks {
         private int[] data;
-        int ptr=-1;
-        private static final int DEFAULT_SIZE=10;
-        public Stacks(){
+        int ptr = -1;
+        private static final int DEFAULT_SIZE = 10;
+
+        public Stacks() {
             this(DEFAULT_SIZE);
         }
-        public Stacks(int size){
-            data=new int[size];
+
+        public Stacks(int size) {
+            data = new int[size];
         }
-        void push(int num) throws Exception{
-            if(isFull()==1){
+
+        void push(int num) throws Exception {
+            if (isFull() == 1) {
                 throw new Exception("Stack full");
             }
             ptr++;
-            data[ptr]=num;
+            data[ptr] = num;
         }
+
         int pop() throws Exception {
-            if(isEmpty()==1){
-               throw new Exception("Stack empty");
+            if (isEmpty() == 1) {
+                throw new Exception("Stack empty");
             }
-            int removed=data[ptr];
+            int removed = data[ptr];
             ptr--;
             return removed;
         }
-        int top() throws Exception{
-            if(isEmpty()==1){
-            throw new Exception("Stack empty");
-        }
+
+        int top() throws Exception {
+            if (isEmpty() == 1) {
+                throw new Exception("Stack empty");
+            }
             return data[ptr];
         }
+
         int isEmpty() {
-            return ptr==-1?1:0;
+            return ptr == -1 ? 1 : 0;
         }
+
         int isFull() {
-            return ptr==data.length-1?1:0;
+            return ptr == data.length - 1 ? 1 : 0;
         }
     }
 
@@ -51,7 +57,8 @@ public class StackQueues {
 
     //using single queue: O(N)time, O(N)space
     public class myStack {
-        Queue<Integer> q=new LinkedList<>();
+        Queue<Integer> q = new LinkedList<>();
+
         public void push(int x) {
             q.add(x);
             for (int i = 0; i < q.size() - 1; i++) {
@@ -75,28 +82,26 @@ public class StackQueues {
     //implement queue using arrays
     //https://practice.geeksforgeeks.org/problems/implement-queue-using-array/1
     class Q {
-        int front, rear,size;
+        int front, rear, size;
         int arr[] = new int[100005];
-        Q()
-        {
-            front=0;
-            size=0;
-            rear=0;
+
+        Q() {
+            front = 0;
+            size = 0;
+            rear = 0;
         }
 
-        void push(int x)
-        {
-            if(size<arr.length){
-                arr[rear%arr.length]=x;
+        void push(int x) {
+            if (size < arr.length) {
+                arr[rear % arr.length] = x;
                 size++;
                 rear++;
             }
         }
 
-        int pop()
-        {
-            if(front!=rear){
-                int removed=arr[front];
+        int pop() {
+            if (front != rear) {
+                int removed = arr[front];
                 front++;
                 size--;
                 return removed;
@@ -117,22 +122,22 @@ public class StackQueues {
     //we use two stacks - input and output. While popping, we check if st2 is empty. If it is, we simply empty input to
     //output. Otherwise, we simply return output's head. Same goes for peek operations. Push operation will be same
 
-    public class MyQueue{
-        Stack<Integer> input=new Stack<>();
-        Stack<Integer> output=new Stack<>();
-        private int peakElement=-1;
+    public class MyQueue {
+        Stack<Integer> input = new Stack<>();
+        Stack<Integer> output = new Stack<>();
+        private int peakElement = -1;
 
         public void push(int x) {
-            if(input.isEmpty())
-                peakElement=x; //to keep track of peek element if no pop operation is ever called.
+            if (input.isEmpty())
+                peakElement = x; //to keep track of peek element if no pop operation is ever called.
             // This will make sure that we don't empty input to output in the peek() function everytime output is empty
             // making the peek function O(1)
             input.push(x);
         }
 
         public int pop() {
-            if(output.isEmpty()){
-                while(!input.isEmpty()) {
+            if (output.isEmpty()) {
+                while (!input.isEmpty()) {
                     output.push(input.pop());
                 }
             }
@@ -140,11 +145,11 @@ public class StackQueues {
         }
 
         public int peek() {
-            return output.isEmpty()?peakElement:output.peek();
+            return output.isEmpty() ? peakElement : output.peek();
         }
 
         public boolean empty() {
-            return input.isEmpty()&&output.isEmpty();
+            return input.isEmpty() && output.isEmpty();
         }
     }
 
@@ -152,21 +157,19 @@ public class StackQueues {
     //https://leetcode.com/problems/valid-parentheses/
 
     public boolean isValid(String s) {
-        char[] ch=s.toCharArray();
-        Stack<Character> st=new Stack<>();
-        for(char c:ch){
-            if(c=='{'||c=='('||c=='['){
+        char[] ch = s.toCharArray();
+        Stack<Character> st = new Stack<>();
+        for (char c : ch) {
+            if (c == '{' || c == '(' || c == '[') {
                 st.push(c);
-            }
-            else{ //closing bracket
-                if(st.isEmpty()) { //no opening brackets pushed yet, ie the string starts with closing bracket
+            } else { //closing bracket
+                if (st.isEmpty()) { //no opening brackets pushed yet, ie the string starts with closing bracket
                     return false;
                 }
-                char sp=st.peek();
-                if(sp=='{'&&c=='}'||sp=='('&&c==')'||sp=='['&&c==']'){
+                char sp = st.peek();
+                if (sp == '{' && c == '}' || sp == '(' && c == ')' || sp == '[' && c == ']') {
                     st.pop();
-                }
-                else{
+                } else {
                     return false;
                 }
             }
@@ -177,22 +180,21 @@ public class StackQueues {
     //next greater element-ii (O(n)time,space)
     //https://leetcode.com/problems/next-greater-element-ii/
     public int[] nextGreaterElements(int[] nums) {
-        Stack<Integer> st=new Stack<>();
-        int[] nge=new int[nums.length];
-        int n=nums.length;
-        for(int i=2*n-1;i>=0;i--){
-            while(!st.isEmpty()&&nums[i%n]>=st.peek()){
+        Stack<Integer> st = new Stack<>();
+        int[] nge = new int[nums.length];
+        int n = nums.length;
+        for (int i = 2 * n - 1; i >= 0; i--) {
+            while (!st.isEmpty() && nums[i % n] >= st.peek()) {
                 st.pop();
             }
-            if(i<n) {
+            if (i < n) {
                 if (!st.isEmpty()) {
                     nge[i] = st.peek();
-                }
-                else{
-                    nge[i]=-1;
+                } else {
+                    nge[i] = -1;
                 }
             }
-            st.push(nums[i%n]);
+            st.push(nums[i % n]);
         }
         return nge;
     }
@@ -209,21 +211,23 @@ public class StackQueues {
     public static void sortStack(Stack<Integer> stack) {
         sortedStack(stack);
     }
-    public static Stack<Integer> sortedStack(Stack<Integer> st){
-        if(st.size()==1){
+
+    public static Stack<Integer> sortedStack(Stack<Integer> st) {
+        if (st.size() == 1) {
             return st;
         }
-        int topEl=st.pop();
+        int topEl = st.pop();
         sortedStack(st);
-        return insert(st,topEl);
+        return insert(st, topEl);
     }
-    public static Stack<Integer> insert(Stack<Integer> st,int topEl){
-        if(st.size()==0||st.peek()<=topEl) {
+
+    public static Stack<Integer> insert(Stack<Integer> st, int topEl) {
+        if (st.size() == 0 || st.peek() <= topEl) {
             st.push(topEl); //current topEl already greater than top of stack
             return st;
         }
-        int top=st.pop();
-        insert(st,topEl);
+        int top = st.pop();
+        insert(st, topEl);
         st.push(top);
         return st;
     }
@@ -233,15 +237,14 @@ public class StackQueues {
     public int[] prevSmaller(int[] nums) {
         Stack<Integer> stack = new Stack<>();
         int[] pse = new int[nums.length];
-        for (int i = 0; i <nums.length; i++) {
-            while(!stack.isEmpty()&&nums[i]<=stack.peek()){
+        for (int i = 0; i < nums.length; i++) {
+            while (!stack.isEmpty() && nums[i] <= stack.peek()) {
                 stack.pop();
             }
-            if(!stack.isEmpty()){
-                pse[i]=stack.peek();
-            }
-            else{
-                pse[i]=-1;
+            if (!stack.isEmpty()) {
+                pse[i] = stack.peek();
+            } else {
+                pse[i] = -1;
             }
             stack.push(nums[i]);
         }
@@ -252,26 +255,24 @@ public class StackQueues {
     //celebrity problem
     //https://practice.geeksforgeeks.org/problems/the-celebrity-problem/1
     //O(N) solution
-    int celebrity(int M[][], int n)
-    {
-        Stack<Integer> st=new Stack<>();
-        for(int i=0;i<n;i++){
+    int celebrity(int M[][], int n) {
+        Stack<Integer> st = new Stack<>();
+        for (int i = 0; i < n; i++) {
             st.push(i);
         }
-        while(st.size()>=2){
-            int b=st.pop();
-            int a=st.pop();
-            if(M[a][b]==1){
+        while (st.size() >= 2) {
+            int b = st.pop();
+            int a = st.pop();
+            if (M[a][b] == 1) {
                 st.push(b); //a knows b
-            }
-            else{
+            } else {
                 st.push(a); //a doesn't know b
             }
         }
-        int potentialCeleb=st.pop();
-        for(int i=0;i<n;i++){
-            if(i!=potentialCeleb){
-                if(M[i][potentialCeleb]==0||M[potentialCeleb][i]!=0){
+        int potentialCeleb = st.pop();
+        for (int i = 0; i < n; i++) {
+            if (i != potentialCeleb) {
+                if (M[i][potentialCeleb] == 0 || M[potentialCeleb][i] != 0) {
                     return -1;
                 }
             }
@@ -284,19 +285,19 @@ public class StackQueues {
     //brute force - O(N2)time, O(1)space - find left and right extremes for each index and simultaneously calculate the area using
     //(arr[right]-arr[left]-1) * arr[i]
     public int largestRectangleArea(int[] heights) {
-        int area=0;
-        for(int i=0;i<heights.length;i++){
-            int left=i;
-            int right=i;
-            while(left>=0&&heights[left]>=heights[i]){
+        int area = 0;
+        for (int i = 0; i < heights.length; i++) {
+            int left = i;
+            int right = i;
+            while (left >= 0 && heights[left] >= heights[i]) {
                 left--;
             }
-            while(right<=heights.length-1&&heights[right]>=heights[i]){
+            while (right <= heights.length - 1 && heights[right] >= heights[i]) {
                 right++;
             }
-            area=Math.max(area,(right-left-1)*heights[i]);
-            if(heights.length==1){
-                area=heights[i];
+            area = Math.max(area, (right - left - 1) * heights[i]);
+            if (heights.length == 1) {
+                area = heights[i];
             }
         }
         return area;
@@ -306,44 +307,44 @@ public class StackQueues {
     //we simply optimize the brute force by using the next smaller and previous smaller functions to store the nse and pse for each element
     //and access them later to find the area for each index. Here instead of storing pse and nse's we store their indices
     public int largestRectangleArea2(int[] heights) {
-        int area=0;
-        int n=heights.length;
-        int[] nse=nextSmallerIndex(heights);
-        int[] pse=prevSmallerIndex(heights);
-        for(int i=0;i<heights.length;i++){
-            area=Math.max(area,(nse[i]-pse[i]-1)*heights[i]);
+        int area = 0;
+        int n = heights.length;
+        int[] nse = nextSmallerIndex(heights);
+        int[] pse = prevSmallerIndex(heights);
+        for (int i = 0; i < heights.length; i++) {
+            area = Math.max(area, (nse[i] - pse[i] - 1) * heights[i]);
         }
         return area;
     }
-    public int[] nextSmallerIndex(int[] heights){
-        Stack<Integer> st=new Stack<>();
-        int[] nse=new int[heights.length];
-        for(int i=heights.length-1;i>=0;i--){
-            while(!st.isEmpty()&&heights[i]<=heights[st.peek()]){
+
+    public int[] nextSmallerIndex(int[] heights) {
+        Stack<Integer> st = new Stack<>();
+        int[] nse = new int[heights.length];
+        for (int i = heights.length - 1; i >= 0; i--) {
+            while (!st.isEmpty() && heights[i] <= heights[st.peek()]) {
                 st.pop();
             }
-            if(!st.isEmpty()){
-                nse[i]=st.peek();
-            }
-            else{
-                nse[i]=heights.length;
+            if (!st.isEmpty()) {
+                nse[i] = st.peek();
+            } else {
+                nse[i] = heights.length;
             }
             st.push(i);
         }
         return nse;
     }
-    public int[] prevSmallerIndex(int[] heights){
-        Stack<Integer> st=new Stack<>();
-        int[] pse=new int[heights.length];
-        for(int i=0;i<heights.length;i++){
-            while(!st.isEmpty()&&heights[i]<=heights[st.peek()]){
+
+    public int[] prevSmallerIndex(int[] heights) {
+        Stack<Integer> st = new Stack<>();
+        int[] pse = new int[heights.length];
+        for (int i = 0; i < heights.length; i++) {
+            while (!st.isEmpty() && heights[i] <= heights[st.peek()]) {
                 st.pop();
             }
-            if(!st.isEmpty()){
-                pse[i]=st.peek();
-            }
-            else{
-                pse[i]=-1;
+            if (!st.isEmpty()) {
+                pse[i] = st.peek();
+            } else {
+                pse[i] = -1;
             }
             st.push(i);
         }
@@ -352,58 +353,123 @@ public class StackQueues {
 
     //rotting oranges
     //https://leetcode.com/problems/rotting-oranges/
-    class triad{
+    class triad {
         int first;
         int second;
         int third;
-        public triad(int first, int second, int third){
-            this.first=first;
-            this.second=second;
-            this.third=third;
+
+        public triad(int first, int second, int third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
         }
     }
+
     public int orangesRotting(int[][] grid) {
-        Queue<triad> q=new LinkedList<>();
-        int n=grid.length;
-        int m=grid[0].length;
-        int freshOranges=0; //to keep track of all fresh oranges in case some were unreachable
-        int count=0; //to keep track of every fresh orange that has been rotten-ed
-        int time=0; //to keep track of min time
-        int[] delRow={-1,0,1,0};
-        int[] delCol={0,1,0,-1};
-        int[][] vis=new int[n][m];
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]==2){
-                    q.add(new triad(i,j,0));
-                    vis[i][j]=2;
-                }
-                else if(grid[i][j]==1){
+        Queue<triad> q = new LinkedList<>();
+        int n = grid.length;
+        int m = grid[0].length;
+        int freshOranges = 0; //to keep track of all fresh oranges in case some were unreachable
+        int count = 0; //to keep track of every fresh orange that has been rotten-ed
+        int time = 0; //to keep track of min time
+        int[] delRow = {-1, 0, 1, 0};
+        int[] delCol = {0, 1, 0, -1};
+        int[][] vis = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 2) {
+                    q.add(new triad(i, j, 0));
+                    vis[i][j] = 2;
+                } else if (grid[i][j] == 1) {
                     freshOranges++;
                 }
             }
         }
-        while(!q.isEmpty()){
-            triad t=q.poll();
-            int row=t.first;
-            int col=t.second;
-            time=Math.max(time,t.third);
-            for(int i=0;i<4;i++){
-                int nrow=row+delRow[i];
-                int ncol=col+delCol[i];
-                if(nrow>=0&&nrow<n&&
-                        ncol>=0&&ncol<m&&
-                        vis[nrow][ncol]!=2&&
-                        grid[nrow][ncol]==1){
-                    q.add(new triad(nrow,ncol,t.third+1));
-                    vis[nrow][ncol]=2;
+        while (!q.isEmpty()) {
+            triad t = q.poll();
+            int row = t.first;
+            int col = t.second;
+            time = Math.max(time, t.third);
+            for (int i = 0; i < 4; i++) {
+                int nrow = row + delRow[i];
+                int ncol = col + delCol[i];
+                if (nrow >= 0 && nrow < n &&
+                        ncol >= 0 && ncol < m &&
+                        vis[nrow][ncol] != 2 &&
+                        grid[nrow][ncol] == 1) {
+                    q.add(new triad(nrow, ncol, t.third + 1));
+                    vis[nrow][ncol] = 2;
                     count++;
                 }
             }
         }
-        if(count!=freshOranges){ //some fresh oranges were unreachable
+        if (count != freshOranges) { //some fresh oranges were unreachable
             return -1;
         }
         return time;
     }
+
+    //sliding window maximum
+    //https://leetcode.com/problems/sliding-window-maximum/
+
+    //brute (O(N*K)time) - traverse the list from start till (n-k)th and in each iteration traverse each kth set of elements
+    // and find max among them
+
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int n = nums.length - k + 1;
+        int[] mx = new int[n];
+        for (int i = 0; i < n; i++) {
+            int max = Integer.MIN_VALUE;
+            for (int j = i; j <= i + k - 1; j++) { //iterating every set of k
+                max = Math.max(max, nums[j]);
+            }
+            mx[i] = max;
+        }
+        return mx;
+    }
+
+
+    //optimal - (O(N)+O(N))time because we are iterating for each element in the array and in each iteration we remove elements<=arr[i]
+    // and out of boundary elements from the deque which can be a total of O(N) amortised. O(K)space because deque at max can store only k elements.
+    // We use a deque to store indices of elements of each set of k size in a decreasing order. While traversing the array
+    //we check from the last of the deque if the current element is greater than the element stored in the deque. If it is,
+    // we simply remove the deque element as it is of no use since we are storing elements in decreasing order.
+    // Then if further elements are less than the deque element(checking from last), we simply add them to the
+    // deque (maintaining a decreasing order). If at any point of time the deque has an element(checking from front) out of boundary ie out
+    // of the k limit for a particular set, we remove it from deque. At the end of each iteration, the first element of the
+    //deque would be storing the max element for that particular set of k size
+
+    //intuition - for any element arr[i], we know with certainty that if any element el that appeared before arr[i] is
+    // such that el<=arr[i], then that element can never be the maximum element for that sub-array of k size
+
+    //we start taking elements when i becomes >= k-1
+    //to keep track of whether an element from deque is out of bounds, we check if that element's index is == i-k meaning that it is the element
+    // just before the starting element of a set
+
+    //DRY RUN!!
+    public int[] maxSlidingWindow2(int[] nums, int k) {
+        int n= nums.length;
+        int[] ans=new int[n-k+1];
+        int max=0;
+        Deque<Integer> deque=new ArrayDeque<>();
+        for(int i=0;i<n;i++){
+            if(!deque.isEmpty()&&deque.peek()==i-k){ //out of boundary element
+                deque.poll();
+            }
+            while(!deque.isEmpty()&&nums[deque.peekLast()]<=nums[i]){  //element smaller than current element
+                deque.pollLast();
+            }
+            deque.offer(i);
+            if(i>=k-1){ //completed first set, now start taking max elements for each set
+                ans[max]=nums[deque.peek()];
+                max++;
+            }
+        }
+        return ans;
+    }
+
+
+
+
+
 }
