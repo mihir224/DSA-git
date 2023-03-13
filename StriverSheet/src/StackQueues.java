@@ -33,7 +33,9 @@ public class StackQueues {
             int removed = data[ptr];
             ptr--;
             return removed;
+
         }
+
 
         int top() throws Exception {
             if (isEmpty() == 1) {
@@ -468,8 +470,111 @@ public class StackQueues {
         return ans;
     }
 
+    //implement minimum stack
+    //https://leetcode.com/problems/min-stack/
 
+    //brute - We store pairs in stack with the first element being the whatever that has been pushed into the stack and
+    // the second element being the min element among all. For get min, we simply return st.peek().second.
+    // Rest all operations would be same
+    // O(1)tc, O(2N)sc since 2N elements are being stored in stack as pairs.
 
+    class MinStack {
+        class Pair{
+            int first;
+            int second;
+            public Pair(int first, int second){
+                this.first=first;
+                this.second=second;
+            }
+        }
+        Stack<Pair> st;
+        public MinStack() {
+            st=new Stack<>();
+        }
 
+        public void push(int val) {
+            int min;
+            if(st.isEmpty()){
+                min=val;
+            }else{
+                min=Math.min(st.peek().second,val);
+            }
+            st.push(new Pair(val,min));
+        }
 
+        public void pop() {
+            st.pop();
+        }
+
+        public int top() {
+            return st.peek().first;
+        }
+
+        public int getMin() {
+            return st.peek().second;
+        }
+    }
+
+    //optimal - (O(1)tc,O(N)sc)
+    //we maintain a min variable to store the min value among all items of the stack
+    //we modify the push and pop operations such that while pushing we check if the val to be pushed is smaller than min.
+    // If it is, we push 2*val-min ie a modified val into the stack and update min. To obtain top we check if the stack's
+    // top is smaller than min which would imply that the top is a modified value which was obtained using current min.
+    // Thus, we return the current min, else we return top.
+    // Intuition behind knowing that st.top() is modified if it is < min:
+    // We pushed a val which was < min ie val<min ie val-min<0 ie 2*val-min<val ie the modified val will always be smaller than the val which later on becomes minimum
+    //for pop() we again check if the top is smaller than min and in that case we have to reset the current min to the previous min, and
+    // we do that by setting min to 2*min-st.top()
+    //Intuition: st.top() in this case is nothing but the modified val ie 2*currentMin-prevMin thus the whole expression becomes
+    //2*min-2*currentMin+prevMin = prevMin
+    class MinStack2 {
+        Stack<Long> st; //modified val can exceed int range
+        Long min;
+        public MinStack2() {
+            this.st=new Stack<>();
+            this.min=Long.MAX_VALUE;
+        }
+
+        public void push(int val) {
+            Long v=Long.valueOf(val);
+            if(st.isEmpty()){
+                min=v;
+                st.push(v);
+            }
+           else{
+               if(v<min){
+                   Long modVal=2*v-min; //pushing modified val
+                   st.push(modVal);
+                   min=v;
+               }
+               else{
+                   st.push(v);
+               }
+            }
+
+        }
+        public void pop() {
+            if(st.isEmpty()){
+                return;
+            }
+            if(st.peek()<min){
+                min=2*min-st.peek(); //rolling min back to prev min val
+            }
+            st.pop();
+
+        }
+        public int top() {
+            if(st.isEmpty()){
+                return -1;
+            }
+            if(st.peek()<min){
+                return min.intValue();
+            }
+            return st.peek().intValue();
+        }
+
+        public int getMin() {
+            return min.intValue();
+        }
+    }
 }
