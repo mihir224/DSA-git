@@ -551,7 +551,6 @@ public class StackQueues {
                    st.push(v);
                }
             }
-
         }
         public void pop() {
             if(st.isEmpty()){
@@ -572,9 +571,48 @@ public class StackQueues {
             }
             return st.peek().intValue();
         }
-
         public int getMin() {
             return min.intValue();
+        }
+    }
+
+    //stock span
+    //https://leetcode.com/problems/online-stock-span/
+
+    //for each element we find its prev greater element's index the span for that element will be obtained using: index-pgeIndex
+    //to store the index of pge we use a stack of pair with the first element being pge and second being its index.
+
+    //DRY RUN!!
+    class Pair{
+        int first;
+        int second;
+        public Pair(int first, int second){
+            this.first=first;
+            this.second=second;
+        }
+    }
+    class StockSpanner {
+        Stack<Pair> st;
+        int index;
+        public StockSpanner() {
+            this.st=new Stack<>();
+            this.index=-1;
+        }
+        public int next(int price) {
+            index++;
+            while(!st.isEmpty()&&price>=st.peek().first){
+                st.pop();
+            }
+            if(!st.isEmpty()){
+                int pge=st.peek().second;
+                st.push(new Pair(price,index));
+                return index-pge;
+            }
+            else{ //stack empty, meaning there are no previous elements greater than current element and, thus we push it
+                // in stack and return index+1 ie count of all elements before the current element including current element
+                st.push(new Pair(price,index));
+                return index+1;
+            }
         }
     }
 }
