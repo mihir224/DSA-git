@@ -403,31 +403,65 @@ public class Questions {
         return dp[m][n];
     }
 
-    ///longest common substring
-    //a variation of lcs
-    int longestCommonSubstr(String a, String b, int m, int n) {
-        int[][] dp = new int[m + 1][n + 1];
-        int length = 0;
-        for (int i = 0; i < m + 1; i++) {
-            for (int j = 0; j < n + 1; j++) {
-                if (i == 0 || j == 0) {
-                    dp[i][j] = 0;
+    //longest common substring
+    //https://leetcode.com/problems/longest-palindromic-substring/submissions/
+    //O(n2) - using left and right pointer approach for odd and even lengths of palindromes. We know that a palindrome can
+    // have an even length or an odd length. Thus for both cases we take two pointers left and right. In the odd case,
+    // we know that there's always going to be an middle element in the palindrome and thus we put left at i-1 and right at i+1
+    // for each element and check if they are equal. If they are, we keep iterating left-- and right++ till they are not equal,
+    // or they have gone out of bounds. After their iteration is completed we calculate the length of the current palindrome using r-l-1
+    // and set two pointers start and end at the end of the palindrome if the obtained length is > max len ie they store the start and
+    // end positions of the longest palindromic substring. We do the same for even palindromes but since they don't have any middle element,
+    // we directly start comparing l and r by  placing them at i and i+1. Rest procedure is same and in the end we just return a substring from start till end
+    public String longestPalindrome(String s) {
+        if(s.length()<=1){
+            return s;
+        }
+        int maxLen=1;
+        int n=s.length();
+        int start=0;
+        int end=0;
+        for(int i=0;i<n-1;i++){
+            int l=i;
+            int r=i;
+            while(l>=0&&r<n){
+                if(s.charAt(l)==s.charAt(r)){
+                    l--;
+                    r++;
+                }
+                else{
+                    break;
                 }
             }
-        }
-        for (int i = 1; i < m + 1; i++) {
-            for (int j = 1; j < n + 1; j++) {
-                if (a.charAt(i - 1) == b.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
-                }
-                if (dp[i][j] > length) {
-                    length = dp[i][j];
-                }
-
+            int len=r-l-1;
+            if(len>maxLen){
+                maxLen=len;
+                start=l+1; //start of palindrome
+                end=r-1; //end of palindrome
             }
         }
-        return length;
+        for(int i=0;i<n-1;i++){
+            int l=i;
+            int r=i+1;
+            while(l>=0&&r<n){
+                if(s.charAt(l)==s.charAt(r)){
+                    l--;
+                    r++;
+                }
+                else{
+                    break;
+                }
+            }
+            int len=r-l-1;
+            if(len>maxLen){
+                maxLen=len;
+                start=l+1;
+                end=r-1;
+            }
+        }
+        return s.substring(start,end+1);
     }
+
 
     //print lcs
     public String printLcs(String a, String b) {
@@ -1044,7 +1078,7 @@ public class Questions {
             int left = solve(root.left);
             int right = solve(root.right);
             int tempAns = Math.max(Math.max(left, right) + root.val, root.val); //in case any nodes from the left and right
-            // subtrees are negative, we only take value of the current no de
+            // subtrees are negative, we only take value of the current node
             int ans = Math.max(tempAns, left + right + root.val);
             res = Math.max(res, ans);
             return tempAns;
