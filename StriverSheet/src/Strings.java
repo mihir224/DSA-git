@@ -15,11 +15,11 @@ public class Strings {
         int j = 0;
         int n = str.length();
         String ans = "";
-        while(i<n) {
+        while (i < n) {
             while (i < n && str.charAt(i) == ' ') {
                 i++;
             }
-            if(i>=n){
+            if (i >= n) {
                 break;
             }
             j = i + 1;
@@ -43,51 +43,48 @@ public class Strings {
     // and then removing them from the stack one by one
 
     public String reverseWords2(String str) {
-        str+=" ";
-        String word="";
-        String ans="";
-        Stack<String> st=new Stack<>();
-        for(int i=0;i<str.length();i++){
-            if(str.charAt(i)==' '){
+        str += " ";
+        String word = "";
+        String ans = "";
+        Stack<String> st = new Stack<>();
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == ' ') {
                 st.push(word);
-                word="";
-            }
-            else{
-                word=word+str.charAt(i);
+                word = "";
+            } else {
+                word = word + str.charAt(i);
             }
         }
-        while(st.size()!=1){
-            ans+=st.pop()+" ";
+        while (st.size() != 1) {
+            ans += st.pop() + " ";
         }
-        ans+=st.pop();
+        ans += st.pop();
         return ans;
     }
+
     //optimal - O(N),O(1) - reversing the order as we iterate over the string
     public String reverseWords3(String str) {
-        int i=0;
-        String word="";
-        String ans="";
-        while(i<=str.length()-1){
-            if(str.charAt(i)!=' '){
-                word+=str.charAt(i);
-            }
-            else{
-                if(ans.isEmpty()){
-                    ans=word;
+        int i = 0;
+        String word = "";
+        String ans = "";
+        while (i <= str.length() - 1) {
+            if (str.charAt(i) != ' ') {
+                word += str.charAt(i);
+            } else {
+                if (ans.isEmpty()) {
+                    ans = word;
+                } else {
+                    ans = word + " " + ans;
                 }
-                else{
-                    ans=word+" "+ans;
-                }
-                word="";
+                word = "";
             }
             i++;
         }
         if (!word.isEmpty()) {
-            if(ans.isEmpty()){
-                ans=word;
-            }
-            else{
-                ans=word+" "+ans;
+            if (ans.isEmpty()) {
+                ans = word;
+            } else {
+                ans = word + " " + ans;
             }
         }
         return ans;
@@ -96,21 +93,20 @@ public class Strings {
     //roman to integer
     //https://leetcode.com/problems/roman-to-integer/
     public int romanToInt(String str) {
-        Map<Character, Integer> map=new HashMap<>();
-        map.put('I',1);
-        map.put('V',5);
-        map.put('X',10);
-        map.put('L',50);
-        map.put('C',100);
-        map.put('D',500);
-        map.put('M',1000);
-        int result=map.get(str.charAt(str.length()-1));
-        for(int i=str.length()-2;i>=0;i--){
-            if(map.get(str.charAt(i))<map.get(str.charAt(i+1))){
-                result-=map.get(str.charAt(i));
-            }
-            else{
-                result+=map.get(str.charAt(i));
+        Map<Character, Integer> map = new HashMap<>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+        int result = map.get(str.charAt(str.length() - 1));
+        for (int i = str.length() - 2; i >= 0; i--) {
+            if (map.get(str.charAt(i)) < map.get(str.charAt(i + 1))) {
+                result -= map.get(str.charAt(i));
+            } else {
+                result += map.get(str.charAt(i));
             }
         }
         return result;
@@ -118,13 +114,13 @@ public class Strings {
 
     //integer to roman
     public String intToRoman(int num) {
-        int[] arr={1000,900,500,400,100,90,50,40,10,9,5,4,1};
-        String[] str={"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
-        String ans="";
-        for(int i=0;i<str.length;i++){
-            while(num>=arr[i]){
-                ans+=str[i];
-                num-=arr[i];
+        int[] arr = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] str = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        String ans = "";
+        for (int i = 0; i < str.length; i++) {
+            while (num >= arr[i]) {
+                ans += str[i];
+                num -= arr[i];
             }
         }
         return ans;
@@ -139,78 +135,136 @@ public class Strings {
     // loop starting from the second string, checking if the ith character of the jth string matches the first string.
     // If it does, we add that character to the ans string otherwise we return the ans
     public String longestCommonPrefix(String[] str) {
-        int minLen=findMinLen(str);
-        String ans="";
-        for(int i=0;i<minLen;i++){
-            char ch=str[0].charAt(i);
-            for(int j=1;j<str.length;j++){
-                if(str[j].charAt(i)!=ch){
+        int minLen = findMinLen(str);
+        String ans = "";
+        for (int i = 0; i < minLen; i++) {
+            char ch = str[0].charAt(i);
+            for (int j = 1; j < str.length; j++) {
+                if (str[j].charAt(i) != ch) {
                     return ans;
                 }
             }
-            ans+=ch;
+            ans += ch;
         }
         return ans;
     }
-    public int findMinLen(String[] str)
-    {
-        int minLen=str[0].length();
-        for(int i=1;i< str.length;i++){
-            if(str[i].length()<minLen){
-                minLen= str[i].length();
+
+    public int findMinLen(String[] str) {
+        int minLen = str[0].length();
+        for (int i = 1; i < str.length; i++) {
+            if (str[i].length() < minLen) {
+                minLen = str[i].length();
             }
         }
         return minLen;
     }
 
     //longest palindromic substring
-    //not done
-    //https://leetcode.com/problems/longest-palindromic-substring/
-    public String longestPalindrome(String s) {
-        int n=s.length();
-        int[][] dp=new int[n+1][n+1];
-        for(int[] arr: dp){ //initialisation
-            Arrays.fill(arr,-1);
+    //https://leetcode.com/problems/longest-palindromic-substring/submissions/
+
+    //dp approach (O(N2))
+    //here we combine three approaches - lps, lcsubstring, & print lcs ie we reverse the given string, then we find the
+    // longest commomn substring between them and then print it. Here a problem might occur that there might be a case where
+    // the common substring between a string and its reverse is not palindromic. Thus we have to additionally check if the
+    // resultant string is palindromic and largest. Moreover, some cases are not passing so there might be a bug in the code
+    // which I'm currently not able to find. The expand around center approach works better for this problem as it does not take any space
+
+    public String longestPalindrom(String a) {
+        int n = a.length();
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                }
+            }
         }
-        StringBuilder sb=new StringBuilder(s);
-        String b=sb.reverse().toString();
-        StringBuilder ans=new StringBuilder();
-        longestPalinsubstr(s,dp);
-        int i=n;
-        int j=n;
-        while(i>0&&j>0){
-            if(s.charAt(i-1)==b.charAt(j-1)){
-                ans.append(s.charAt(i));
+        StringBuilder sb = new StringBuilder(a);
+        String b = sb.reverse().toString();
+        longestPalinSub(a, b, dp, n);
+        StringBuilder ans = new StringBuilder();
+        int i = n;
+        int j = n;
+        while (i > 0 && j > 0) {
+            if (a.charAt(i - 1) == b.charAt(i - 1)) {
+                ans.append(a.charAt(i - 1));
                 i--;
                 j--;
-            }
-            else if(dp[i-1][j]>dp[i][j-1]){
+            } else if (dp[i - 1][j] > dp[i][j - 1]) {
                 i--;
-            }
-            else{
+            } else {
                 j--;
             }
         }
         return ans.reverse().toString();
     }
-    public void longestPalinsubstr(String s,int[][] dp) {
-        StringBuilder sb=new StringBuilder(s);
-        String b=sb.reverse().toString();
-        int n=s.length();
-        int length=0;
-        for(int i=1;i<n+1;i++){
-            for(int j=1;j<n+1;j++){
-                if(s.charAt(i-1)==b.charAt(j-1)){
-                    dp[i][j]=1+dp[i-1][j-1];
-                    if(dp[i][j]>length){
-                        length=dp[i][j];
-                    }
-                }
-                else{
-                    dp[i][j]=0;
+
+    public void longestPalinSub(String a, String b, int[][] dp, int n) {
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                if (a.charAt(i - 1) == b.charAt(i - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 0;
                 }
             }
         }
+    }
+
+    //better approach
+    //O(N2) - using expand around center approach for odd and even lengths of palindromes. We know that a palindrome can
+    // have an even length or an odd length. Thus, for both cases we take two pointers left and right. In the odd case,
+    // we know that there's always going to be a middle element in the palindrome, and thus we put left at i-1 and right at i+1
+    // for each element and check if they are equal. If they are, we keep iterating left-- and right++ till they are not equal,
+    // or they have gone out of bounds. After their iteration is completed we calculate the length of the current palindrome using r-l-1
+    // and set two pointers start and end at the end of the palindrome if the obtained length is > max len ie they store the start and
+    // end positions of the longest palindromic substring. We do the same for even palindromes but since they don't have any middle element,
+    // we directly start comparing l and r by  placing them at i and i+1. Rest procedure is same and in the end we just return a substring from start till end
+    public String longestPalindrome(String s) {
+        if (s.length() <= 1) {
+            return s;
+        }
+        int maxLen = 1;
+        int n = s.length();
+        int start = 0;
+        int end = 0;
+        for (int i = 0; i < n - 1; i++) {
+            int l = i;
+            int r = i;
+            while (l >= 0 && r < n) {
+                if (s.charAt(l) == s.charAt(r)) {
+                    l--;
+                    r++;
+                } else {
+                    break;
+                }
+            }
+            int len = r - l - 1;
+            if (len > maxLen) {
+                maxLen = len;
+                start = l + 1; //start of palindrome
+                end = r - 1; //end of palindrome
+            }
+        }
+        for (int i = 0; i < n - 1; i++) {
+            int l = i;
+            int r = i + 1;
+            while (l >= 0 && r < n) {
+                if (s.charAt(l) == s.charAt(r)) {
+                    l--;
+                    r++;
+                } else {
+                    break;
+                }
+            }
+            int len = r - l - 1;
+            if (len > maxLen) {
+                maxLen = len;
+                start = l + 1;
+                end = r - 1;
+            }
+        }
+        return s.substring(start, end + 1);
     }
 
     //rabin karp algo
@@ -257,9 +311,9 @@ public class Strings {
             return ans;
         }
     }
-        //implement atoi
-        //https://leetcode.com/problems/string-to-integer-atoi/
-        //string.trim() removes any leading or trailing white spaces
+    //implement atoi
+    //https://leetcode.com/problems/string-to-integer-atoi/
+    //string.trim() removes any leading or trailing white spaces
 
     public int myAtoi(String s) {
         long ans = 0;
@@ -289,6 +343,58 @@ public class Strings {
             return ans < Integer.MIN_VALUE ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
         return (int) ans;
+    }
+
+    //find first occurrence of a string in another string
+    //https://leetcode.com/problems/implement-strstr/
+
+    //(O(N*M)time) - using 2 nested for loops to check each substring of length m in the haystack of length n
+    public int strStr(String haystack, String needle) {
+        int j=0;
+        int n=haystack.length();
+        int m=needle.length();
+        if(needle.equals(haystack)){
+            return 0;
+        }
+        if(m>n){
+            return -1;
+        }
+        for(int i=0;i<=n-m;i++){
+            for(j=0;j<m;j++){
+                if(haystack.charAt(i+j)!=needle.charAt(j)){
+                    break;
+                }
+            }
+            if(j==m){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //valid anagram
+    //https://leetcode.com/problems/valid-anagram/
+    //O(N) - using hashmap
+    public boolean isAnagram(String s, String t) {
+        char[] ch=s.toCharArray();
+        Map<Character,Integer> map=new HashMap<>();
+        if(s.length()!=t.length()){
+            return false;
+        }
+        for(char c:ch){
+            map.put(c,map.getOrDefault(c,0)+1);
+        }
+        char[] th=t.toCharArray();
+        for(char c:th) {
+            if (map.containsKey(c)) {
+                if (map.get(c) == 1) {
+                    map.remove(c);
+                } else {
+                    map.put(c, map.get(c) - 1);
+                }
+            }
+        }
+        return map.isEmpty();
     }
 
 }
