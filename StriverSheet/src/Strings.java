@@ -399,6 +399,14 @@ public class Strings {
 
     //count and say
     //https://leetcode.com/problems/count-and-say/
+    //O(N*length of nth string)
+    //we take a counter to count the number of times a certain digit has occurred till we hit a different digit.
+    // As soon as we do, we add the count of the previous digit to an empty string and then add that digit to that string.
+    // Then we copy that string to our ans string. We do this operation n times to obtain the nth string and in each iteration
+    // we initialize our ans string to ans+"&" where & acts as a delimiter so that when we've completely traversed the string
+    // we are sure to include the last character as well (as when we reach the end of the string, we compare the delimiter &
+    // with the last character of the string ie the one at str[i-1] and since they are not the same we add str[i-1]
+    // to the ans and the iteration is over)
     public String countAndSay(int n) {
         if(n==1){
             return "1";
@@ -411,7 +419,7 @@ public class Strings {
             s=s+"&"; //here '&' acts as a delimiter so that the last element is included when we've completely traversed the string
             for(int j=1;j<s.length();j++){
                 if(s.charAt(j)!=s.charAt(j-1)){
-                    t=t+Integer.toString(count);
+                    t=t+count;
                     t=t+s.charAt(j-1);
                     count=1;
                 }
@@ -426,6 +434,14 @@ public class Strings {
 
     //compare version numbers
     //https://leetcode.com/problems/compare-version-numbers/
+
+    //O(N2) - We take two pointers i and j at the start of the first and second versions. Then we move them both until
+    // we encounter a '.' period in each version. While moving the pointers, we simultaneously calculate the whole number
+    // that we've encountered till that period using the formula: num=num*10+version[i]. Then we compare both the numbers
+    // obtained from versions 1 and 2, returning 1 if num1>num2, -1 if num1<num2, moving both the pointers otherwise
+    // (to make them go past the period '.'). Also we iterate till we have traversed both the strings.
+    // In case both versions have been completely traversed then that would imply that both versions are equal,
+    // and thus we return 0.
     public int compareVersion(String version1, String version2) {
         int n=version1.length();
         int m=version2.length();
@@ -435,8 +451,78 @@ public class Strings {
             int num1=0;
             int num2=0;
             while(i<n&&version1.charAt(i)!='.'){
-                num1=num1*10+version1.charAt()
+                num1=num1*10+version1.charAt(i)-'0';
+                i++;
+            }
+            while(j<m&&version2.charAt(j)!='.'){
+                num2=num2*10+version2.charAt(j)-'0';
+                j++;
+            }
+            if(num1<num2){
+                return -1;
+            }
+            else if(num1>num2) {
+                return 1;
+            }
+            i++;
+            j++;
+        }
+        return 0; //completely traversed both versions and thus they are same
+    }
+
+    //min number of insertions to make string palindrome
+    //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
+    public int solve(String a) {
+        int n=a.length();
+        StringBuilder sb=new StringBuilder(a);
+        String b=sb.reverse().toString();
+        int[][] dp=new int[n+1][n+1];
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
             }
         }
+        for(int i=1;i<n+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return n-dp[n][n];
+    }
+
+    public static int minChar(String str) {
+        int n=str.length();
+        int[] lps=findLps(str);
+        return n-lps[n-1];
+    }
+    public static int[] findLps(String a){
+        int n=a.length();
+        int len=0;
+        int[] lps=new int[n];
+        int i=1;
+        while(i<n){
+            if(a.charAt(i)==a.charAt(len)){
+                len++;
+                lps[i]=len;
+                i++;
+            }
+            else{
+                if(len!=0){
+                    len=lps[len-1];
+                }
+                else{
+                    lps[i]=0;
+                    i++;
+                }
+            }
+        }
+        return lps;
     }
 }
