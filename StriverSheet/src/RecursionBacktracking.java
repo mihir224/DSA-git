@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class RecursionBacktracking {
     //subset sum
@@ -287,6 +285,7 @@ public class RecursionBacktracking {
 
     //M-Coloring problem
     //https://practice.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1#
+    //tc- O(N^M - N recursive calls for N nodes, applying M colors to all)+O(N2)
     public boolean graphColoring(boolean graph[][], int m, int n) {
         //forming the adj list;
         List<List<Integer>> adj=new ArrayList<>();
@@ -294,8 +293,8 @@ public class RecursionBacktracking {
             adj.add(new ArrayList<>());
         }
         for(int i=0;i<n;i++){
-            for(int j=0;j<graph[i].length;j++){
-                if(graph[i][j]) {
+            for(int j=0;j<n;j++){
+                if(graph[i][j]==true) {
                     adj.get(i).add(j);
                     adj.get(j).add(i);
                 }
@@ -311,15 +310,13 @@ public class RecursionBacktracking {
         for(int i=1;i<=m;i++){
             if(isPossibleM(i,currentNode,color,adj)){
                 color[currentNode]=i;
-                if(solveM(currentNode+1,color,adj,m,n)){
+                if(solveM(currentNode+1,color,adj,n,m)){
                     return true;
                 }
-            }
-            else{
-                color[currentNode]=0; //not possible to color current node
+                color[currentNode]=0; //not possible to color node if we color current node with this color
             }
         }
-        return false; //not possible to color the current node with alt color
+        return false; //not possible to color the graph
     }
     public boolean isPossibleM(int clr, int currentNode,int[] color,List<List<Integer>> adj){
         for(int i:adj.get(currentNode)){
@@ -329,4 +326,79 @@ public class RecursionBacktracking {
         }
         return true;
     }
+
+    //rat in a maze
+    //https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/1
+    //tc - O(4^m*n - since for each cell we try going in 4 directions)
+    public static ArrayList<String> findPath(int[][] m, int n) {
+        ArrayList<String> ans=new ArrayList<>();
+        boolean[][] vis=new boolean[n][n];
+        helperRat(0,0,"",vis,ans,m,n);
+        return ans;
+    }
+    public static void helperRat(int row,int col,String s,boolean[][] vis, ArrayList<String> ans,int[][] m, int n){
+        if(row==n-1&&col==n-1){ //reached end
+            ans.add(s);
+            return;
+        }
+        //moving down
+        if(row+1<n&&!vis[row+1][col]&&m[row+1][col]==1){
+            vis[row][col]=true;
+            helperRat(row+1,col,s,vis,ans,m,n);
+            vis[row][col]=false;
+        }
+        //moving left
+        if(col-1>=0&&!vis[row][col-1]&&m[row][col-1]==1){
+            vis[row][col]=true;
+            helperRat(row,col-1,s,vis,ans,m,n);
+            vis[row][col]=false;
+        }
+        //moving right
+        if(col+1<n&&!vis[row][col+1]&&m[row][col+1]==1){
+            vis[row][col]=true;
+            helperRat(row,col+1,s,vis,ans,m,n);
+            vis[row][col]=false;
+        }
+        //moving up
+        if(row-1<n&&!vis[row-1][col]&&m[row-1][col]==1){
+            vis[row][col]=true;
+            helperRat(row-1,col,s,vis,ans,m,n);
+            vis[row][col]=false;
+        }
+    }
+
+    //word break
+    //https://www.codingninjas.com/codestudio/problems/983635?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website&leftPanelTab=0
+    //O(M^N where M is the size of the dictionary ie for each substring of s, we have M different words of the dictionary that we can form );
+    public static ArrayList<String> wordBreak(String s, ArrayList<String> dictionary) {
+        ArrayList<String> ans = new ArrayList<>();
+        Set<String> set = new HashSet<>(); //to avoid duplicates
+        helperW(0, s, dictionary, set);
+        ans.addAll(set);
+        return ans;
+    }
+    public static void helperW(int index, String s, ArrayList<String> dictionary, Set<String> ans) {
+        if (index > s.length()) {
+            ans.add(s);
+            return;
+        }
+        int temp = s.length();
+        for (int i = index + 1; i <= temp; i++) {
+            String str = s.substring(index, i);
+            if (dictionary.contains(str)) {
+                if (i != temp) {
+                    s = s.substring(0, i) + " " + s.substring(i);
+                }
+                helperW(i + 1, s, dictionary, ans);
+                if (i != temp) {
+                    s = s.substring(0, i) + s.substring(i + 1); //removing the space which was added to try out other combinations
+                }
+            }
+        }
+    }
+
+
+
 }
+
+
