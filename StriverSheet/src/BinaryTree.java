@@ -276,7 +276,126 @@ class BinaryTree {
         return ans;
     }
 
+    //vertical order traversal
+    //https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/
+    //O(N for traversal*logN for PQ)
+    class Triad{
+        TreeNode first;
+        int second;
+        int third;
+        public Triad(TreeNode first,int second,int third){
+            this.first=first;
+            this.second=second; //col ie vertical
+            this.third=third; //row ie level
+        }
+    }
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<List<Integer>> ans=new ArrayList<>();
+        TreeMap<Integer,TreeMap<Integer,PriorityQueue<Integer>>> map=new TreeMap<>();  //vertical,map<level,pq>
+        // we use tree map in order to sort the items along with their keys. First item is the vertical ie column ie -2,-1,0,1,2 etc and the second item is another treemap in which the first item stores the level and second item is a pq to store all those nodes which occur at the same row and col
+        Queue<Triad> q=new LinkedList();
+        q.offer(new Triad(root,0,0)); //node,vertical,level
+        while(!q.isEmpty()){
+            Triad t=q.poll();
+            TreeNode node=t.first;
+            int vertical=t.second;
+            int level=t.third;
+            if(node.left!=null){
+                q.offer(new Triad(node.left,vertical-1,level+1));
+            }
+            if(t.first.right!=null){
+                q.offer(new Triad(node.right,vertical+1,level+1));
+            }
+            if(!map.containsKey(vertical)){
+                map.put(vertical,new TreeMap<>());
+            }
+            if(!map.get(vertical).containsKey(level)){
+                map.get(vertical).put(level,new PriorityQueue<>());
+            }
+            map.get(vertical).get(level).add(node.val);
+        }
+        for(TreeMap<Integer,PriorityQueue<Integer>> mp:map.values()){ //doubt
+            ans.add(new ArrayList<>());
+            for(PriorityQueue<Integer> pq:mp.values()){
+                while(!pq.isEmpty()){
+                    ans.get(ans.size()-1).add(pq.poll()); //ans.size()-1 because in each iteration we are adding a new list and thus to access that list we do ans.size()-1 since it is the last list that was added
+                }
+            }
+        }
+        return ans;
+     }
+
+
+
+    //root to node path
+    //https://www.interviewbit.com/problems/path-to-given-node/
+    //O(N) space and time as we're traversing in N nodes (case when distance between root and node is N)
+
+    public int[] solve(TreeNode A, int B) {
+        ArrayList<Integer> list=new ArrayList<>();
+        helper2(A,B,list);
+        int[] ans=new int[list.size()];
+        for(int i=0;i<list.size();i++){
+            ans[i]=list.get(i);
+        }
+        return ans;
+    }
+    public boolean helper2(TreeNode node,int target,ArrayList<Integer> ans){
+        if(node==null){
+            return false;
+        }
+        ans.add(node.val);
+        if(node.val==target) {
+            return true;
+        }
+        if(helper2(node.left,target,ans)||helper2(node.right,target,ans)){
+            return true;
+        }
+        ans.remove(ans.size()-1); //to try out other possibilities
+        return false;
+    }
+
+
+    //max width of the binary tree
+    //https://leetcode.com/problems/maximum-width-of-binary-tree/
+    //O(N)time, since level order traversal O(N)space, since we use a queue DS
+    public int widthOfBinaryTree(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        Queue<Pair> q=new LinkedList<>();
+        int ans=0;
+        q.offer(new Pair(root,0));
+        while(!q.isEmpty()){
+            int n=q.size();
+            int min=q.peek().second; //min index at each level (can be different in cases where the first node is null)
+            int first=0;
+            int last=0;
+            for(int i=0;i<n;i++){
+                Pair p=q.poll();
+                int currentIndex=p.second-min;
+                TreeNode node=p.first;
+                if(i==0){
+                    first=currentIndex;
+                }
+                if(i==n-1){
+                    last=currentIndex;
+                }
+                if(node.left!=null){
+                    q.offer(new Pair(node.left,2*currentIndex+1));
+                }
+                if(node.right!=null){
+                    q.offer(new Pair(node.right,2*currentIndex+2));
+                }
+            }
+            ans=Math.max(ans,last-first+1);
+        }
+        return ans;
+    }
+
     //height of binary tree
+    //https://leetcode.com/problems/maximum-depth-of-binary-tree/
+    //O(N) time, O(N) auxiliary stack space
     public int maxDepth(TreeNode root) {
         if(root==null){
             return 0;
