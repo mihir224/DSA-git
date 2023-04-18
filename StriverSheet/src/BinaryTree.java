@@ -279,6 +279,25 @@ class BinaryTree {
     //vertical order traversal
     //https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/
     //O(N for traversal*logN for PQ)
+
+    //We traverse the tree (using any traversal - I've used level order). In the queue for each node we store a traid of
+    //  node itself, its vertical number ie -2,-1,0,1,2 etc, and its level. To store the vertical order traversal, we use
+    //  a treemap with an Integer key and another treemap as its value. The key of this map is the vertical number and the
+    //  inner tree map holds two things - the level as key and a Priority Queue as value. This priority queue will make
+    //  sure that the node at the same vertical and same level are aligned in a sorted manner in the vertical order traversal.
+    //  For each vertical we have different levels(as keys of the inner tree map) and for each level we mark different
+    //  nodes in the PQ. // we use tree map in order to sort the items along with their keys. First item is the vertical ie column ie
+    // -2,-1,0,1,2 etc and the second item is another treemap in which the first item stores the level and second
+    // item is a pq to store all those nodes which occur at the same row and col. Intially we insert the root with
+    // vertical and level 0 into the queue. Then we iterate over the queue in a level order fashion. In each iteration,
+    // we check if the map contains the vertical of the respective node that we just pulled out from the queue and if it doesn't,
+    // add it to the map with a new TreeMap as its value. Then we check if the level of the respective node at its vertical
+    // exists inside the treemap of that vertical or not. If it doesn't we add it to the vertical's treemap with a new
+    // Priority Queue as its value. Then we simply go left (add to q node.left, vertical-1, level+1) and then right
+    // (add to q node.right, vertical+1, level+1) if possible. This is repeated till the q becomes empty ie we've traversed all nodes.
+    // Then, we simply iterate over the different tree maps of all the verticals inside the main tree map. In each iteration
+    // we add a new list to the list of lists storing the vertical order traversal for each vertical. Inside each inner treemap,
+    // we iterate over the priority queue on each level and add empty it into the last list that was added in the list of lists.
     class Triad{
         TreeNode first;
         int second;
@@ -292,7 +311,7 @@ class BinaryTree {
     public List<List<Integer>> verticalTraversal(TreeNode root) {
         List<List<Integer>> ans=new ArrayList<>();
         TreeMap<Integer,TreeMap<Integer,PriorityQueue<Integer>>> map=new TreeMap<>();  //vertical,map<level,pq>
-        // we use tree map in order to sort the items along with their keys. First item is the vertical ie column ie -2,-1,0,1,2 etc and the second item is another treemap in which the first item stores the level and second item is a pq to store all those nodes which occur at the same row and col
+
         Queue<Triad> q=new LinkedList();
         q.offer(new Triad(root,0,0)); //node,vertical,level
         while(!q.isEmpty()){
@@ -300,21 +319,21 @@ class BinaryTree {
             TreeNode node=t.first;
             int vertical=t.second;
             int level=t.third;
-            if(node.left!=null){
-                q.offer(new Triad(node.left,vertical-1,level+1));
-            }
-            if(t.first.right!=null){
-                q.offer(new Triad(node.right,vertical+1,level+1));
-            }
             if(!map.containsKey(vertical)){
                 map.put(vertical,new TreeMap<>());
             }
             if(!map.get(vertical).containsKey(level)){
                 map.get(vertical).put(level,new PriorityQueue<>());
             }
+            if(node.left!=null){
+                q.offer(new Triad(node.left,vertical-1,level+1));
+            }
+            if(t.first.right!=null){
+                q.offer(new Triad(node.right,vertical+1,level+1));
+            }
             map.get(vertical).get(level).add(node.val);
         }
-        for(TreeMap<Integer,PriorityQueue<Integer>> mp:map.values()){ //doubt
+        for(TreeMap<Integer,PriorityQueue<Integer>> mp:map.values()){
             ans.add(new ArrayList<>());
             for(PriorityQueue<Integer> pq:mp.values()){
                 while(!pq.isEmpty()){
@@ -324,8 +343,6 @@ class BinaryTree {
         }
         return ans;
      }
-
-
 
     //root to node path
     //https://www.interviewbit.com/problems/path-to-given-node/
@@ -403,5 +420,187 @@ class BinaryTree {
         return 1+Math.max(maxDepth(root.left),maxDepth(root.right));
     }
 
+    //level order traversal
+    //https://leetcode.com/problems/binary-tree-level-order-traversal/
+    //O(N)
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ans=new ArrayList<>();
+        Queue<TreeNode> q=new LinkedList<>();
+        q.add(root);
+        if(root==null){
+            return ans;
+        }
+        while(!q.isEmpty()){
+            int n=q.size();
+            List<Integer> list=new ArrayList<>();
+            for(int i=0;i<n;i++){
+                TreeNode node=q.poll();
+                list.add(node.val);
+                if(node.left!=null){
+                    q.add(node.left);
+                }
+                if(node.right!=null){
+                    q.add(node.right);
+                }
+            }
+            ans.add(list);
+        }
+        return ans;
+    }
 
+    //diameter of a binary tree
+    //https://leetcode.com/problems/diameter-of-binary-tree/
+    //O(N)
+    public int diameterOfBinaryTree(TreeNode root) {
+        int[] diameter=new int[1]; //we use an array coz java does not support pass by reference and simply passing the
+        // variable diameter would directly copy its value and not change it in further iterations
+        findHeight(root,diameter);
+        return diameter[0];
+    }
+    public int findHeight(TreeNode node, int[] max){
+        if(root==null){
+            return 0;
+        }
+        int lh=findHeight(node.left,max);
+        int rh=findHeight(node.right,max);
+        max[0]=Math.max(max[0],lh+rh);
+        return 1+Math.max(lh,rh);
+    }
+
+    //balanced binary tree
+    //https://leetcode.com/problems/balanced-binary-tree/
+    //O(N)
+    public boolean isBalanced(TreeNode root) {
+        return height(root)==-1?false:true;
+    }
+    public int height(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        int lh=height(root.left);
+        int rh=height(root.right);
+        if(lh==-1||rh==-1||Math.abs(lh-rh)>1){
+            return -1;
+        }
+        return 1+Math.max(lh,rh);
+    }
+
+    //lowest common ancestor
+    //https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree
+    //Brute takes O(2N)
+    //O(N) time and space
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null||root==p||root==q){
+            return root;
+        }
+        TreeNode left=lowestCommonAncestor(root.left,p,q);
+        TreeNode right=lowestCommonAncestor(root.right,p,q);
+        if(left==null){
+            return right;
+        }
+        if(right==null){
+            return left;
+        }
+        return root; //both left and right not null meaning that we reached both p and q from current root
+    }
+
+    //same tree
+    //https://leetcode.com/problems/same-tree/
+    //O(N+M) - traversing n nodes of and m nodes of q
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if(p==null||q==null){
+            return p==q;
+        }
+        return p.val==q.val&&isSameTree(p.left,q.left)&&isSameTree(p.right,q.right);
+    }
+
+    //zig zag traversal
+    //https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> ans=new ArrayList<>();
+        List<Integer> list=new ArrayList<>();
+        if(root==null){
+            return ans;
+        }
+        boolean flag=false;
+        Queue<TreeNode> q=new LinkedList<>();
+        q.offer(root);
+        while(!q.isEmpty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                TreeNode node=q.poll();
+                if(node.left!=null){
+                    q.add(node.left);
+                }
+                if(node.right!=null){
+                    q.offer(node.right);
+                }
+                if(!flag){
+                    list.add(node.val);
+                }
+                else{
+                    list.add(0,node.val);
+                }
+                flag=!flag;
+            }
+            ans.add(list);
+        }
+        return ans;
+    }
+
+    //boundary traversal
+    //
+    ArrayList <Integer> boundary(TreeNode root)
+    {
+        ArrayList<Integer> ans=new ArrayList<>();
+        if(!isLeaf(root)){
+            ans.add(root.val);
+        }
+        addLeftBoundary(root,ans);
+        addLeaves(root,ans);
+        addRightBoundary(root,ans);
+        return ans;
+    }
+    public void addLeftBoundary(TreeNode root, ArrayList<Integer> ans){
+        TreeNode temp=root.left;
+        while(temp!=null){
+            if(!isLeaf(temp)){
+                ans.add(temp.val);
+            }
+            if(temp.left!=null){
+                temp=temp.left;
+            }
+            else{
+                temp=temp.right; //moving right when we can no longer move left
+            }
+        }
+    }
+    public void addLeaves(TreeNode root, ArrayList<Integer> ans){
+        if(isLeaf(root)){
+            ans.add(root.val);
+        }
+        if(root.left!=null){
+            addLeaves(root.left,ans);
+        }
+        if(root.right!=null){
+            addLeaves(root.right,ans);
+        }
+    }
+    public void addRightBoundary(TreeNode root,ArrayList<Integer> ans){
+        TreeNode temp=root.right;
+        while(temp!=null){
+            if(!isLeaf(temp)){
+                ans.add(temp.val);
+            }
+            if(temp.right!=null){
+                temp=temp.right;
+            }
+            else{
+                temp=temp.left; //moving left when we can no longer go right
+            }
+        }
+    }
+    public boolean isLeaf(TreeNode root){
+        return root.left==null&&root.right==null;
+    }
 }
