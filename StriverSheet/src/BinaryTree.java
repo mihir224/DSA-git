@@ -549,7 +549,8 @@ class BinaryTree {
     }
 
     //boundary traversal
-    //
+    //https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1
+    //O(3N - left boundary, leaves, right boundary)
     ArrayList <Integer> boundary(TreeNode root)
     {
         ArrayList<Integer> ans=new ArrayList<>();
@@ -588,9 +589,10 @@ class BinaryTree {
     }
     public void addRightBoundary(TreeNode root,ArrayList<Integer> ans){
         TreeNode temp=root.right;
+        ArrayList<Integer> t=new ArrayList<>();
         while(temp!=null){
             if(!isLeaf(temp)){
-                ans.add(temp.val);
+                t.add(temp.val);
             }
             if(temp.right!=null){
                 temp=temp.right;
@@ -598,6 +600,9 @@ class BinaryTree {
             else{
                 temp=temp.left; //moving left when we can no longer go right
             }
+        }
+        for(int i=t.size()-1;i>=0;i--){
+            ans.add(t.get(i));
         }
     }
     public boolean isLeaf(TreeNode root){
