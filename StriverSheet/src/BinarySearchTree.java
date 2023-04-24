@@ -7,6 +7,9 @@ class BinarySearchTree{
         TreeNode left;
         TreeNode right;
         int val;
+        public TreeNode(){
+
+        }
         public TreeNode(int val){
             this.val=val;
             this.left=this.right=null;
@@ -155,6 +158,61 @@ class BinarySearchTree{
             return false;
         }
         return isValid(root.left,lowerBound,root.val)&&isValid(root.right,root.val,upperBound);
+    }
+
+    //lca of a BST
+    //https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/
+
+    //O(Height of tree)tc, O(N)sc-stack space for recursion
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null){
+            return null;
+        }
+        if(root.val>p.val&&root.val>q.val){
+            return lowestCommonAncestor(root.left,p,q);
+        }
+        if(root.val<p.val&&root.val<q.val){
+            return lowestCommonAncestor(root.right,p,q);
+        }
+        return root; //point of intersection
+    }
+
+    //inorder successor/predecessor of BST
+    //https://practice.geeksforgeeks.org/problems/predecessor-and-successor/1
+
+    //brute - (O(N) for storing inorder + O(Logbase2N) for applying binary search to find predecessor and successor
+    //better - (O(N) - performing inorder traversal and returning the first val greater than given node (morris traversal) ie space is O(1))
+    //optimal - (O(height of tree)time, O(1)space)
+    public void findPreSuc(TreeNode root, TreeNode p, TreeNode s, int key)
+    {
+        p=findP(root,key);
+        s=findS(root,key);
+    }
+    public TreeNode findS(TreeNode root,int key){
+        TreeNode successor=null;
+        while(root!=null){
+            if(root.val<key){
+                root=root.right;
+            }
+            else{
+                successor=root;
+                root=root.left;
+            }
+        }
+        return successor;
+    }
+    public TreeNode findP(TreeNode root,int key){
+        TreeNode predecessor=null;
+        while(root!=null){
+            if(root.val>key){
+                root=root.left;
+            }
+            else{
+                predecessor=root;
+                root=root.right;
+            }
+        }
+        return predecessor;
     }
 
 
