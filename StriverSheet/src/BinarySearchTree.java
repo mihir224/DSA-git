@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 class BinarySearchTree{
     TreeNode root;
     public BinarySearchTree(){
@@ -215,6 +217,149 @@ class BinarySearchTree{
         return predecessor;
     }
 
+    //BST iterator
+    //https://leetcode.com/problems/binary-search-tree-iterator/
+
+    //brute - we store the inorder traversal of the given BST and maintain a ptr over it which returns the current node
+    // and moves to the next node whenever next() is called. When that ptr points to null we hasNext() returns false
+    //O(1) time and O(N) space. But there might be a possibility that we aren't allowed to store the inorder.
+
+    //optimal - O(1) time, O(ht of tree) space
+
+    class BSTIterator {
+        Stack<TreeNode> st;
+        public BSTIterator(TreeNode root) {
+            this.st=new Stack<>();
+            pushLeft(root);
+        }
+
+        public int next() {
+            TreeNode node=st.pop();
+            pushLeft(node.right);
+            return node.val;
+        }
+
+        public boolean hasNext() {
+            return !st.isEmpty();
+        }
+        public void pushLeft(TreeNode node){
+            while(node!=null){
+                st.push(node);
+                node=node.left;
+            }
+        }
+    }
+
+    //Two sum BST
+    //https://leetcode.com/problems/two-sum-iv-input-is-a-bst/
+
+    //brute - store inorder to find the elements of bst in a sorted fashion and then apply simple two pointer approach as
+    // we did in the original two sum problem
+    //O(N)time and space - to traverse the inorder and to store the inorder
+
+    //optimal - use BSTIterator() to obtain the next() function along with a new function prev, which returns the first
+    // element of the reverse inorder ie last element of inorder. We can use these functions to obtain next and prev pointers
+    // which we can use similarly as we did in two pointer
+    //O(N) time and O(ht of tree) space
+    public boolean findTarget(TreeNode root, int k) {
+        BSTIterator2 prev=new BSTIterator2(root,true);
+        BSTIterator2 next=new BSTIterator2(root,false);
+        int i=next.next();
+        int j=prev.next();
+        while(i<j){
+            if(i+j==k){
+                return true;
+            }
+            if(i+j<k){
+                i= next.next();
+            }
+            else{
+                j= prev.next();
+            }
+        }
+        return false;
+    }
+    class BSTIterator2 {
+        Stack<TreeNode> st;
+        boolean isReverse;
+        public BSTIterator2(TreeNode root,boolean isReverse) {
+            this.st=new Stack<>();
+            this.isReverse=isReverse;
+            push(root);
+        }
+
+        public int next() {
+            TreeNode node=st.pop();
+            if(isReverse){
+                push(node.left);
+            }
+            else{
+                push(node.right);
+            }
+            return node.val;
+        }
+
+        public boolean hasNext() {
+            return !st.isEmpty();
+        }
+        public void push(TreeNode node){
+            while(node!=null){
+                st.push(node);
+                if(isReverse){
+                    node=node.right;
+                }
+                else {
+                    node = node.left;
+                }
+            }
+        }
+    }
+
+    //size of largest bst in a binary tree
+    //https://www.codingninjas.com/codestudio/problems/893103?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website&leftPanelTab=0
+
+    //Brute force - We use the valid bst function() to check whether a node is a valid bst or not. If it is, we first
+    // move left, and again check and if the current node is a valid bst, we traverse all the nodes of the tree with
+    // current node taken as its root and find their sum. Then we move right of the previous current node and do the same
+    // thing. We store the maximum sum and then return it at the end.
+    //O(N*N)tc - validate bst takes O(N) time and finding the sum of all nodes of the tree where the nth node is taken as root
+
+    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
+    //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
+    // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
+    // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
+    // satisfies the above condition,we save that node's largest value on the left as the min of (smallest val on left, node's val)
+    // and its smallest value on right as max of (largest val on right, node's val). If it isn't a bst, we keep track of the max sum
+    // val up till now and set that node's greatest on left as int max and that node's smallest on right as int min so that there's
+    // no comparison further. If a root's left and right are null, we set its greatest and smallest to node.val
+    // DRY RUN FOR BETTER UNDERSTANDING.- really imp
+
+    public class Solution {
+         class Node{
+            int size;
+            int largest;
+            int smallest;
+            public Node(int size,int largest, int smallest){
+                this.size=size;
+                this.largest=largest;
+                this.smallest=smallest;
+            }
+        }
+        public  Node helpThis(TreeNode root){
+            if(root==null){
+                return new Node(0,Integer.MIN_VALUE,Integer.MAX_VALUE);
+            }
+            Node left=helpThis(root.left);
+            Node right=helpThis(root.right);
+            if(root.val>left.largest&&root.val<right.smallest){ //valid bst
+                return new Node(left.size+right.size+1,Math.max(right.largest,root.val),Math.min(left.smallest,root.val));
+            }
+            return new Node(Math.max(left.size,right.size),Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst
+        }
+        public  int largestBST(TreeNode root) {
+            return helpThis(root).size;
+        }
+    }
 
 
 }
