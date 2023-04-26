@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 class BinarySearchTree{
@@ -360,6 +362,90 @@ class BinarySearchTree{
             return helpThis(root).size;
         }
     }
+
+    //leetcode soln
+    //here we declare a global variable max to store max sum because there might be a possibility that there might be
+    // negative values in the tree which might the final max sum in further recursive calls and, thus we use this variable
+    // to store the max value out of all the values encountered for max sum
+    class Solutions {
+        int max=0;
+        class Node{
+            int size;
+            int largest;
+            int smallest;
+            public Node(int size,int largest, int smallest){
+                this.size=size;
+                this.largest=largest;
+                this.smallest=smallest;
+            }
+        }
+        public  Node helpThis(TreeNode root){
+            if(root==null){
+                return new Node(0,Integer.MIN_VALUE,Integer.MAX_VALUE);
+            }
+            Node left=helpThis(root.left);
+            Node right=helpThis(root.right);
+            if(root.val>left.largest&&root.val<right.smallest){ //valid bst
+                max=Math.max(max,root.val+left.size+right.size);
+                return new Node(root.val+left.size+right.size,Math.max(right.largest,root.val),Math.min(left.smallest,root.val));
+            }
+            return new Node(Math.max(left.size,right.size),Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst
+        }
+        public  int maxSumBST(TreeNode root) {
+            helpThis(root);
+            return max;
+        }
+    }
+
+    //Serialise/De-serialise binary tree
+    //https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+    //O(N)time and space - level order traversal and strong nodes in queue
+    public class Codec {
+        public String serialize(TreeNode root) {
+            StringBuilder sb=new StringBuilder();
+            if(root==null){
+                return "";
+            }
+            Queue<TreeNode> q=new LinkedList<>();
+            q.add(root);
+            while(!q.isEmpty()){
+                TreeNode node=q.poll();
+                if(node==null){
+                    sb.append("null ");
+                    continue;
+                }
+                sb.append(node.val+" ");
+                q.add(node.left);
+                q.add(node.right);
+            }
+            return sb.toString();
+        }
+
+        // Decodes your encoded data to tree.
+        public TreeNode deserialize(String data) {
+            if(data==""){
+                return null;
+            }
+            String[] st=data.split(" ");
+            TreeNode root=new TreeNode(Integer.parseInt(st[0]));
+            Queue<TreeNode> q=new LinkedList<>();
+            q.add(root);
+            for(int i=1;i<st.length;i++){
+                TreeNode node=q.poll();
+                if(!st[i].equals("null")){
+                    node.left=new TreeNode(Integer.parseInt(st[i]));
+                    q.add(node.left);
+                }
+                if(!st[++i].equals("null")){
+                    node.right=new TreeNode(Integer.parseInt(st[i]));
+                    q.add(node.right);
+                }
+            }
+            return root;
+        }
+
+    }
+
 
 
 }
