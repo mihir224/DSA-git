@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -443,8 +444,26 @@ class BinarySearchTree{
             }
             return root;
         }
-
     }
+
+    //flatten binary tree to linked list
+    //https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+    TreeNode prev=null;
+    public void flatten(TreeNode root) {
+        if(root==null){
+            return;
+        }
+        flatten(root.right);
+        flatten(root.left);
+        //root is now leaf node
+        root.right=prev;
+        root.left=null;
+        prev=root;
+    }
+
+
+
+
 
 
 
