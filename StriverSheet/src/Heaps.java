@@ -25,6 +25,20 @@ class Heaps {
             return Integer.compare(this.second, other.second);
         }
     }
+    class ListNode {
+        int val;
+        ListNode next;
+        public ListNode() {
+        }
+        public ListNode(int val) {
+            this.val = val;
+        }
+        public ListNode(int val, ListNode next) {
+            this.val = val;
+            this.next = next;
+        }
+
+    }
 
     //min heap implementation
     //https://www.codingninjas.com/codestudio/problems/min-heap_4691801?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website\
@@ -267,7 +281,7 @@ class Heaps {
             } else {
                 minHeap.offer(num);
             }
-            if (maxHeap.size() > minHeap.size() + 1) { //max heap is allowed to store atmost minHeap.size()+1 elements (case when total elements up till now are odd -then we store more elements in max heap)
+            if (maxHeap.size() > minHeap.size() + 1) { //max heap is allowed to store at most minHeap.size()+1 elements (case when total elements up till now are odd -then we store more elements in max heap)
                 minHeap.offer(maxHeap.poll());
             } else if (minHeap.size() > maxHeap.size()) {
                 maxHeap.offer(minHeap.poll());
@@ -353,4 +367,70 @@ class Heaps {
         }
         return ans;
     }
+
+    //distinct numbers in a window
+    //https://www.interviewbit.com/problems/distinct-numbers-in-window/
+
+    //brute force: iterate over every window and in each iteration run two for loops to count the number of distinct elements
+    // in each window. To find the number distinct elements in a particular window or array, we take 2 pointers - i from 0 to
+    // arr.length and j from i+1 to arr.length. In each iteration of i we check if arr[i]==arr[j] ie if element at ith index
+    // appears somewhere else further in the array and if it doesn't we increase the count for that iteration of i.
+    // Otherwise we don't. The inner 2 for loops take k^2 complexity and the outer loop for each window runs till N-K+1.
+    //Thus total complexity is - O((N-K+1)*K2)
+
+    //better - O(N) - using hashmap. For each window, we can store the frequency of each element inside a map and for
+    // that window the size of the map would give us the number of distinct windows in that map. Thus we initially iterate
+    // over tha first window, map the frequency of all elements and then we start iterating from the kth index ie right
+    // where the first window ends. Then we obtain the previous elements through i-k and check if the i-kth element exists
+    // in the map. If it does and its frequency is 1, we remove it from the map and if it is more than 1, we decrease its
+    // frequency by 1. This will make sure that the previous elements which are not in the window anymore are removed(ie
+    // their frequency is decreased). Size of the map in each iteration would give us our ans.
+
+    public ArrayList<Integer> dNums(ArrayList<Integer> A, int k) {
+        Map<Integer,Integer> map=new HashMap<>();
+        ArrayList<Integer> ans=new ArrayList<>();
+        for(int i=0;i<k;i++){
+            map.put(A.get(i),map.getOrDefault(A.get(i),0)+1);
+        }
+        ans.add(map.size());
+        for(int i=k;i<A.size();i++){
+            if(map.get(A.get(i-k))==1){
+                map.remove(A.get(i-k));
+            }
+            else{
+                map.put(A.get(i-k),map.get(A.get(i-k))-1);
+            }
+            map.put(A.get(i),map.getOrDefault(A.get(i),0)+1);
+            ans.add(map.size());
+        }
+        return ans;
+    }
+
+    //merge k sorted lists
+    //https://leetcode.com/problems/merge-k-sorted-lists/
+
+    //brute - merge all k linked lists into 1 and then sort it.
+    //tc-O(N*klog(N*k) assuming all k lists have N elements)
+
+    //optimal - O(NlogK) using same approach as merging k sorted arrays
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<ListNode> pq=new PriorityQueue<>((a,b)->a.val-b.val);
+        ListNode ans =new ListNode();
+        ListNode temp=ans;
+        for(ListNode lp:lists){
+            if(lp!=null)
+                pq.offer(lp);
+        }
+        while(pq.size()>0){
+            ListNode l=pq.poll();
+            temp.next=l;
+            temp=temp.next;
+            if(l.next!=null){
+                pq.offer(l.next);
+            }
+        }
+        return ans.next;
+    }
+
+
 }
