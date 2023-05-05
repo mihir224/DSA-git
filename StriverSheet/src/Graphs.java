@@ -1,11 +1,18 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.LinkedList;
 
 class Graphs{
     //clone graph
     //https://leetcode.com/problems/clone-graph
-    //O(N) ie O(Edges+Vertices) time
+
+    //O(N) - for traversing all nodes+O(2M) - finding neighbours of each node ie (total degree of graph where M is the number of edges)
+    //We have to create a deep copy of the whole graph ie we cannot just use the same node addresses as in the original
+    // graph to form the clone. We have to make new nodes with new addresses and exact same values and positioning as original nodes.
+    // For this purpose we use a map to map a node to its newly created copy. Then, we recursively traverse the original graph and
+    // for each node that we are at, we create its new copy if it doesn't already exist in the map and, then we traverse the current
+    // node's neighbours and add them to the neighbours of the copy we just created. If the map already contains current node's copy,
+    // we simply return it otherwise we return the new copy we just created after adding neighbours to it. We do this recursively for each node.
+
     class Node {
         public int val;
         public List<Node> neighbors;
@@ -41,4 +48,443 @@ class Graphs{
         }
         return copy;
     }
+
+    //dfs
+    //https://practice.geeksforgeeks.org/problems/depth-first-traversal-for-a-graph/1
+    //O(N) - for traversing all nodes+O(2M) - finding neighbours of each node ie (total degree of graph where M is the number of edges)
+
+    public ArrayList<Integer> dfsOfGraph(int V, ArrayList<ArrayList<Integer>> adj) {
+        ArrayList<Integer> dfs=new ArrayList<>();
+        boolean[] vis=new boolean[V];
+        DFS(0,dfs,vis,adj);
+        return dfs;
+    }
+    public void DFS(int node,ArrayList<Integer> dfs,boolean[] vis, ArrayList<ArrayList<Integer>> adj){
+        vis[node]=true;
+        dfs.add(node);
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                DFS(i,dfs,vis,adj);
+            }
+        }
+    }
+
+    //bfs
+    //https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1
+    //O(N) - for traversing all nodes+O(2M) - finding neighbours of each node ie (total degree of graph where M is the number of edges)
+    public ArrayList<Integer> bfsOfGraph(int V, ArrayList<ArrayList<Integer>> adj) {
+        boolean[] vis=new boolean[V];
+        ArrayList<Integer> bfs=new ArrayList<>();
+        Queue<Integer> queue=new LinkedList<>();
+        queue.offer(0);
+        while(!queue.isEmpty()){
+            int node=queue.poll();
+            vis[node]=true;
+            bfs.add(node);
+            for(int i:adj.get(node)){
+                if(!vis[i]){
+                    queue.offer(i);
+                }
+            }
+        }
+        return bfs;
+    }
+
+    //number of islands
+    //https://leetcode.com/problems/number-of-islands/
+    static class Pair{
+        int first;
+        int second;
+        public Pair(int first,int second){
+            this.first=first;
+            this.second=second;
+        }
+    }
+
+    public int numIslands(char[][] grid) {
+        int m= grid.length;
+        int n=grid[0].length;
+        int count=0;
+        boolean[][] vis=new boolean[m][n];
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(!vis[i][j]&&grid[i][j]=='1'){
+                    bfs(i,j,vis,grid,m,n);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public void bfs(int row, int col, boolean[][] vis,char[][] grid, int m, int n) {
+        vis[row][col] = true;
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(row, col));
+        while (!q.isEmpty()){
+            Pair p=q.poll();
+            int i=p.first;
+            int j=p.second;
+            for (int delRow = -1; delRow <= 1; delRow++) {
+                for (int delCol = -1; delCol <= 1; delCol++) {
+                    if (delRow == -1 && delCol == -1 || delRow == -1 && delCol == 1 || delRow == 1 && delCol == -1 || delRow == 1 && delCol == 1) {
+                        continue;
+                    }
+                    int neighRow = i + delRow;
+                    int neighCol = j + delCol;
+                    while (neighRow>=0&&neighRow < m && neighCol>=0&&neighCol < n && !vis[neighRow][neighCol] && grid[neighRow][neighCol] == '1') {
+                        vis[neighRow][neighCol]=true;
+                        q.offer(new Pair(neighRow, neighCol));
+                    }
+                }
+            }
+        }
+    }
+
+    //course schedule (cycle detection in undirected graph)
+    //
+
+    //bfs
+    public static String cycleDetection(int[][] edges, int n, int m) {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<n+1;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<m;i++){
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+        }
+        boolean[] vis=new boolean[n+1];
+        for(int i=1;i<n+1;i++){
+            if(!vis[i]){
+                if(checkCycleBfs(i,adj,vis)){
+                    return "Yes";
+                }
+            }
+        }
+        return "No";
+    }
+    public static boolean checkCycleBfs(int i, ArrayList<ArrayList<Integer>> adj, boolean[] vis){
+        Queue<Pair> q=new LinkedList<>();
+        q.add(new Pair(i,-1));
+        while(!q.isEmpty()){
+            Pair p=q.poll();
+            int node=p.first;
+            vis[node]=true;
+            int parent=p.second;
+            for(int n:adj.get(node)){
+                if(!vis[n]){
+                    q.offer(new Pair(n,node));
+                }
+                else if(parent!=n){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //dfs
+    public static String cycleDetection1(int[][] edges, int n, int m) {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<n+1;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<m;i++){
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+        }
+        boolean[] vis=new boolean[n+1];
+        for(int i=1;i<n+1;i++){
+            if(!vis[i]){
+                if(checkCycleDfs(i,adj,vis,-1)){
+                    return "Yes";
+                }
+            }
+        }
+        return "No";
+    }
+    public static boolean checkCycleDfs(int node,ArrayList<ArrayList<Integer>> adj,boolean[] vis,int parent){
+        vis[node]=true;
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                if(checkCycleDfs(i,adj,vis,node)) {
+                    return true;
+                }
+            }
+            if(parent!=i){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //detect cycle in directed graph
+    //https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+    //dfs
+    public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
+        boolean[] vis=new boolean[V];
+        boolean[] pathVis=new boolean[V];
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                if(dfsCycle(i,adj,vis,pathVis)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean dfsCycle(int node, ArrayList<ArrayList<Integer>> adj, boolean[] vis,boolean[] pathVis){
+        vis[node]=true;
+        pathVis[node]=true;
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                if(dfsCycle(i,adj,vis,pathVis)) {
+                    return true;
+                }
+            }
+            else if(pathVis[i]){
+                return true;
+            }
+        }
+        pathVis[node]=false;
+        return false;
+    }
+
+    //toposort
+    //https://practice.geeksforgeeks.org/problems/topological-sort/1
+
+    //dfs
+    // O(V+E) time (since undirected graph),
+    //O(V) stack space and vis array
+    static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        Stack<Integer> st=new Stack<>();
+        boolean[] vis=new boolean[V];
+        int[] ans=new int[V];
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                topoDfs(i,adj,vis,st);
+            }
+        }
+        for(int i=0;i<V;i++){
+            ans[i]=st.pop();
+        }
+        return ans;
+    }
+
+    public static void topoDfs(int node, ArrayList<ArrayList<Integer>> adj, boolean[] vis, Stack<Integer> st){
+        vis[node]=true;
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                topoDfs(i,adj,vis,st);
+            }
+        }
+        st.push(node);
+    }
+
+    //bfs (kahn's algo)
+    // O(V+E) time (since undirected graph),
+    static int[] topoSort2(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        int[] indegree=new int[V];
+        int[] ans=new int[V];
+        ArrayList<Integer> ansList=new ArrayList<>();
+        Queue<Integer> q=new LinkedList<>();
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                indegree[adj.get(i).get(j)]++;
+            }
+        }
+        for(int i=0;i<indegree.length;i++){
+            if(indegree[i]==0){
+                q.offer(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            ansList.add(node);
+            for(int i:adj.get(node)){
+                indegree[i]--;
+                if(indegree[i]==0){
+                    q.offer(i);
+                }
+            }
+        }
+        for(int i=0;i<V;i++){
+            ans[i]=ansList.get(i);
+        }
+        return ans;
+    }
+
+    //course schedule
+    //https://leetcode.com/problems/course-schedule
+
+    //O(V+E)
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] indegree=new int [numCourses];
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        ArrayList<Integer> ans=new ArrayList<>();
+        Queue<Integer> q=new LinkedList<>();
+        for(int i=0;i<numCourses;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<prerequisites.length;i++){
+            adj.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j< adj.get(i).size();j++){
+                indegree[adj.get(i).get(j)]++;
+            }
+        }
+        for(int i=0;i<indegree.length;i++){
+            if(indegree[i]==0) {
+                q.offer(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node=q.poll();
+            ans.add(node);
+            for(int i:adj.get(node)){
+                indegree[i]--;
+                if(indegree[i]==0){
+                    q.add(i);
+                }
+            }
+        }
+        return ans.size()==numCourses;
+    }
+
+    //check if graph is bipartite
+    //https://leetcode.com/problems/is-graph-bipartite
+
+    //O(V+2E)
+
+    //bfs
+    public boolean isBipartite(int[][] graph) {
+        int V=graph.length;
+        int[] color=new int[V];
+        Arrays.fill(color,-1);
+        for(int i=0;i<V;i++){
+            if(color[i]==-1){
+                if(!checkBipartiteBfs(i,color,graph)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean checkBipartiteBfs(int node, int[] color, int[][] graph){
+        Queue<Integer> q=new LinkedList<>();
+        color[node]=0;
+        q.offer(node);
+        while(!q.isEmpty()){
+            int np=q.poll();
+            for(int i:graph[np]){
+                if(color[i]==-1){
+                    color[i]=1-color[np];
+                    q.offer(i);
+                }
+                if(color[i]==color[np]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //dfs
+    public boolean isBipartite2(int[][] graph) {
+        int V=graph.length;
+        int[] color=new int[V];
+        Arrays.fill(color,-1);
+        for(int i=0;i<V;i++){
+            if(color[i]==-1){
+                if(!checkBipartiteDfs(i,0,color,graph)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean checkBipartiteDfs(int node, int clr, int[] color, int[][] graph){
+        color[node]=clr;
+        for(int i:graph[node]){
+            if(color[i]==-1){
+                if(!checkBipartiteDfs(i,1-clr,color,graph)){
+                    return false;
+                }
+            }
+            if(color[i]==color[node]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //flood fill algo
+    //https://leetcode.com/problems/flood-fill/
+
+    //time: O((N*M): case when all nodes are connected ie have same value * 4 (each node has 4 neighbours)) == O(N*M)
+    //space: O(2(N*M)) - copy array, recursive stack space
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+        int[][] copy=image; //not modifying the original given array
+        int[] delRow={0,-1,0,1};
+        int[] delCol={-1,0,1,0};
+        floodFillDfs(sr,sc,color,image[sr][sc],delRow,delCol,copy);
+        return copy;
+    }
+    public void floodFillDfs(int sr,int sc,int color,int defaultColor,int[] delRow,int[] delCol,int[][] copy){
+        copy[sr][sc]=color;
+        for(int i=0;i<delRow.length;i++){
+            int neighRow=sr+delRow[i];
+            int neighCol=sc+delCol[i];
+            if(neighRow<copy.length&&neighRow>=0&&
+                    neighCol<copy[0].length&&neighCol>=0&&
+                    copy[neighRow][neighCol]==defaultColor //neighbours have same color as defaultColor, thus we can flood fill them
+                    &&copy[neighRow][neighCol]!=color) //case when new color and default color are same
+            {
+                floodFillDfs(neighRow,neighCol,color,defaultColor,delRow,delCol,copy);
+            }
+        }
+    }
+
+    //Prim's algo
+    //https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1
+    //Elog(E) time
+
+    static int spanningTree(int V, int E, int edges[][]){
+        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        int sum=0;
+        boolean[] vis=new boolean[V];
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        pq.add(new Pair(0,0));
+        for(int i=0;i<V;i++){
+            adj.add(new ArrayList<>());
+        }
+        //forming adj list
+        for(int i=0;i<edges.length;i++){
+            adj.get(edges[i][0]).add(new Pair(edges[i][1],edges[i][2]));
+            adj.get(edges[i][1]).add(new Pair(edges[i][0],edges[i][2]));
+        }
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int node=p.second;
+            int weight=p.first;
+            if(vis[node]){
+                continue;
+            }
+            vis[node]=true;
+            sum+=weight;
+            for(int i=0;i<adj.get(node).size();i++){
+                int adjNode=adj.get(node).get(i).first;
+                int adjWeight=adj.get(node).get(i).second;
+                if(!vis[adjNode]){
+                    pq.offer(new Pair(adjWeight,adjNode));
+                }
+            }
+        }
+        return sum;
+    }
+
 }
