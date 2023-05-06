@@ -449,12 +449,102 @@ class Graphs{
         }
     }
 
+    //Dijkstra's algo
+    //https://practice.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1
+
+    //3 methods - queue,pq,set
+
+    //using pq
+    static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S)
+    {
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        int[] dist=new int[V];
+        Arrays.fill(dist,(int)1e9);
+        dist[S]=0;
+        pq.offer(new Pair(0,S));
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int node=p.second;
+            int dst=p.first;
+                for(int j=0;j<adj.get(node).size();j++){
+                    int adjNode=adj.get(node).get(j).get(0);
+                    int wt=adj.get(node).get(j).get(1);
+                    if(wt+dst<dist[adjNode]){
+                        dist[adjNode]=wt+dst;
+                        pq.offer(new Pair(dist[adjNode],adjNode));
+                    }
+                }
+        }
+        return dist;
+    }
+
+
+    //Disjoint set
+    //O(4A)==O(CONSTANT) time for union() function
+    static class DisjointSet{
+        List<Integer> parent;
+        List<Integer> rank;
+        List<Integer> size;
+        public DisjointSet(int V){
+            this.parent=new ArrayList<>();
+            this.rank=new ArrayList<>();
+            this.size=new ArrayList<>();
+            for(int i=0;i<=V;i++){
+                parent.add(i);
+                rank.add(0);
+                size.add(1);
+            }
+        }
+        public int findUltimateParent(int u){
+            if(parent.get(u)==u){
+                return u;
+            }
+            int up=findUltimateParent(parent.get(u));
+            parent.set(u,up);
+            return parent.get(u);
+        }
+        public void unionByRank(int u,int v){
+            int pu=findUltimateParent(u);
+            int pv=findUltimateParent(v);
+            if(pu==pv){  //both u and v belong to the same component
+                return;
+            }
+            if(rank.get(pu)<rank.get(pv)){ //rank won't be affected since we're doing path compression and rank of pu is already less than pv
+                // and, it will be directly attached to pv
+                parent.set(pu,pv);
+            }
+            else if(rank.get(pu)>rank.get(pv)){
+                parent.set(pv,pu);
+            }
+            else{ //same rank
+                parent.set(pu,pv); //attach either one to the other one
+                rank.set(pu,rank.get(pu)+1);
+            }
+        }
+        public void unionBySize(int u,int v){
+            int pu=findUltimateParent(u);
+            int pv=findUltimateParent(v);
+            if (pu == pv) {
+                return;
+            }
+            if(size.get(pu)<size.get(pv)){
+                parent.set(pu,pv);
+                size.set(pv,size.get(pv)+size.get(pu));
+            }
+            else{
+                parent.set(pu,pv);
+                size.set(pu,size.get(pu)+size.get(pv));
+            }
+        }
+    }
+
     //Prim's algo
     //https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1
     //Elog(E) time
 
     static int spanningTree(int V, int E, int edges[][]){
         ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+
         int sum=0;
         boolean[] vis=new boolean[V];
         PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
@@ -485,6 +575,54 @@ class Graphs{
             }
         }
         return sum;
+    }
+
+    //kruskal's algo
+    //O(E) - to form adj list+ O(N+E) to form edges =
+    static class Edge implements Comparable<Edge>{
+        int weight;
+        int src;
+        int dst;
+        public Edge (int weight, int src, int dst){
+            this.weight=weight;
+            this.src=src;
+            this.dst=dst;
+        }
+        @Override
+        public int compareTo(Edge CompareEdge) {
+            return this.weight-CompareEdge.weight;
+        }
+    }
+    static int spanningTree2(int V, int E, int edges[][]){
+        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        int ans=0;
+        DisjointSet ds=new DisjointSet(V);
+        List<Edge> edgeList=new ArrayList<>();
+        for(int i=0;i<V;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0;i<E;i++){
+            adj.get(edges[i][0]).add(new Pair(edges[i][1],edges[i][2]));
+            adj.get(edges[i][1]).add(new Pair(edges[i][0],edges[i][2]));
+        }
+        for(int i=0;i<V;i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                int adjNode=adj.get(i).get(j).first;
+                int weight=adj.get(i).get(j).second;
+                edgeList.add(new Edge(weight,i,adjNode));
+            }
+        }
+        Collections.sort(edgeList);
+        for(int i=0;i<edgeList.size();i++){
+            int wt=edgeList.get(i).weight;
+            int src=edgeList.get(i).src;
+            int dst=edgeList.get(i).dst;
+            if(ds.findUltimateParent(src)!=ds.findUltimateParent(dst)){ //union
+                ds.unionByRank(src,dst);
+                ans+=wt;
+            }
+        }
+        return ans;
     }
 
 }
