@@ -141,7 +141,7 @@ class Graphs{
     }
 
     //course schedule (cycle detection in undirected graph)
-    //
+    //https://leetcode.com/problems/course-schedule/
 
     //bfs
     public static String cycleDetection(int[][] edges, int n, int m) {
@@ -449,12 +449,70 @@ class Graphs{
         }
     }
 
+    //Kosarju's algo
+    //https://practice.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1
+
+    //O(3(V+E))==O(V+E)
+    public int kosaraju(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        Stack<Integer> st=new Stack<>();
+        ArrayList<ArrayList<Integer>> adjTrans=new ArrayList<>();
+        boolean[] vis=new boolean[V];
+        //sorting nodes wrt their finishing time inside a stack
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                dfsFinishTime(i,vis,st,adj);
+            }
+        }
+        //initialising adj list of reversed graph
+        for(int i=0;i<V;i++){
+            adjTrans.add(new ArrayList<>());
+        }
+        //reversing the graph
+        for(int i=0;i<V;i++){
+            vis[i]=false; //resetting the vis array since we have to use it again in another dfs to find the number of SCCs
+            for(int adjNode:adj.get(i)){
+                adjTrans.get(adjNode).add(i);
+            }
+        }
+        //finding SCC count
+        int scc=0;
+        while(!st.isEmpty()){
+            int i=st.pop();
+            if(!vis[i]){
+                dfsCountSCC(i,vis,adjTrans);
+                scc++;
+            }
+        }
+        return scc;
+    }
+    //dfs to sort the nodes acc to their finish time
+    public void dfsFinishTime(int node, boolean[] vis, Stack<Integer> st, ArrayList<ArrayList<Integer>> adj){
+        vis[node]=true;
+        for(int i:adj.get(node)){
+            if(!vis[i]){
+                dfsFinishTime(i,vis,st,adj);
+            }
+        }
+        st.push(node);
+    }
+    //dfs to find the number of SCCs
+    public void dfsCountSCC(int node, boolean[] vis, ArrayList<ArrayList<Integer>> adjTrans){
+        vis[node]=true;
+        for(int i:adjTrans.get(node)){
+            if(!vis[i]){
+                dfsCountSCC(i,vis,adjTrans);
+            }
+        }
+    }
+
     //Dijkstra's algo
     //https://practice.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1
 
     //3 methods - queue,pq,set
 
     //using pq
+    //O(ElogV) - check derivation in notes (imp)
     static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S)
     {
         PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
@@ -478,8 +536,121 @@ class Graphs{
         return dist;
     }
 
+    //print shortest path in a weighted undirected graph
+    //https://practice.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1
+
+    //O(ElogV (Dijkstra) + N (worst case when path from 1 to n involves every node)) time
+    public static List<Integer> shortestPath(int n, int m, int edges[][]) {
+        ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+        PriorityQueue<Pair> pq=new PriorityQueue<>((x,y)->x.first-y.first);
+        int[] parent=new int[n+1];
+        int[] dist=new int[n+1];
+        Arrays.fill(dist,(int)1e9);
+        dist[1]=0;
+        for(int i=0;i<=n;i++){
+            parent[i]=i;
+            adj.add(new ArrayList<>());
+        }
+        //forming adj list
+        for(int i=0;i<edges.length;i++){
+            adj.get(edges[i][0]).add(new Pair(edges[i][1],edges[i][2]));
+            adj.get(edges[i][1]).add(new Pair(edges[i][0],edges[i][2]));
+        }
+        pq.offer(new Pair(0,1));
+        while(!pq.isEmpty()){
+            Pair p=pq.poll();
+            int dst=p.first;
+            int node=p.second;
+            for(Pair pt:adj.get(node)){
+                int adjDst=pt.second;
+                int adjNode=pt.first;
+                if(dst+adjDst<dist[adjNode]){
+                    dist[adjNode]=dst+adjDst;
+                    pq.offer(new Pair(dist[adjNode],adjNode));
+                    parent[adjNode]=node;
+                }
+            }
+        }
+        int node=n;
+        List<Integer> ans=new ArrayList<>();
+        if(dist[node]==(int)1e9) //can't access node n
+        {
+            ans.add(-1);
+            return ans;
+        }
+        //O(N)
+        while(parent[node]!=node){
+            ans.add(node);
+            node=parent[node];
+        }
+        ans.add(1);
+        Collections.reverse(ans);
+        return ans;
+    }
+
+    //difficult to implement the set method in java as it does not allow us to remove an item from the set.
+
+    //Bellman Ford - works with negative weights as well, returns the shortest path, and detects negative cycles
+    //https://practice.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/0?fbclid=IwAR2_lL0T84DnciLyzMTQuVTMBOi82nTWNLuXjUgahnrtBgkphKiYk6xcyJU
+
+    static int[] bellman_ford(int V, ArrayList<ArrayList<Integer>> edges, int S) {
+        int[] dist=new int[V];
+        Arrays.fill(dist,(int)1e8);
+        dist[S]=0;
+        for(int i=0;i<V-1;i++){
+            for(ArrayList<Integer> edge:edges){
+                int src=edge.get(0);
+                int dst=edge.get(1);
+                int wt=edge.get(2);
+                if(dist[src]+wt<dist[dst]){
+                    dist[dst]=dist[src]+wt;
+                }
+            }
+        }
+        for(ArrayList<Integer> edge:edges){
+            if(dist[edge.get(0)]+edge.get(2)<dist[edge.get(1)]){ //dist array can still be updated at Nth iteration, meaning there's a negative cycle
+                return new int[]{-1};
+            }
+        }
+        return dist;
+    }
+
+    //Floyd Warshall
+    //https://practice.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1
+
+    //O(N3)
+    public void shortest_distance(int[][] matrix)
+    {
+        int n= matrix.length;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]==-1) {
+                    matrix[i][j] = (int) 1e9;
+                }
+                if(i==j){
+                    matrix[i][j]=0;
+                }
+            }
+        }
+        for(int k=0;k<n;k++){
+            for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                    matrix[i][j]=Math.min(matrix[i][j],matrix[i][k]+matrix[k][j]);
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]==(int)1e9){
+                    matrix[i][j]=-1;
+                }
+            }
+        }
+    }
+
 
     //Disjoint set
+
     //O(4A)==O(CONSTANT) time for union() function
     static class DisjointSet{
         List<Integer> parent;
@@ -537,6 +708,8 @@ class Graphs{
             }
         }
     }
+
+    //MST ALGOs
 
     //Prim's algo
     //https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1
@@ -624,5 +797,6 @@ class Graphs{
         }
         return ans;
     }
+
 
 }
