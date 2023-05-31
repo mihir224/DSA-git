@@ -148,6 +148,134 @@ class DynamicProgramming{
         return max;
     }
 
+
+    //longest increasing subsequence
+    //https://leetcode.com/problems/longest-increasing-subsequence/o
+
+    //approach - We start from the first element of the array, and for each element, we maintain a previous element such
+    // that if the current element is greater than the previous element, then we can pick that element for our LIS. Thus,
+    // we move forward, making the current element as prev for next element. If however, the current element is less than
+    // the prev element, then we can not pick that element in our LIS, and thus we move onto the next element, not changing
+    // the prev element. Now if we pick an element, we take the max of what we got from not picking the element and from
+    // what we got from picking that element. For this reason,we calculate the result from not picking up the element beforehand,
+    // and then we calculate the max from this result and the result from picking up the element.`
+
+    //memoization (O(N2)) - check tabulation also for this
+    public int lengthOfLIS(int[] nums) {
+        int n=nums.length;
+        //we always take prev_index + 1 in the dp table because for prev_index=-1, it would give out of bounds error (this is called coordinate shift)
+        // and for this  reason we make dp table of size n*n+1
+        int [][] dp=new int[n][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helperLIS(0,-1,dp, nums, n);
+    }
+    public int helperLIS(int index, int prev_index, int[][] dp, int[] nums, int n){
+        if(index==n){ //bc, traversed all elements
+            return 0;
+        }
+        if(dp[index][prev_index+1]!=-1){
+            return dp[index][prev_index+1];
+        }
+        int len=0+helperLIS(index+1,prev_index,dp,nums,n); //not pick
+        if(prev_index==-1||nums[index]>nums[prev_index]){ //pick
+            len=Math.max(len,1+helperLIS(index+1,index,dp,nums,n)); //we didn't directly put 0+helperLis(index+1,
+            // prev_index,dp,nums,n) here instead of len and calculated it before hand because if we didn't do that,
+            // 0+helperLis(index+1,prev_index,dp,nums,n) would be called only for the cases when current element>prev
+        }
+        return dp[index][prev_index+1]=len;
+    }
+
+    //tabulataion
+    public int lengthOfLIS2(int[] nums) {
+        int n=nums.length;
+        int [][] dp=new int[n+1][n+1]; //since we start index from n-1 and in each iteration we check dp[index+1][...]
+        //here we don't need to intialize dp table for base case ie for i==n, return 0. This is because each element of
+        // the table is 0 by default
+        //Now since we moved from start till end in recursive and memoized solutions, we do the exact opposite here. ie
+        // we move from end till start.
+        for(int index=n-1;index>=0;index--){
+            for(int prev_index=index-1;prev_index>=-1;prev_index--){
+                int len=0+dp[index+1][prev_index+1];
+                if(prev_index==-1||nums[index]>nums[prev_index]){
+                    len=Math.max(len,1+dp[index+1][index+1]);
+                }
+                dp[index][prev_index+1]=len;
+            }
+        }
+        return dp[0][-1 +1];
+    }
+
+    //there's one more way to solve this problem, with same tc: O(N2) but much lesser sc: O(N). Now if we have to print
+    // the LIS, it is important to understand the obtainment of LIS from this method, so that we can trace back from it
+    // in order to print the LIS
+
+    //here we take a 1d dp[] of size n, where dp[i] stores the maximum length of an increasing subsequence that ends with nums[i].
+    // Then, we can simply iterate over this array and find the max value to obtain the ans. To fill this dp, we first
+    // initialize all elements with 1, as in the worst case, length of an increasing subsequence can be 1 (if there's no
+    // element before the current element that is less than it). Then, we iterate over the nums array and for each element
+    // we check if there's a valid smaller element before it. If there is, we set the current element's value in the dp array
+    // as max of its current value, and the value obtained after adding 1(picking current element) to the dp value of the valid prev element ie (the max
+    // length of an increasing subsequence that ends with that prev element).
+
+    //This way, we can add the length of any increasing subsequence that ends with a valid prev element to the length of
+    // the increasing subsequence that ends with current element without having to calculate the length by picking all
+    // valid previous elements individually
+    public int lengthOfLIS3(int[] nums) {
+        int n=nums.length;
+        int[] dp=new int[n];
+        int max=Integer.MIN_VALUE;
+        Arrays.fill(dp,1); //initialization
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<=i-1;prev++){
+                if(nums[i]>nums[prev]){
+                    dp[i]=Math.max(dp[i],1+dp[prev]);
+                }
+            }
+            max=Math.max(max,dp[i]);
+        }
+        return max;
+    }
+
+    // now to print LIS, we make use of a hash array (each element initialised with their index) . This hash will store the index of the prev element for each element
+    // after the dp array has been formed to help us identify where the current element came from in forming the IS which
+    // ended with that element. Then, we can access the prev of the element that gave us the LIS ie the one with the max
+    // value in the dp array through the hash array and then we can back track to find all elements involved in forming
+    // the LIS
+
+    public String lengthOfLIS4(int[] nums) {
+        int n=nums.length;
+        int[] dp=new int[n];
+        int max=Integer.MIN_VALUE;
+        int[] hash=new int[n];
+        int lastIndex=0;
+        Arrays.fill(dp,1); //initialization
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<n;i++){
+            hash[i]=i;
+        }
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<=i-1;prev++){
+                if(nums[i]>nums[prev]){
+                    dp[i]=Math.max(dp[i],1+dp[prev]);
+                    hash[i]=prev;
+                }
+            }
+            if(dp[i]>max){
+                max=dp[i];
+                lastIndex=i;
+            }
+        }
+        while(hash[lastIndex]!=lastIndex){
+            sb.append(dp[lastIndex]);
+            lastIndex=hash[lastIndex];
+        }
+        sb.append(hash[lastIndex]);
+        return sb.reverse().toString();
+    }
+
+
     //Unbounded Knapsack
 
     //Rod cutting problem
@@ -280,5 +408,76 @@ class DynamicProgramming{
             }
         }
         return dp[n][amount]==Integer.MAX_VALUE-1?-1:dp[n][amount];
+    }
+
+    //longest common subsequence
+    //https://leetcode.com/problems/longest-common-subsequence/
+
+    public int longestCommonSubsequence(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        //print lcs
+//        StringBuilder sb =new StringBuilder();
+//        int i=m;
+//        int j=n;
+//        while(i!=0&&j!=0){
+//            if(a.charAt(i)==b.charAt(j)){
+//                sb.append(a.charAt(i));
+//                i--;
+//                j--;
+//            }
+//            else if(dp[i-1][j]>dp[i][j-1]){
+//                i--;
+//            }
+//            else{
+//                j--;
+//            }
+//        }
+//        sb=sb.reverse();
+        return dp[m][n];
+    }
+
+    //longest common substring
+    //https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1
+    int longestCommonSubstr(String a, String b, int m, int n){
+        int[][] dp=new int[m+1][n+1];
+        int length=0;
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                    length=Math.max(length,dp[i][j]);
+                }
+                else{
+                    dp[i][j]=0;
+                }
+            }
+        }
+        return length;
     }
 }
