@@ -4,105 +4,7 @@ import java.util.Collections;
 import java.util.PriorityQueue;
 
 class DynamicProgramming{
-    //0-1 knapsack
-    //https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1
 
-    //recursive
-    static int knapSack(int W, int wt[], int val[], int n)
-    {
-        //base condition
-        if(n==0||W==0){
-            return 0;
-        }
-        //choice diagram
-        if(wt[n-1]<=W){
-            return Math.max(val[n-1]+knapSack(W-wt[n-1],wt,val,n-1),knapSack(W,wt,val,n-1));
-        }
-        return knapSack(W,wt,val,n-1); //W<w[n-1]
-    }
-
-    //memoization
-    static int knapSack2(int W, int wt[], int val[], int n)
-    {
-        int[][] dp=new int[n+1][W+1];
-        for(int[] arr:dp){
-            Arrays.fill(arr,-1);
-        }
-        return memoHelpKnap(W,n,wt,val,dp);
-    }
-    static int memoHelpKnap(int w,int n,int[] wt,int [] val,int[][] dp){
-        if(n==0||w==0){
-            return 0;
-        }
-        if(dp[n][w]!=-1){ //current cell has already been evaluated
-            return dp[n][w];
-        }
-        if(wt[n-1]<=w){
-            return dp[n][w]=Math.max(val[n-1]+memoHelpKnap(w-wt[n-1],n-1,wt,val,dp),memoHelpKnap(w,n-1,wt,val,dp));
-        }
-        return dp[n][w]=memoHelpKnap(w,n-1,wt,val,dp);
-    }
-
-    //tabulation (bottom up)
-    static int knapSack3(int w, int wt[], int val[], int n)
-    {
-        int[][] dp=new int[n+1][w+1];
-        for(int i=0;i<=n;i++){
-            for(int j=0;j<=w;j++){
-                if(i==0||j==0){
-                    dp[i][j]=0;
-                }
-            }
-        }
-        for(int i=1;i<=n;i++){ //i varies wrt n
-            for(int j=1;j<=w;j++){ //j varies wrt w
-                if(wt[i-1]<=j){
-                    dp[i][j]=Math.max(val[i-1]+dp[i-1][j-wt[i-1]],dp[i-1][j]);
-                }
-                else {
-                    dp[i][j]=dp[i-1][j];
-                }
-            }
-        }
-        return dp[n][w];
-    }
-
-    //equal sum partition
-    //https://leetcode.com/problems/partition-equal-subset-sum/
-    public boolean canPartition(int[] nums) {
-        int sum=0;
-        for(int i:nums){
-            sum+=i;
-        }
-        if(sum%2!=0){ //sum is odd
-            return false;
-        }
-        return isSubsetSum(nums,nums.length,sum/2);
-    }
-    public boolean isSubsetSum(int[] nums, int n, int sum){
-        boolean[][] dp=new boolean[n+1][sum+1];
-        for(int i=0;i<n+1;i++){
-            for(int j=0;j<sum+1;j++){
-                if(i==0){
-                    dp[i][j]=false;
-                }
-                if(j==0){
-                    dp[i][j]=true;
-                }
-            }
-        }
-        for(int i=1;i<n+1;i++){
-            for(int j=1;j<sum+1;j++){
-                if(nums[i-1]<=j){
-                    dp[i][j]=dp[i-1][j-nums[i-1]]||dp[i-1][j];
-                }
-                else{
-                    dp[i][j]=dp[i-1][j];
-                }
-            }
-        }
-        return dp[n][sum];
-    }
 
     //number of senior citizens
     public int countSeniors(String[] details) {
@@ -150,7 +52,7 @@ class DynamicProgramming{
 
 
     //longest increasing subsequence
-    //https://leetcode.com/problems/longest-increasing-subsequence/o
+    //https://leetcode.com/problems/longest-increasing-subsequence/
 
     //approach - We start from the first element of the array, and for each element, we maintain a previous element such
     // that if the current element is greater than the previous element, then we can pick that element for our LIS. Thus,
@@ -181,7 +83,7 @@ class DynamicProgramming{
         int len=0+helperLIS(index+1,prev_index,dp,nums,n); //not pick
         if(prev_index==-1||nums[index]>nums[prev_index]){ //pick
             len=Math.max(len,1+helperLIS(index+1,index,dp,nums,n)); //we didn't directly put 0+helperLis(index+1,
-            // prev_index,dp,nums,n) here instead of len and calculated it before hand because if we didn't do that,
+            // prev_index,dp,nums,n) here instead of len and calculated it beforehand because if we didn't do that,
             // 0+helperLis(index+1,prev_index,dp,nums,n) would be called only for the cases when current element>prev
         }
         return dp[index][prev_index+1]=len;
@@ -275,6 +177,400 @@ class DynamicProgramming{
         return sb.reverse().toString();
     }
 
+    //longest common subsequence
+    //https://leetcode.com/problems/longest-common-subsequence/
+
+    public int longestCommonSubsequence(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        //print lcs
+//        StringBuilder sb =new StringBuilder();
+//        int i=m;
+//        int j=n;
+//        while(i!=0&&j!=0){
+//            if(a.charAt(i)==b.charAt(j)){
+//                sb.append(a.charAt(i));
+//                i--;
+//                j--;
+//            }
+//            else if(dp[i-1][j]>dp[i][j-1]){
+//                i--;
+//            }
+//            else{
+//                j--;
+//            }
+//        }
+//        sb=sb.reverse();
+        return dp[m][n];
+    }
+
+    //0-1 knapsack
+    //https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1
+
+    //recursive
+    static int knapSack(int W, int wt[], int val[], int n)
+    {
+        //base condition
+        if(n==0||W==0){
+            return 0;
+        }
+        //choice diagram
+        if(wt[n-1]<=W){
+            return Math.max(val[n-1]+knapSack(W-wt[n-1],wt,val,n-1),knapSack(W,wt,val,n-1));
+        }
+        return knapSack(W,wt,val,n-1); //W<w[n-1]
+    }
+
+    //memoization
+    static int knapSack2(int W, int wt[], int val[], int n)
+    {
+        int[][] dp=new int[n+1][W+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return memoHelpKnap(W,n,wt,val,dp);
+    }
+    static int memoHelpKnap(int w,int n,int[] wt,int [] val,int[][] dp){
+        if(n==0||w==0){
+            return 0;
+        }
+        if(dp[n][w]!=-1){ //current cell has already been evaluated
+            return dp[n][w];
+        }
+        if(wt[n-1]<=w){
+            return dp[n][w]=Math.max(val[n-1]+memoHelpKnap(w-wt[n-1],n-1,wt,val,dp),memoHelpKnap(w,n-1,wt,val,dp));
+        }
+        return dp[n][w]=memoHelpKnap(w,n-1,wt,val,dp);
+    }
+
+    //tabulation (bottom up)
+    static int knapSack3(int w, int wt[], int val[], int n)
+    {
+        int[][] dp=new int[n+1][w+1];
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<=w;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<=n;i++){ //i varies wrt n
+            for(int j=1;j<=w;j++){ //j varies wrt w
+                if(wt[i-1]<=j){
+                    dp[i][j]=Math.max(val[i-1]+dp[i-1][j-wt[i-1]],dp[i-1][j]);
+                }
+                else {
+                    dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        return dp[n][w];
+    }
+
+    //Edit distance
+    //https://leetcode.com/problems/edit-distance
+
+    //memoization
+    public int minDistance(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int[] i:dp){
+            Arrays.fill(i,-1);
+        }
+        return f(m,n,a,b,dp);
+    }
+    public int f(int i,int j,String a,String b,int[][] dp){
+        if(i==0){
+            return j; //1 based indexing
+        }
+        if(j==0){
+            return i;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        if(a.charAt(i-1)==b.charAt(j-1)){
+            return dp[i][j]=0+f(i-1,j-1,a,b,dp);
+        }
+        return 1+Math.min(f(i,j-1,a,b,dp),Math.min(f(i-1,j,a,b,dp),f(i-1,j-1,a,b,dp)));
+    }
+
+    //tabulation
+    public int minDistance2(String a, String b) {
+        int m=a.length();
+        int n=b.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int j=0;j<n+1;j++){
+            dp[0][j]=j;
+        }
+        for(int i=0;i<m+1;i++){
+            dp[i][0]=i;
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=0+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=1+Math.min(dp[i][j-1],Math.min(dp[i-1][j],dp[i-1][j-1]));
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    //maximum sum increasing subsequence
+    //https://practice.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1
+
+    //similar to LIS, just track the max sum
+    public int maxSumIS(int arr[], int n)
+    {
+        int[] dp=new int[n];
+        int max=Integer.MIN_VALUE;
+        dp=Arrays.copyOfRange(arr,0,n);;
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<=i-1;prev++){
+                if(arr[i]>arr[prev]){
+                    dp[i]=Math.max(dp[i],arr[i]+dp[prev]);
+                }
+            }
+            max=Math.max(max,dp[i]);
+        }
+        return max;
+    }
+
+    //longest common substring
+    //https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1
+    int longestCommonSubstr(String a, String b, int m, int n){
+        int[][] dp=new int[m+1][n+1];
+        int length=0;
+        for(int i=0;i<m+1;i++){
+            for(int j=0;j<n+1;j++){
+                if(i==0||j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<m+1;i++){
+            for(int j=1;j<n+1;j++){
+                if(a.charAt(i-1)==b.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                    length=Math.max(length,dp[i][j]);
+                }
+                else{
+                    dp[i][j]=0;
+                }
+            }
+        }
+        return length;
+    }
+
+    //Matrix chan multiplication
+    //https://practice.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1
+    static int matrixMultiplication(int N, int nums[])
+    {
+        int[][] dp=new int[N+1][N+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return mcm(1,N-1,dp,nums);
+    }
+    static int mcm(int i, int j, int[][] dp, int[] nums){
+        if(i>=j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int min=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int tempAns=mcm(i,k,dp,nums)+mcm(k+1,j,dp,nums)+nums[i-1]*nums[k]*nums[j];
+            min=Math.min(tempAns,min);
+        }
+        return dp[i][j]=min;
+    }
+
+    //minimum path sum
+    //https://leetcode.com/problems/minimum-path-sum/
+
+    //Tc O(n*m)
+    //Sc O(n*m) + path length ie O((m-1)+(n-1)) because to reach from cell (0,0) to (m-1,n-1) we have to travel m-1 rows, and n-1 columns
+
+    //make sure to also watch the space optimised lecture
+    public int minPathSum(int[][] grid) {
+        int m=grid.length;
+        int n=grid[0].length;
+        int[][] dp=new int[m][n]; //max val of i and j can be m-1 and n-1
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return mps(m-1,n-1,dp,grid);
+    }
+    public int mps(int i,int j,int[][] dp,int[][] grid){
+        if(i==0&&j==0){ //reached first cell;
+            return grid[0][0];
+        }
+        if(i<0||j<0){ //case of out of bounds
+            return (int)Math.pow(10,9); //returning max possible val so that it will never be considered as valid ans
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int up=grid[i][j]+mps(i-1,j,dp,grid); //moving up, processing rest of the matrix
+        int left=grid[i][j]+mps(i,j-1,dp,grid); //moving left, processing rest of the matrix
+        return dp[i][j]=Math.min(up,left);
+    }
+
+    //tabulation
+    public int minPathSum2(int[][] grid) {
+        int m=grid.length;
+        int n=grid[0].length;
+        int[][] dp=new int[m][n]; //max val of i and j can be m-1 and n-1
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i==0&&j==0){
+                    dp[i][j]=grid[0][0];
+                }
+                else{
+                    int up=grid[i][j];
+                    if(i>0){
+                        up+=dp[i-1][j];
+                    }
+                    else{
+                        up+=(int)1e9;
+                    }
+                    int left=grid[i][j];
+                    if(j>0){
+                        left+=dp[i][j-1];
+                    }
+                    else{
+                        left+=(int)1e9;
+                    }
+                    dp[i][j]=Math.min(up,left);
+                }
+            }
+        }
+        return dp[m-1][n-1];
+    }
+
+    //coin change: number of ways
+    //https://practice.geeksforgeeks.org/problems/coin-change2448/1
+    public long count(int coins[], int N, int sum) {
+        long[][] dp=new long[N+1][sum+1];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<sum+1;j++){
+                if(j==0){
+                    dp[i][j]=0;
+                }
+                if(i==0){
+                    dp[i][j]=1;
+                }
+            }
+        }
+        for(int i=1;i<N+1;i++){
+            for(int j=1;j<sum+1;j++){
+                if(coins[i-1]<=j){
+                    dp[i][j]=Math.max(dp[i][j-coins[i-1]],dp[i-1][j]);
+                }
+                else{
+                    dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        return dp[N][sum];
+    }
+
+    //coin change: min number of coins req to form sum
+    //https://leetcode.com/problems/coin-change/
+
+    //The following step in the initialisation process is not necessary and it only increases the time. Thus we can OMIT it.
+    // Just read for educational purposes:
+    //verma sir told us to consider row i==1 also in the initialization. For i=1, we have one element in the array such that,
+    // if its remainder with sum is 0, then we can add that element multiple times to form the sum and thus, j/coins[0] would
+    // give us our ans. Otherwise, we initialize the element to INT_MIN-1
+
+    public int coinChange(int[] coins, int amount) {
+        int n=coins.length;
+        int[][] dp=new int[n+1][amount+1];
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<amount+1;j++){
+                if(i==0){
+                    dp[i][j]=Integer.MAX_VALUE-1;
+                }
+                else{
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<n+1;i++){
+            for(int j=1;j<amount+1;j++){
+                if(coins[i-1]<=j){
+                    dp[i][j]=Math.min(1+dp[i][j-coins[i-1]],dp[i-1][j]);
+                }
+                else{
+                    dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        return dp[n][amount]==Integer.MAX_VALUE-1?-1:dp[n][amount];
+    }
+
+    //equal sum partition
+    //https://leetcode.com/problems/partition-equal-subset-sum/
+    public boolean canPartition(int[] nums) {
+        int sum=0;
+        for(int i:nums){
+            sum+=i;
+        }
+        if(sum%2!=0){ //sum is odd
+            return false;
+        }
+        return isSubsetSum(nums,nums.length,sum/2);
+    }
+    public boolean isSubsetSum(int[] nums, int n, int sum){
+        boolean[][] dp=new boolean[n+1][sum+1];
+        for(int i=0;i<n+1;i++){
+            for(int j=0;j<sum+1;j++){
+                if(i==0){
+                    dp[i][j]=false;
+                }
+                if(j==0){
+                    dp[i][j]=true;
+                }
+            }
+        }
+        for(int i=1;i<n+1;i++){
+            for(int j=1;j<sum+1;j++){
+                if(nums[i-1]<=j){
+                    dp[i][j]=dp[i-1][j-nums[i-1]]||dp[i-1][j];
+                }
+                else{
+                    dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        return dp[n][sum];
+    }
+
 
     //Unbounded Knapsack
 
@@ -348,136 +644,9 @@ class DynamicProgramming{
         return dp[i][j]=min;
     }
 
-    //coin change: number of ways
-    //https://practice.geeksforgeeks.org/problems/coin-change2448/1
-    public long count(int coins[], int N, int sum) {
-        long[][] dp=new long[N+1][sum+1];
-        for(int i=0;i<N+1;i++){
-            for(int j=0;j<sum+1;j++){
-                if(j==0){
-                    dp[i][j]=0;
-                }
-                if(i==0){
-                    dp[i][j]=1;
-                }
-            }
-        }
-        for(int i=1;i<N+1;i++){
-            for(int j=1;j<sum+1;j++){
-                if(coins[i-1]<=j){
-                    dp[i][j]=Math.max(dp[i][j-coins[i-1]],dp[i-1][j]);
-                }
-                else{
-                    dp[i][j]=dp[i-1][j];
-                }
-            }
-        }
-        return dp[N][sum];
-    }
 
-    //coin change: min number of coins req to form sum
-    //https://leetcode.com/problems/coin-change/
 
-    //The following step in the initialisation process is not necessary and it only increases the time. Thus we can OMIT it.
-    // Just read for educational purposes:
-    //verma sir told us to consider row i==1 also in the initialization. For i=1, we have one element in the array such that,
-    // if its remainder with sum is 0, then we can add that element multiple times to form the sum and thus, j/coins[0] would
-    // give us our ans. Otherwise, we initialize the element to INT_MIN-1
 
-    public int coinChange(int[] coins, int amount) {
-        int n=coins.length;
-        int[][] dp=new int[n+1][amount+1];
-        for(int i=0;i<n+1;i++){
-            for(int j=0;j<amount+1;j++){
-                if(i==0){
-                    dp[i][j]=Integer.MAX_VALUE-1;
-                }
-                else{
-                    dp[i][j]=0;
-                }
-            }
-        }
-        for(int i=1;i<n+1;i++){
-            for(int j=1;j<amount+1;j++){
-                if(coins[i-1]<=j){
-                    dp[i][j]=Math.min(1+dp[i][j-coins[i-1]],dp[i-1][j]);
-                }
-                else{
-                    dp[i][j]=dp[i-1][j];
-                }
-            }
-        }
-        return dp[n][amount]==Integer.MAX_VALUE-1?-1:dp[n][amount];
-    }
 
-    //longest common subsequence
-    //https://leetcode.com/problems/longest-common-subsequence/
 
-    public int longestCommonSubsequence(String a, String b) {
-        int m=a.length();
-        int n=b.length();
-        int[][] dp=new int[m+1][n+1];
-        for(int i=0;i<m+1;i++){
-            for(int j=0;j<n+1;j++){
-                if(i==0||j==0){
-                    dp[i][j]=0;
-                }
-            }
-        }
-        for(int i=1;i<m+1;i++){
-            for(int j=1;j<n+1;j++){
-                if(a.charAt(i-1)==b.charAt(j-1)){
-                    dp[i][j]=1+dp[i-1][j-1];
-                }
-                else{
-                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
-                }
-            }
-        }
-        //print lcs
-//        StringBuilder sb =new StringBuilder();
-//        int i=m;
-//        int j=n;
-//        while(i!=0&&j!=0){
-//            if(a.charAt(i)==b.charAt(j)){
-//                sb.append(a.charAt(i));
-//                i--;
-//                j--;
-//            }
-//            else if(dp[i-1][j]>dp[i][j-1]){
-//                i--;
-//            }
-//            else{
-//                j--;
-//            }
-//        }
-//        sb=sb.reverse();
-        return dp[m][n];
-    }
-
-    //longest common substring
-    //https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1
-    int longestCommonSubstr(String a, String b, int m, int n){
-        int[][] dp=new int[m+1][n+1];
-        int length=0;
-        for(int i=0;i<m+1;i++){
-            for(int j=0;j<n+1;j++){
-                if(i==0||j==0){
-                    dp[i][j]=0;
-                }
-            }
-        }
-        for(int i=1;i<m+1;i++){
-            for(int j=1;j<n+1;j++){
-                if(a.charAt(i-1)==b.charAt(j-1)){
-                    dp[i][j]=1+dp[i-1][j-1];
-                    length=Math.max(length,dp[i][j]);
-                }
-                else{
-                    dp[i][j]=0;
-                }
-            }
-        }
-        return length;
-    }
 }
