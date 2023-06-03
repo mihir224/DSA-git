@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.PriorityQueue;
+import java.util.*;
 
 class DynamicProgramming{
 
@@ -409,6 +406,114 @@ class DynamicProgramming{
         return dp[i][j]=min;
     }
 
+    //boolean parenthesization (imp!!)
+    //https://practice.geeksforgeeks.org/problems/boolean-parenthesization5610/1
+
+    //tc(O(N*N*2))
+    //sc(O(N*N*2) + recursive stack space)
+    static int countWays(int N, String S){
+        int[][][] dp=new int[N+1][N+1][2];
+        for(int i=0;i<N+1;i++){
+            for(int j=0;j<N+1;j++){
+                for(int k=0;k<2;k++){
+                    dp[i][j][k]=-1;
+                }
+            }
+        }
+        return bp(0,N-1,1,dp,S); //isTrue is int here
+    }
+    static int bp(int i,int j, int isTrue, int[][][] dp, String s){
+        if(i>j){ //empty/invalid string, return false
+            return 0;
+        }
+        if(i==j){
+            if(isTrue==1){
+                return s.charAt(i)=='T'?1:0;
+            }
+            else{
+                return s.charAt(i)=='F'?1:0;
+            }
+        }
+        if(dp[i][j][isTrue]!=-1){
+            return dp[i][j][isTrue];
+        }
+        int mod=1003;
+        int ans=0;
+        for(int k=i+1;k<j;k+=2){
+            int lt=bp(i,k-1,1,dp,s);
+            int lf=bp(i,k-1,0,dp,s);
+            int rt=bp(k+1,j,1,dp,s);
+            int rf=bp(k+1,j,0,dp,s);
+            if(s.charAt(k)=='&'){
+                if(isTrue==1){
+                    ans+=lt*rt;
+                }
+                else{
+                    ans+=(lt*rf)+(lf*rt)+(lf*rf);
+                }
+            }
+            if(s.charAt(k)=='|'){
+                if(isTrue==1){
+                    ans+=(lt*rt)+(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=lf*rf;
+                }
+            }
+            if(s.charAt(k)=='^'){
+                if(isTrue==1){
+                    ans+=(lf*rt)+(lt*rf);
+                }
+                else{
+                    ans+=(lf*rf)+(lt*rt);
+                }
+            }
+        }
+        return dp[i][j][isTrue]=ans%mod;
+    }
+
+    //scrambled string
+    //https://leetcode.com/problems/scramble-string
+
+    //tc is O(N2) because in each recursive call there's a for loop and there would be n recursive calls in total
+    //sc is O(N2) because in the worst case the map can store N2 keys (for all combinations of strings a and b)
+    static boolean isScramble(String a,String b)
+    {
+        if(a.length()!=b.length()){
+            return false;
+        }
+        HashMap<String,Boolean> map=new HashMap<>(); //this map is being used as in place of dp table, does the same job
+        // with lesser time and space complexity
+        return isSS(a,b,map);
+    }
+    static boolean isSS(String a, String b, HashMap<String,Boolean> map){
+        if(a.equals(b)){
+            return true;
+        }
+        if (a.length() < 1) { //this will cover the case of b.length()<1 as up till now we have made sure a and b have equal length
+            return false;
+        }
+        String key=a + " " + b;
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        int n=a.length();
+        boolean flag=false;
+        for(int i=1;i<n;i++){
+            if(isSS(a.substring(0,i),b.substring(n-i),map)&&isSS(a.substring(i),b.substring(0,n-i),map)){ //swap
+                flag=true;
+                break;
+            }
+            if(isSS(a.substring(0,i),b.substring(0,i),map)&&isSS(a.substring(i),b.substring(i),map)){ //no swap
+                flag=true;
+                break;
+            }
+        }
+        map.put(key,flag);
+        return flag;
+    }
+
+
     //minimum path sum
     //https://leetcode.com/problems/minimum-path-sum/
 
@@ -416,6 +521,8 @@ class DynamicProgramming{
     //Sc O(n*m) + path length ie O((m-1)+(n-1)) because to reach from cell (0,0) to (m-1,n-1) we have to travel m-1 rows, and n-1 columns
 
     //make sure to also watch the space optimised lecture
+
+    //memoization
     public int minPathSum(int[][] grid) {
         int m=grid.length;
         int n=grid[0].length;
@@ -502,7 +609,7 @@ class DynamicProgramming{
     //coin change: min number of coins req to form sum
     //https://leetcode.com/problems/coin-change/
 
-    //The following step in the initialisation process is not necessary and it only increases the time. Thus we can OMIT it.
+    //The following step in the initialisation process is not necessary, and it only increases the time. Thus, we can OMIT it.
     // Just read for educational purposes:
     //verma sir told us to consider row i==1 also in the initialization. For i=1, we have one element in the array such that,
     // if its remainder with sum is 0, then we can add that element multiple times to form the sum and thus, j/coins[0] would
@@ -642,6 +749,100 @@ class DynamicProgramming{
             min=Math.min(min,cost);
         }
         return dp[i][j]=min;
+    }
+
+    //egg drop
+    //https://leetcode.com/problems/super-egg-drop
+
+    //recursive
+    public int superEggDrop(int e, int f) {
+        //we don't consider case of e==0 because it is given that e is always >= 1
+        if(e==1||f==0||f==1){ // worst case attempts for these cases are f
+            return f;
+        }
+        int min=Integer.MIN_VALUE;
+        for(int k=1;k<=f;k++){
+            int tempAns=1+Math.max(superEggDrop(e-1,k-1),superEggDrop(e,f-k)); //obtaining max ans ie the worst one
+            min=Math.min(min,tempAns); //min attempts out of all worst cases
+        }
+        return min;
+    }
+
+    //memoization
+    //here we apply bs instead of linear search because that would give TLE for large test cases
+    public int superEggDrop2(int e, int f) {
+      int[][] dp=new int[e+1][f+1];
+      for(int[] arr:dp){
+          Arrays.fill(arr,-1);
+      }
+      return eggDrop(e,f,dp);
+    }
+    public int eggDrop(int e,int f,int[][] dp){
+        if(e==1||f==0||f==1){
+            return f;
+        }
+        if(dp[e][f]!=-1) {
+            return dp[e][f];
+        }
+        int min=Integer.MAX_VALUE;
+        int start=1;
+        int end=f;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            int left=eggDrop(e-1,mid-1,dp);
+            int right=eggDrop(e,f-mid,dp);
+            int tempAns=1+Math.max(left,right);
+            if(left<right){ //chasing the optimal value of worst case ie max attempts in each iteration
+                left=mid+1;
+            }
+            else{
+                end=mid-1;
+            }
+            min=Math.min(tempAns,min);
+        }
+        return dp[e][f]=min;
+    }
+
+
+    //word break
+
+
+    //palindrome partitioning
+    //https://practice.geeksforgeeks.org/problems/palindromic-patitioning4845/1
+    static int palindromicPartition(String str)
+    {
+        int n=str.length();
+        int[][] dp=new int[n+1][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return pp(0,n-1,dp,str);
+    }
+    static int pp(int i, int j, int[][] dp ,String str){
+        if(i>=j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        if(isPalindrome(str.substring(i,j+1))){
+            return 0;
+        }
+        int min=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int tempAns=1+pp(i,k,dp,str)+pp(k+1,j,dp,str);
+            min=Math.min(tempAns,min);
+        }
+        return dp[i][j]=min;
+    }
+    static boolean isPalindrome(String s){
+        int n=s.length();
+        for(int i=0;i<n/2;i++){
+            if(s.charAt(i)!=s.charAt(n-i-1)){
+                return false;
+            }
+        }
+        return true;
     }
 
 
