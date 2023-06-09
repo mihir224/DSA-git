@@ -140,8 +140,7 @@ class Graphs{
         }
     }
 
-    //course schedule (cycle detection in undirected graph)
-    //https://leetcode.com/problems/course-schedule/
+    //cycle detection in undirected graph
 
     //bfs
     public static String cycleDetection(int[][] edges, int n, int m) {
@@ -255,7 +254,7 @@ class Graphs{
     //https://practice.geeksforgeeks.org/problems/topological-sort/1
 
     //dfs
-    // O(V+E) time (since undirected graph),
+    // O(V+E) time (since directed graph),
     //O(V) stack space and vis array
     static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj)
     {
@@ -538,6 +537,14 @@ class Graphs{
 
     //print shortest path in a weighted undirected graph
     //https://practice.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1
+
+    //here we modify the Dijkstra's algo such that every time we encounter a shorter path for a node, we also store it's
+    // parent node (the node it came from) in a parent array. At the end for each node we get its optimal parent ie the
+    // one it came from to obtain the shortest distance from the source node. Now we have to find the shortest path till
+    // nth node. Thus, we start from parent of nth node and backtrack our way to the source node, storing the current node
+    // in each iteration in a DS. We do this till we find the node such that parent[node]=node ie node 1 after which we
+    // add node 1 to our ans DS. Then, we simply reverse it to find the shortest path from node 1 to n. In case the nth
+    // node is unreachable ie its distance is 1e9, we return -1 in a list as ans.
 
     //O(ElogV (Dijkstra) + N (worst case when path from 1 to n involves every node)) time
     public static List<Integer> shortestPath(int n, int m, int edges[][]) {

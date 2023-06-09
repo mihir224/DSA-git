@@ -164,7 +164,7 @@ public class Strings {
 
     //dp approach (O(N2))
     //here we combine three approaches - lps, lcsubstring, & print lcs ie we reverse the given string, then we find the
-    // longest commomn substring between them and then print it. Here a problem might occur that there might be a case where
+    // longest commom substring between them and then print it. Here a problem might occur that there might be a case where
     // the common substring between a string and its reverse is not palindromic. Thus we have to additionally check if the
     // resultant string is palindromic and largest. Moreover, some cases are not passing so there might be a bug in the code
     // which I'm currently not able to find. The expand around center approach works better for this problem as it does not take any space
@@ -470,7 +470,6 @@ public class Strings {
         return 0; //completely traversed both versions and thus they are same
     }
 
-    //min number of insertions to make string palindrome
     //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
     public int solve(String a) {
         int n=a.length();
@@ -497,6 +496,19 @@ public class Strings {
         return n-dp[n][n];
     }
 
+    //min number of insertions in the front to make string palindrome
+    //O(N)
+    //Here we use the concept of pattern matching (KMP algo). We are only allowed to make insertions in the front of the
+    // string, and thus we make use of the lps array by concatenating the given string and its reverse and calculating the
+    // lps of the whole string. This way, the last element of lps[] array will give us the length of the longest prefix that is
+    // same as suffix. So, subtracting that from the length of the given string will give us the number of characters to
+    // be inserted at the front to make the string palindrome. Intuition behind this is that -  in a palindrome, the longest
+    // prefix ie the whole string is equal to the longest suffix ie the whole string and thus using the lps logic we find
+    // the longest prefix equal to suffix. So if it is of length 1, then we will need str.length()-1 more characters as prefix to
+    // make the longest prefix(ie of length of string) equal to the longest suffix(of length of string). For eg: if the
+    // string is abc, then the longest suffix and prefix would be abc.
+
+    //We add a '&' in between the string and its reverse so that it can be differentiated in case the string is already a palindrome
     public static int minChar(String str) {
         int n=str.length();
         int[] lps=findLps(str);

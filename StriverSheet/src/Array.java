@@ -847,7 +847,7 @@ public class Array {
         return ans;
     }
 
-    //optimal (O(3N), O(1))
+    //optimal (O(3N), O(N))
     public int longestConsecutive2(int[] nums) {
         int ans = 1;
         if (nums.length == 0) {
@@ -875,7 +875,8 @@ public class Array {
     //https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
 
     //brute (O(N3))-better (O(N2)) - find all possible sub arrays, then find the ones with sum 0 and store max length.
-    // We can also use a third for loop to track zero-sum instead of only two for loops but that would take O(N3) and would be considered extremely naive, so this is much better than that.
+    // We can also use a third for loop to track zero-sum instead of only two for loops but that would take O(N3) and
+    // would be considered extremely naive, so this is much better than that.
     int maxLen(int arr[], int n) {
         int ans = 0;
         for (int i = 0; i < n; i++) {
@@ -911,7 +912,8 @@ public class Array {
     //count sub-arrays with xor k (really imp problem which clears concepts of xor with sub-arrays)
     //https://www.interviewbit.com/problems/subarray-with-given-xor/
 
-    //brute - (O(N2))-better(O(N3)) - find all sub-arrays, perform xor in each and see which one equals the given xor, then calculate number of such sub-arrays
+    //brute - (O(N2))-better(O(N3)) - find all sub-arrays, perform xor in each and see which one equals the given xor,
+    // then calculate number of such sub-arrays
     public int solve(ArrayList<Integer> A, int B) {
         int count = 0;
         for (int i = 0; i < A.size(); i++) {
@@ -941,7 +943,7 @@ public class Array {
             }
             if (map.containsKey(xor)) {
                 map.put(xor, map.get(xor) + 1);
-            } else { //map does not containt the current xor
+            }  else { //map does not contain the current xor
                 map.put(xor, 1);
             }
         }

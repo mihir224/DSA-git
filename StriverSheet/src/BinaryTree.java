@@ -1,8 +1,5 @@
-import com.sun.source.tree.Tree;
-
 import java.util.*;
 import java.util.LinkedList;
-import java.util.concurrent.TransferQueue;
 
 class BinaryTree {
     TreeNode root;
@@ -14,11 +11,12 @@ class BinaryTree {
     class TreeNode {
         TreeNode left;
         TreeNode right;
+        TreeNode next;
         int val;
 
         public TreeNode(int val) {
             this.val = val;
-            this.left = this.right = null;
+            this.left = this.right = this.next = null;
         }
     }
 
@@ -794,4 +792,31 @@ class BinaryTree {
         node.left = right;
         node.right = left;
     }
+
+    //populate next pointers in each node
+    //https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+    //O(N) -  we simply follow a preorder traversal where we check if the root is null we return it. ]
+    // Now since the given tree is a perfect BT, each node must be having 2 children or none. Now if the current root is
+    // not null, we check if its left child exists or not and if does, then we assign its left child's next to the node's right.
+    // Now since the left child is !null we surely know that there will also be a right child, since given tree is perfect BT.
+    // Thus, within the same condition, we check if the root's next is not null. If it isn't then we simply assign its left to right child's next.
+    // We then do this recursively for left and right subtrees.
+    public TreeNode connect(TreeNode root) {
+        if(root==null){ //null node
+            return root;
+        }
+        if(root.left!=null){
+            root.left.next=root.right;
+            if(root.next!=null){
+                root.right.next=root.next.left;
+            }
+        }
+        connect(root.left);
+        connect(root.right);
+        return root;
+    }
+
 }
+
+

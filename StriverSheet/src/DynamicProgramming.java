@@ -793,7 +793,7 @@ class DynamicProgramming{
             int right=eggDrop(e,f-mid,dp);
             int tempAns=1+Math.max(left,right);
             if(left<right){ //chasing the optimal value of worst case ie max attempts in each iteration
-                left=mid+1;
+                start=mid+1;
             }
             else{
                 end=mid-1;
@@ -845,9 +845,110 @@ class DynamicProgramming{
         return true;
     }
 
+    //word break
+    //https://practice.geeksforgeeks.org/problems/word-break1352/1
+
+    //memoization
+    //O(N2)
+    public static int wordBreak(String A, ArrayList<String> B )
+    {
+        int n=A.length();
+        int[][] dp=new int[n+1][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return wb(0,n-1,dp,A,B);
+    }
+    public static int wb(int i, int j, int[][] dp,String a, ArrayList<String> b){
+        if(i>j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        if(b.contains(a.substring(i,j+1))){
+            return 1;
+        }
+        boolean flag=false;
+        for(int k=i;k<j;k++){
+            if(wb(i,k,dp,a,b)==1&&wb(k+1,j,dp,a,b)==1){
+                flag=true;
+                break;
+            }
+        }
+        dp[i][j]=flag?1:0;
+        return flag?1:0;
+    }
+
+    //random 200 LC mark question
+    //plus one
+    //https://leetcode.com/problems/plus-one/submissions/
+    public int[] plusOne(int[] digits) {
+        for(int i=digits.length-1;i>=0;i--){
+            if(digits[i]<9){
+                digits[i]++;
+                return digits;
+            }
+            digits[i]=0; //case when digits[i]==9
+        }
+        digits=new int[digits.length+1]; //case when all items have become zero
+        digits[0]=1;
+        return digits;
+    }
+    
+    //job sequencing problem
+    //https://practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1
 
 
+    //since we have to perform the jobs to get the max profit, we sort the given job array in decreasing order of profits
+    // so that we can perform the jobs with higher profits at first. This is what we can think of greedily. Now to find when
+    // to perform a specific job, we can use the analogy that if we try to perform each job on the last day of its deadline,
+    // then we'd be able to accommodate doing more jobs in the days prior to the last day of that job's deadline. Thus we find
+    // the max deadline m among all jobs and create an array of size m+1 where each item denotes a day from 1 to last day of
+    // max deadline. This array is filled with -1 denoting that no job has been done yet on any day. Then we simply traverse
+    // through all jobs and for each job we check if we can do that job on the last day of its deadline ie if no other job
+    // has been done on the same day. If we can, we just fill that day in the deadline array with the index of the current
+    // job. Otherwise, we check days prior to that day and fill the one that's empty. Each time we do a job on a particular
+    // day (ie fill that day in deadline array), we add that job's profit to the total profit yet and simultaneously count
+    // the number of jobs done till now. Then we break from the inner loop through which we were traversing the days prior
+    // to the last day of current job's deadline to move onto the next job. Through this approach, we try to do each job
+    // on the last day of its deadline, and we do the jobs with higher profits first in order to maximize the profits,
+    // counting the number of jobs that we could do along the way.
 
+    //intuition: we try to perform the job with the longer deadline as late as possible so that we can perform another job
+    // with shorted deadline in the earlier days (this way we can make best use of all jobs)
 
-
+    //tc O(NLogN + N*M) considering that size of longest deadline is m
+    //sc O(M)
+    class Job {
+        int id, profit, deadline;
+        Job(int x, int y, int z){
+            this.id = x;
+            this.deadline = y;
+            this.profit = z;
+        }
+    }
+    int[] JobScheduling(Job arr[], int n)
+    {
+        int jobCount=0;
+        int maxProfit=0;
+        int maxDeadline=0; //to store max deadline
+        Arrays.sort(arr,(a,b)->b.profit-a.profit);
+        for(int i=0;i<arr.length;i++){
+            maxDeadline=Math.max(maxDeadline,arr[i].deadline);
+        }
+        int[] nums=new int[maxDeadline+1];
+        Arrays.fill(nums,-1);
+        for(int i=0;i<arr.length;i++){
+            for(int j=arr[i].deadline;j>0;j--){
+                if(nums[j]==-1){
+                    nums[j]=i;
+                    jobCount++;
+                    maxProfit+=arr[i].profit;
+                    break; //job done, now do other job
+                }
+            }
+        }
+        return new int[]{jobCount,maxProfit};
+    }
 }

@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public  class Trie {
     Node root;
     Node2 root2;
@@ -59,21 +63,6 @@ public  class Trie {
             node=node.next(prefix.charAt(i));
         }
         return true; //traversed the whole prefix w/o returning false ie prefix exists
-    }
-
-    public boolean prefixExists(String prefix){
-        boolean flag=true;
-        Node node=root;
-        for(int i=0;i<prefix.length();i++){
-            if(!node.containsKey(prefix.charAt(i))){
-                return false;
-            }
-            node=node.next(prefix.charAt(i));
-            if(node.flag==false){
-                return false;
-            }
-        }
-        return flag;
     }
 
     //implement trie 2
@@ -152,13 +141,15 @@ public  class Trie {
     ///In tries we generally cannot predict the sc as there might be a possibility that the root might contain the ref
     // nodes for all 26 letters and all the ref nodes might contain 26 ref nodes individually thus it can go like 26*26*26...
     // but this generally doesn't happen as the words with same prefixes are reused in tries
-    public String completeString(int n, String[] a) {
+
+    public static String completeString(int n, String[] a) {
+        Trie obj=new Trie();
         for(int i=0;i<n;i++){
-            insert(a[i]);
+            obj.insert(a[i]);
         }
         String longest="";
         for(int i=0;i<n;i++){
-            if(prefixExists(a[i])){
+            if(obj.prefixExists(a[i])){
                 if(a[i].length()>longest.length()){
                     longest=a[i];
                 }
@@ -168,8 +159,66 @@ public  class Trie {
             }
         }
         if(longest.isEmpty()){
-            return "none";
+            return "None";
         }
         return longest;
     }
+    public boolean prefixExists(String word){
+        boolean flag=true;
+        Node node=root;
+        for(int i=0;i<word.length();i++){
+            node=node.next(word.charAt(i));
+            if(node.flag==false){
+                return false;
+            }
+        }
+        return flag;
+    }
+
+    //Count Distinct Substrings
+    //https://www.codingninjas.com/codestudio/problems/count-distinct-substrings_985292?utm_source=youtube&utm_medium=affiliate&utm_campaign=striver_tries_videos
+
+    //tc O(N2)
+    public int countDistinctSubstrings(String s)
+    {
+
+        int count=1; //empty string
+        Node root=new Node();
+        for(int i=0;i<s.length();i++){
+            Node node=root;
+            for(int j=i;j<s.length();j++){
+                if(!node.containsKey(s.charAt(j))){
+                    node.put(s.charAt(j),new Node());
+                    count++;
+                }
+                node=node.next(s.charAt(j));
+            }
+        }
+        return count;
+    }
+
+    //Power Set (not related to trie but crucial to bit manipulation)
+    //https://practice.geeksforgeeks.org/problems/power-set4302/1#
+
+    //tc O((2^N)*N)
+    //sc O(2^N), if we consider the ans list
+    public List<String> AllPossibleStrings(String s)
+    {
+        int n=s.length();
+        List<String> ans=new ArrayList<>();
+        for(int i=0;i<Math.pow(2,n);i++){  //2^n can also be written as 1<<n
+            String str="";
+            for(int j=0;j<n;j++){
+                if(((i>>j)&1)!=0){
+                    str+=s.charAt(j);
+                }
+            }
+            if(str.length()>0){ //since we don't take empty subsequences
+                ans.add(str);
+            }
+        }
+        Collections.sort(ans); //sorting lexicographically
+        return ans;
+    }
+
 }

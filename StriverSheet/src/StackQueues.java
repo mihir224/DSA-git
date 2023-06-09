@@ -615,4 +615,61 @@ public class StackQueues {
             }
         }
     }
+
+    //maximum of minimum for every window size
+    //https://practice.geeksforgeeks.org/problems/maximum-of-minimum-for-every-window-size3453/1
+
+    //watch this for approach - https://www.youtube.com/watch?v=CK8PIAF-m2E&t=1120s
+
+    //DRY RUN!!
+    static int[] maxOfMin(int[] arr, int n)
+    {
+        int[] ans=new int[n];
+        int[] ns=nse(arr,n);
+        int[] ps=pse(arr,n);
+        for(int i=0;i<n;i++){
+            int len=ns[i]-ps[i]-1;
+            ans[len-1]=Math.max(ans[len-1],arr[i]);
+        }
+        for(int i=n-2;i>=0;i--){
+            if(ans[i]<ans[i+1]){ //case when some values were not filled
+                ans[i]=ans[i+1];
+            }
+        }
+        return ans;
+    }
+    static int[] pse(int[] arr,int n){
+        Stack<Integer> st=new Stack<>();
+        int[] pse=new int[n];
+        for(int i=0;i<n;i++){
+            while(!st.isEmpty()&&arr[i]<=arr[st.peek()]){
+                st.pop();
+            }
+            if(!st.isEmpty()){
+                pse[i]=st.peek();
+            }
+            else{
+                pse[i]=-1;
+            }
+            st.push(i);
+        }
+        return pse;
+    }
+    static int[] nse(int[] arr,int n){
+        Stack<Integer> st=new Stack<>();
+        int[] nse=new int[n];
+        for(int i=n-1;i>=0;i--){
+            while(!st.isEmpty()&&arr[i]<=arr[st.peek()]){
+                st.pop();
+            }
+            if(!st.isEmpty()){
+                nse[i]=st.peek();
+            }
+            else{
+                nse[i]=n;
+            }
+            st.push(i);
+        }
+        return nse;
+    }
 }
