@@ -1,11 +1,9 @@
 package com.company;
-//9920102054 MIHIR SAINI E2
 import java.util.Arrays;
 
 public class MergeSort {
     public static void main(String[] args) {
         int[] arr1={1,7,3,2,5,6};
-
         System.out.println(Arrays.toString(MergeSort(arr1)));
     }
     static int[] MergeSort(int[] arr){ //to sort parts of the array we use copy of the two parts of array
@@ -50,46 +48,6 @@ public class MergeSort {
             k++;
         }
         return mergedArray;
-    }
-    static void mergeSortInPlace(int[] arr, int start, int end){ //merge sort without dividing the array in two parts
-        if(end-start==1){ //base condition
-            return;
-        }
-        int mid=(start+end)/2;
-        mergeSortInPlace(arr,start,mid); //to sort parts of the array we use indices like start and end
-        mergeSortInPlace(arr,mid, end);
-        mergeInPlace(arr,start,mid,end);
-    }
-    private static void mergeInPlace(int[] arr, int start, int mid, int end){
-        int [] mergedArray=new int[end-start];
-        int i=start;
-        int j=mid;
-        int k=0;
-        while(i<mid&&j<end){
-            if(arr[i]<arr[j]){
-                mergedArray[k]=arr[i];
-                i++;
-            }
-            else{
-               mergedArray[k]=arr[j];
-               j++;
-            }
-            k++;
-        }
-        while (i < mid) {
-            mergedArray[k] =arr[i]; //copying the remaining elements as it is
-            i++;
-            k++;
-            ;
-        }
-        while (j < end) {
-            mergedArray[k] = arr[j];
-            j++;
-            k++;
-        }
-        for(int l=0;l<mergedArray.length;l++){
-            arr[start+l]=mergedArray[l];  //this puts the sorted elements from wherever the start index is
-        }
     }
 
 }

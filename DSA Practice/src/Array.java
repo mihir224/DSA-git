@@ -201,6 +201,10 @@ public class Arrays {
 
     //best time to buy and sell stock
     //https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+
+    //O(N) tc O(1) sc
+    //this is basically a sort of DP as we store the ans we got from previous iterations (least price till day) and use
+    // it in future iterations
     public int maxProfit(int[] prices) {
         int leastPrice=Integer.MAX_VALUE;
         int netProfit=0;
@@ -215,5 +219,47 @@ public class Arrays {
         }
         return netProfit;
     }
+
+    //rotate matrix
+    //https://leetcode.com/problems/rotate-image/
+    //O(2(N*N));
+    public void rotate(int[][] matrix) {
+        int n=matrix.length;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){ //observe how j starts from i+1. This is done to handle the condition i!=j and
+                // also skip cells that have been swapped
+                int temp=matrix[i][j];
+                matrix[i][j]=matrix[j][i];
+                matrix[j][i]=temp;
+            }
+        }
+        for(int[] row :matrix){
+            reverse(0,n,row);
+        }
+    }
+
+    //brute O(NlogN+N2) tc, O(N) sc
+    //sort the intervals array, then iterate over all the intervals and for each interval check if there are any valid
+    // intervals on its right that can be merged to it and if there are, then merge them with te current interval.
+    // After merging all valid intervals, add the resultant to a DS and then move to the next interval
+
+    //optimal O(NlogN+N) tc, O(N) sc
+
+    class Pair{
+        int first;
+        int second;
+        public Pair (int first, int second){
+            this.first=first;
+            this.second=second;
+        }
+    }
+    public int[][] merge(int[][] intervals) {
+        List<Pair> list=new ArrayList<>();
+        if(intervals.length==0){
+            return list.toArray(new int[0][0]);
+        }
+        
+    }
+
 
 }
