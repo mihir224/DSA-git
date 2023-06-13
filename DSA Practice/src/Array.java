@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class Array {
@@ -341,7 +339,7 @@ public class Array {
             slow=nums[slow];
             fast=nums[fast];
         }
-        //second collision occurred
+        //second collisiodn occurred
         return slow;
     }
 
@@ -464,7 +462,7 @@ public class Array {
 
     //brute O(N*M) tc, O(1) sc - linearly search for the element
 
-    //this approach is better for leetcode & optimal for gfg
+    //better - this approach is better for leetcode & optimal for gfg
     //O(N) tc, O(1) sc
     public boolean searchMatrix(int[][] matrix, int target) {
         int row=0;
@@ -543,8 +541,8 @@ public class Array {
     //brute O(N2) tc, O(1) sc - traverse the array twice in a nested manner, then check if element in the outer loop equals the one in the
     // inner loop and if it is, increase the count and if for any element count>N/2, then we return it.
 
-    //better (O(N), O(NlogN) wc) tc, O(1) sc - using hashmap to store freq of all N elements and return the one with freq>N/2. O(N)
-    // because in java avg insertion time in hashmap is O(1) and for inserting N elements, O(N)
+    //better (O(NlogN) wc) tc, O(1) sc - using hashmap to store freq of all N elements and return the one with freq>N/2. O(N)
+    // because in java avg insertion time in hashmap is O(1) and O(N) for inserting N elements
 
     //optimal O(N) tc, O(1) sc - using Moore's voting algo
     public int majorityElement(int[] nums) {
@@ -566,6 +564,9 @@ public class Array {
 
     //majority element appearing > N/3 times
     //https://leetcode.com/problems/majority-element-ii/
+
+    //brute, better - same as before
+    //optimal O(N) tc, O(1) sc - using Moore's voting algo
     public List<Integer> majorityElement1(int[] nums) {
         int count1=0;
         int count2=0;
@@ -621,4 +622,493 @@ public class Array {
         }
         return ans;
     }
+
+    //unique grid paths
+    //https://leetcode.com/problems/unique-paths/
+    
+    //brute O(2^N) tc, O(2^N) sc (recursive stack space) - recursively find all possible paths from start to end (in down
+    // and right directions) and return the total unique paths
+    public int uniquePaths(int m, int n) {
+        return uP(0,0,m,n);
+    }
+    public int uP(int i, int j, int m,int n){
+        if(i>=m||j>=n){
+            return 0;
+        }
+        if(i==m-1&&j==n-1){
+            return 1;
+        }
+        return uP(i+1,j,m,n)+uP(i,j+1,m,n);
+    }
+
+    //better O(N*M) time and space - memoization
+    public int uniquePaths1(int m, int n) {
+        int[][] dp=new int[m+1][n+1];
+        for(int [] arr: dp){
+            Arrays.fill(arr,-1);
+        }
+        return uP(0,0,m,n,dp);
+    }
+    public int uP(int i, int j, int m,int n,int[][] dp){
+        if(i>=m||j>=n){
+            return 0;
+        }
+        if(i==m-1&&j==n-1){
+            return 1;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        return dp[i][j]=uP(i+1,j,m,n,dp)+uP(i,j+1,m,n,dp);
+    }
+
+    //optimal O(N) tc, O(1) - using combinations approach
+    public int uniquePaths2(int m, int n) {
+        double ans = 1;
+        int totalWays = m + n - 2; // total number of times we are allowed to move in a path
+        int r = m - 1; // total number of times we are allowed to go down in a path
+        for (int i = 1; i <= r; i++) {
+            ans = ans * (totalWays - i + 1) / i; //no. of ways we can move down
+        }
+        return (int) Math.round(ans); // Round the result to the nearest integer
+    }
+
+    //reverse pairs
+    //https://leetcode.com/problems/reverse-pairs
+
+    //brute O(N2)tc, O(1)sc iterate over the array and for each element check on its right if it is greater than 2wice
+    // of any element and increment the count in that case
+
+    //optimal O(NlogN)+O(N)tc, O(N- temp array)sc - Merge sort variation
+
+    public int reversePairs(int[] nums) {
+        int n=nums.length;
+        return mergeSort2(0,n-1,nums);
+    }
+    public int mergeSort2(int start,int end, int[] arr){
+        int pairs=0;
+        if(start>=end){
+            return pairs;
+        }
+        int mid=(start+end)/2;
+        pairs+=mergeSort2(start,mid,arr);
+        pairs+=mergeSort2(mid+1,end,arr);
+        pairs+=merge2(start,mid,end,arr);
+        return pairs;
+    }
+    public int merge2(int start,int mid,int end,int[] arr){
+        int pairs=0;
+        int j=mid+1;
+        for(int i=start;i<=mid;i++){
+            while(j<=end&&arr[i]>2*(long)arr[j]){
+                j++;
+            }
+            pairs+=j-(mid+1);
+        }
+        int left=start;
+        int right=mid+1;
+        List<Integer> temp=new ArrayList<>();
+        while(left<=mid&&right<=end){
+            if(arr[left]<arr[right]){
+                temp.add(arr[left]);
+                left++;
+            }
+            else{
+                temp.add(arr[right]);
+                right++;
+            }
+        }
+        while(left<=mid){
+            temp.add(arr[left]);
+            left++;
+        }
+        while(right<=end){
+            temp.add(arr[right]);
+            right++;
+        }
+        for(int i=start;i<=end;i++){
+            arr[i]=temp.get(i-start);
+        }
+        return pairs;
+    }
+
+    //Two Sum
+    //https://leetcode.com/problems/two-sum/
+    
+    //brute O(N2) time, O(1) space - iterate over the array and for each element check on its right if its sum with an element equals target and
+    // in case it does, then return indices of both the elements
+
+    //better O(N+NlogN+N) time, O(N) space - make a copy of the original array, then sort the array and apply two pointer.
+    // If ans found, retrieve the indices of the two elements from the temp array and return them. We didn't use hashmap
+    // here because there might be a case where two equal elements form the target sum and in that case the hashmap would store only one value for both of those elements
+
+    public int[] twoSum1(int[] nums, int target) {
+        int[] temp=new int[nums.length];
+        for(int i=0;i<nums.length;i++){
+            temp[i]=nums[i];
+        }
+        Arrays.sort(nums);
+        int left=0;
+        int right=nums.length-1;
+        while(left<right){
+            if(nums[left]+nums[right]==target){
+                break;
+            }
+            else if(nums[left]+nums[right]<target){ //use of else if is necessary. otherwise the pointers would be moved unnecessarily
+            }
+            else{
+                right--;
+            }
+        }
+        int[] ans={-1,-1};
+        for(int i=0;i<nums.length;i++){
+            if(temp[i]==nums[left]){
+                ans[0]=i;
+                break;
+            }
+        }
+        for(int i=nums.length-1;i>=0;i--){
+            if(temp[i]==nums[right]){
+                ans[1]=i;
+                break;
+            }
+        }
+        return ans;
+    }
+
+    //optimal O(N - in case the other matching element is the last one we have to iterate over the whole array) - start
+    // inserting elements in the map and if there exists an element in the map such that target-nums[i]=that element, then
+    // return the indices of these two elements
+
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(map.containsKey(target-nums[i]))
+                return new int[] {map.get(target-nums[i]),nums[i]};
+            map.put(nums[i],i);
+        }
+        return new int[] {-1,-1};
+    }
+
+    //4 Sum
+    //https://leetcode.com/problems/4sum/
+
+    //brute O(N4) - take 4 pointers, i from 0 to n, j from i+1 to n, k from j+1 to n, and l from k+1 to n and check if the
+    // elements at the 4 positions make a valid sum and return them if they do
+
+    //better O(NlogN+N3logN+M(where M is the number of quadruples, and to iterate over the quadruples in the set and store them in the list it would take O(M) time)) - three pointers+binary search: we basically sort the array, then take three pointers at i at the
+    // start, j from i+1, and k from j+1. Now the quadruple includes arr[i],arr[j],arr[k], and the 4th element, which lies
+    // in the right half. So we use binary search to find the 4th element. We can use hashset to avoid duplicate quadruples.
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        int n=nums.length;
+        Arrays.sort(nums);
+        HashSet<List<Integer>> set=new HashSet<>();
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                for(int k=j+1;k<n;k++){
+                    long sum=nums[i]+nums[j];
+                    sum+=nums[k];
+                    long x = target - sum;
+                    if(binarySearch(x,Arrays.copyOfRange(nums,k+1,n))){
+                        List<Integer> list=new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[k]);
+                        list.add((int)x);
+                        Collections.sort(list); //here we basically sort the list so that set can identify the duplicates bettek
+                        set.add(list);
+                    }
+                }
+            }
+        }
+        List<List<Integer>> ans=new ArrayList<>(set);
+        return ans;
+    }
+    public boolean binarySearch(long target, int[] nums){
+        int start=0;
+        int end=nums.length-1;
+        while(start<=end) {
+            int mid = start + (end - start) / 2;
+            if (nums[mid] == target) {
+                return true;
+            } else if (nums[mid] > target) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    //optimal - O(NlogN+N3) - sort the array, take two pointers at i at start and j at i+1 and two pointers left and right
+    // at j+1 and n-1. We basically try to apply two sum in the right of i and j to find the other two elements such that
+    // their sum=target-(arr[i]+arr[j])
+
+    public List<List<Integer>> fourSum1(int[] nums, int target) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (nums.length == 0) {
+            return ans;
+        }
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            long t1 = target - nums[i]; //we take this expression explicitly instead of just writing t=target-nums[i]-nums[j]
+            // because in that case if target and input are very large, subtracting a very large number from target would
+            // exceed the integer range for target and will thus produce a wrong output. Thus, we store target-nums[i] in
+            // a long variable to avoid this and then we use it with nums[j].
+            for (int j = i + 1; j < nums.length; j++) {
+                long t = t1 - nums[j];
+                int left = j + 1;
+                int right = nums.length - 1;
+                while (left < right) { //two pointer
+                    if (nums[left] + nums[right] < t) {
+                        left++;
+                    } else if (nums[left] + nums[right] > t) {
+                        right--;
+                    } else { //left+right==t
+                        List<Integer> list = new ArrayList<>(); //to store a quadruple
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[left]);
+                        list.add(nums[right]);
+                        ans.add(list);
+                        //avoiding duplicates
+                        while (left < right && nums[left] == list.get(2)) {
+                            left++;
+                        }
+                        while (left < right && nums[right] == list.get(3)) {
+                            right--;
+                        }
+                    }
+                }
+                //avoiding j duplicates
+                while (j + 1 < nums.length && nums[j + 1] == nums[j]) {
+                    j++;
+                }
+            }
+            //avoiding i duplicates
+            while (i + 1 < nums.length && nums[i + 1] == nums[i]) {
+                i++;
+            }
+        }
+        return ans;
+    }
+
+    //longest consecutive subsequence
+    //https://leetcode.com/problems/longest-consecutive-sequence
+
+    //brute - O(NlogN+N) tc, O(1) sc - sort the array, then iterate over it and check if arr[i]+1=arr[i+1] and if it is, increase count,
+    // otherwise set it to 1
+
+    public int longestConsecutive(int[] nums) {
+        int n=nums.length;
+        if(n==0||n==1){
+            return n;
+        }
+        Arrays.sort(nums);
+        int count=1;
+        int maxCount=1;
+        for(int i=0;i<n-1;i++){
+            if(nums[i]+1==nums[i+1]){
+                count++;
+            }
+            else if(nums[i+1]!=nums[i]) {
+                count=1;
+            }
+            maxCount=Math.max(count,maxCount);
+        }
+        return maxCount;
+    }
+
+    //optimal O(N+N+N(while loop wc)) tc , O(N) sc - insert elements into a hash set,then iterate over the array and check if num-1
+    // exists in set and if it doesn't then it means that this is the first element of its sequence and then we run a
+    // while loop till the current num + 1 exists in the set, increasing the count and current num accordingly. Then,
+    // out of all counts, we return the max count
+
+    public int longestConsecutive1(int[] nums) {
+        HashSet<Integer> set=new HashSet<>();
+        int count=1;
+        int maxCount=1;
+        for(int i:nums){
+            set.add(i);
+        }
+        for(int i=0;i<nums.length-1;i++){
+            if(nums[i]==nums[i+1]){
+                continue;
+            }
+            if(!set.contains(i-1)){
+                while(set.contains(i+1)){
+                    count++;
+                    i++;
+                }
+            }
+            count=Math.max(count,maxCount);
+        }
+        return maxCount;
+    }
+
+    //largest sub array with 0 sum
+    //https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
+
+    //brute - O(N2)tc, O(1)sc - find all possible sub arrays, calculate sum in all and if it is 0, find length of current
+    // sub array and update accordingly in max if greater
+    int maxLen(int arr[], int n)
+    {
+        if(n==0||n==1){
+            return 1;
+        }
+        int maxLen=Integer.MIN_VALUE;
+        int sum=0;
+        for(int i=0;i<n;i++){
+            sum=arr[i];
+            for(int j=i+1;j<n;j++){
+                sum+=arr[j];
+                if(sum==0){
+                    maxLen=Math.max(maxLen,j-i+1);
+                }
+            }
+        }
+        return maxLen==Integer.MIN_VALUE?0:maxLen;
+    }
+
+    //optimal - O(NlogN - map+traversal)tc, O(N)sc
+    int maxLen1(int arr[], int n)
+    {
+        HashMap<Integer,Integer> map=new HashMap<>();
+        int prefixSum=0;
+        int maxSum=0;
+        for(int i=0;i<n;i++){
+            prefixSum+=arr[i];
+            if(prefixSum==0){
+                maxSum=i+1; //this will be longest yet thus no need to compare
+            }
+            else if(!map.containsKey(prefixSum)){
+                map.put(prefixSum,i);
+            }
+            else{ //map contains prefix sum
+                maxSum=Math.max(maxSum,i-map.get(prefixSum));
+            }
+        }
+        return maxSum;
+    }
+
+    //number of sub arrays with given xor
+    //https://www.interviewbit.com/problems/subarray-with-given-xor/
+
+    //brute - O(N3) or O(N2) - using 3 or 2 pointers (optimized) to find all sub arrays and increase count whenever xor
+    // of elements of a sub array equals k. one extra condition to check: if the current element ie the one in at the ith
+    // index is itself equal to B, then also we increase the count
+    public int solve(ArrayList<Integer> A, int B) {
+        int xor=0;
+        int count=0;
+        for(int i=0;i<A.size();i++){
+            xor=A.get(i);
+            if(xor==B){ //case when the element itself is equal to B
+                count++;
+            }
+            for(int j=i+1;j<A.size();j++){
+                xor=xor^A.get(j);
+                if(xor==B){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //optimal - O(NlogN: map+traversal)tc, O(N)sc
+    public int solve1(ArrayList<Integer> A, int B) {
+        HashMap<Integer,Integer> map=new HashMap<>();
+        int xor=0;
+        int count=0;
+        for(int i=0;i<A.size();i++){
+            xor^=A.get(i);
+            int y=xor^B;
+            if(xor==B){
+                count++;
+            }
+            if(map.containsKey(y)){
+                count+=map.get(y);
+            }
+            if(map.containsKey(xor)){
+                map.put(xor,map.get(xor)+1);
+            }
+            else{
+                map.put(xor,1);
+            }
+        }
+        return count;
+    }
+
+    //longest substring without repeating characters
+    //https://leetcode.com/problems/longest-substring-without-repeating-characters\
+
+    //brute O(N2)time,O(N (HashSet))space - find all possible substrings and obtain length of the valid ones, then return max length overall
+    public int lengthOfLongestSubstring(String s) {
+        int n=s.length();
+        int len=0;
+        int ans=0;
+        HashSet<Character> set=new HashSet<>();
+        for(int i=0;i<n;i++){
+            len=1;
+            set.add(s.charAt(i));
+            for(int j=i+1;j<n;j++){
+                if(set.contains(s.charAt(j))){ //repeating character
+                    break;
+                }
+                else{
+                    set.add(s.charAt(j));
+                    len++;
+                }
+            }
+            set.clear();
+            ans=Math.max(ans,len);
+        }
+        return ans;
+    }
+
+    //better - when u revise this 2mrw watch striver video
+    //(O(2N)tc as we initally loop right pointer from left till we reach a duplicate, then we loop the left pointer till the duplicate has been removed,
+    // O(1)space because the set will at most store 26 characters)
+    public int lengthOfLongestSubstring1(String s) {
+        int ans=0;
+        HashSet<Character> set=new HashSet<>();
+        int left=0;
+        int right=0;
+        while(right<s.length()){
+            if(set.contains(s.charAt(right))){
+                while(left<right&&set.contains(s.charAt(right))){
+                    set.remove(s.charAt(left));
+                    left++;
+                }
+            }
+            set.add(s.charAt(right));
+            ans=Math.max(ans,right-left+1);
+            right++;
+
+        }
+        return ans;
+    }
+
+    //optimal
+    //This reduces tc to O(N) as we don't have to iterate the left pointer however sc is increased to O(N) as the map might
+    // store all of the elements in the string since we don't remove anything
+    public int lengthOfLongestSubstring2(String s) {
+        int ans=0;
+        HashMap<Character,Integer> map=new HashMap<>();
+        int left=0;
+        int right=0;
+        while(right<s.length()){
+            if(map.containsKey(s.charAt(right))){
+                left=Math.max(left,map.get(s.charAt(right))+1); //there might be a case when left is already ahead of the
+                // last occurence of the repeating element, thus we always take max
+            }
+            map.put(s.charAt(right),right); //storing the most recent occurrence of current element in the map
+            ans=Math.max(ans,right-left+1);
+            right++;
+        }
+        return ans;
+    }
+
+
 }
