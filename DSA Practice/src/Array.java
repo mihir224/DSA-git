@@ -8,20 +8,20 @@ public class Array {
     //brute
     //O(2(N*M)) tc, O(N+M) sc
     public void setZeroes(int[][] matrix) {
-        int[] dummyRow=new int[matrix.length];
-        int[] dummyCol=new int[matrix[0].length];
-        for(int i=0;i< matrix.length;i++){
-            for(int j=0;j< matrix[0].length;j++){
-                if(matrix[i][j]==0){
-                    dummyRow[i]=-1;
-                    dummyCol[j]=-1;
+        int[] dummyRow = new int[matrix.length];
+        int[] dummyCol = new int[matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    dummyRow[i] = -1;
+                    dummyCol[j] = -1;
                 }
             }
         }
-        for(int i=0;i< matrix.length;i++){
-            for(int j=0;j<matrix[0].length;j++){
-                if(dummyRow[i]==-1||dummyCol[j]==-1){
-                    matrix[i][j]=0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (dummyRow[i] == -1 || dummyCol[j] == -1) {
+                    matrix[i][j] = 0;
                 }
             }
         }
@@ -30,26 +30,26 @@ public class Array {
     //optimal
     //O(2(N*M)) tc, O(1) sc
     public void setZeroes1(int[][] matrix) {
-        boolean col=true;
-        for(int i=0;i<matrix.length;i++){
-            if(matrix[i][0]==0){ //if any element of col1 is 0, we turn it to zero
-                col=false;
+        boolean col = true;
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i][0] == 0) { //if any element of col1 is 0, we turn it to zero
+                col = false;
             }
-            for(int j=1;j<matrix[0].length;j++){ //starting with j=1 since we already dealt with j=0
-                if(matrix[i][j]==0){
-                    matrix[i][0]=0;
-                    matrix[0][j]=0;
+            for (int j = 1; j < matrix[0].length; j++) { //starting with j=1 since we already dealt with j=0
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
                 }
             }
         }
-        for(int i=matrix.length-1;i>=0;i--){
-            for(int j=matrix[0].length-1;j>0;j--){
-                if(matrix[i][0]==0||matrix[0][j]==0){
-                    matrix[i][j]=0;
+        for (int i = matrix.length - 1; i >= 0; i--) {
+            for (int j = matrix[0].length - 1; j > 0; j--) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
                 }
             }
-            if(!col){
-                matrix[i][0]=0; //dealing with 1st col
+            if (!col) {
+                matrix[i][0] = 0; //dealing with 1st col
             }
         }
     }
@@ -59,18 +59,18 @@ public class Array {
 
     //O(N2) tc, O(M) where M is the avg size of each row
     public List<List<Integer>> generate(int numRows) {
-        List<List<Integer>> ans=new ArrayList<>();
-        List<Integer> prev=new ArrayList<>();
-        for(int i=0;i<numRows;i++){
-            List<Integer> list=new ArrayList<>();
-            for(int j=0;j<=i;j++){
-                if(j==0||j==i){
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> prev = new ArrayList<>();
+        for (int i = 0; i < numRows; i++) {
+            List<Integer> list = new ArrayList<>();
+            for (int j = 0; j <= i; j++) {
+                if (j == 0 || j == i) {
                     list.add(1);
-                }else{
-                    list.add(prev.get(j-1)+prev.get(j));
+                } else {
+                    list.add(prev.get(j - 1) + prev.get(j));
                 }
             }
-            prev=list;
+            prev = list;
             ans.add(list);
         }
         return ans;
@@ -81,18 +81,18 @@ public class Array {
 
     //O(3N)
     public void nextPermutation(int[] nums) {
-        int n=nums.length;
-        if(n==0||n==1){
+        int n = nums.length;
+        if (n == 0 || n == 1) {
             return;
         }
-        int breakPoint=-1;
-        for(int i=n-2;i>=0;i--){
-            if(nums[i]<nums[i+1]){
-                breakPoint=i;
+        int breakPoint = -1;
+        for (int i = n - 2; i >= 0; i--) {
+            if (nums[i] < nums[i + 1]) {
+                breakPoint = i;
                 break;
             }
         }
-        if(breakPoint>=0) { //case when bp exists
+        if (breakPoint >= 0) { //case when bp exists
             for (int i = n - 1; i >= 0; i--) {
                 if (nums[i] > nums[breakPoint]) {
                     swap(i, breakPoint, nums);
@@ -100,16 +100,18 @@ public class Array {
                 }
             }
         }
-        reverse(breakPoint+1,n-1,nums);
+        reverse(breakPoint + 1, n - 1, nums);
     }
-    public void swap(int a,int b, int[] nums){
-        int temp=nums[a];
-        nums[a]=nums[b];
-        nums[b]=temp;
+
+    public void swap(int a, int b, int[] nums) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
     }
-    public void reverse(int i, int j, int[] nums){
-        while(i<j){
-            swap(i,j,nums);
+
+    public void reverse(int i, int j, int[] nums) {
+        while (i < j) {
+            swap(i, j, nums);
             i++;
             j--;
         }
@@ -124,15 +126,15 @@ public class Array {
     //optimal would be using kadane's algo O(N)
 
     public int maxSubArray(int[] nums) {
-        int sum=0;
-        int maxSum=Integer.MIN_VALUE;
-        for(int i=0;i<nums.length;i++){
-            sum+=nums[i];
-            if(sum>maxSum){
-                maxSum=sum;
+        int sum = 0;
+        int maxSum = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (sum > maxSum) {
+                maxSum = sum;
             }
-            if(sum<0){
-                sum=0;
+            if (sum < 0) {
+                sum = 0;
             }
         }
         return maxSum;
@@ -148,31 +150,31 @@ public class Array {
     //using counting sort approach
     //O(N+k) tc a
     public void sortColors(int[] nums) {
-        int count0=0;
-        int count1=0;
-        int count2=0;
-        for(int i=0;i<nums.length;i++){
-            if(nums[i]==0){
+        int count0 = 0;
+        int count1 = 0;
+        int count2 = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
                 count0++;
             }
-            if(nums[i]==1){
+            if (nums[i] == 1) {
                 count1++;
             }
-            if(nums[i]==2){
+            if (nums[i] == 2) {
                 count2++;
             }
         }
-        int k=0;
-        while(k<count0){
-            nums[k]=0;
+        int k = 0;
+        while (k < count0) {
+            nums[k] = 0;
             k++;
         }
-        while(k<count0+count1){
-            nums[k]=1;
+        while (k < count0 + count1) {
+            nums[k] = 1;
             k++;
         }
-        while(k<nums.length){
-            nums[k]=2;
+        while (k < nums.length) {
+            nums[k] = 2;
             k++;
         }
     }
@@ -180,20 +182,18 @@ public class Array {
     //using three pointer approach
     //same O(N) tc O(1) sc
     public void sortColors1(int[] nums) {
-        int low=0;
-        int mid=0;
-        int hi=nums.length-1;
-        while(mid<=hi){
-            if(nums[mid]==1){
+        int low = 0;
+        int mid = 0;
+        int hi = nums.length - 1;
+        while (mid <= hi) {
+            if (nums[mid] == 1) {
                 mid++;
-            }
-            else if(nums[mid]==0){
-                swap(low,mid,nums);
+            } else if (nums[mid] == 0) {
+                swap(low, mid, nums);
                 low++;
                 mid++;
-            }
-            else if(nums[mid]==2){
-                swap(mid,hi,nums);
+            } else if (nums[mid] == 2) {
+                swap(mid, hi, nums);
                 hi--;
             }
         }
@@ -206,15 +206,15 @@ public class Array {
     //this is basically a sort of DP as we store the ans we got from previous iterations (least price till day) and use
     // it in future iterations
     public int maxProfit(int[] prices) {
-        int leastPrice=Integer.MAX_VALUE;
-        int netProfit=0;
-        for(int i:prices){
-            if(i<leastPrice){//calculating net profit through least price till day
-                leastPrice=i;
+        int leastPrice = Integer.MAX_VALUE;
+        int netProfit = 0;
+        for (int i : prices) {
+            if (i < leastPrice) {//calculating net profit through least price till day
+                leastPrice = i;
             }
-            int currentProfit=i-leastPrice;
-            if(currentProfit>netProfit){
-                netProfit=currentProfit;
+            int currentProfit = i - leastPrice;
+            if (currentProfit > netProfit) {
+                netProfit = currentProfit;
             }
         }
         return netProfit;
@@ -224,17 +224,17 @@ public class Array {
     //https://leetcode.com/problems/rotate-image/
     //O(2(N*N));
     public void rotate(int[][] matrix) {
-        int n=matrix.length;
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){ //observe how j starts from i+1. This is done to handle the condition i!=j and
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) { //observe how j starts from i+1. This is done to handle the condition i!=j and
                 // also skip cells that have been swapped
-                int temp=matrix[i][j];
-                matrix[i][j]=matrix[j][i];
-                matrix[j][i]=temp;
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
             }
         }
-        for(int[] row :matrix){
-            reverse(0,n,row);
+        for (int[] row : matrix) {
+            reverse(0, n, row);
         }
     }
 
@@ -250,24 +250,23 @@ public class Array {
     //optimal O(NlogN+N) tc, O(N) sc
 
     public int[][] merge(int[][] intervals) {
-        List<int[]> list=new ArrayList<>();
-        if(intervals.length==0){
+        List<int[]> list = new ArrayList<>();
+        if (intervals.length == 0) {
             return list.toArray(new int[0][0]);
         }
-        Arrays.sort(intervals, (a,b)->a[0]-b[0]);
-        int lb=intervals[0][0];
-        int ub=intervals[0][1];
-        for(int[] arr:intervals){
-            if(ub>=arr[0]){ //found overlapping interval, merge
-                ub=Math.max(ub,arr[1]);
-            }
-            else{ //merge not possible
-                list.add(new int[] {lb,ub});
-                lb=arr[0];
-                ub=arr[1];
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        int lb = intervals[0][0];
+        int ub = intervals[0][1];
+        for (int[] arr : intervals) {
+            if (ub >= arr[0]) { //found overlapping interval, merge
+                ub = Math.max(ub, arr[1]);
+            } else { //merge not possible
+                list.add(new int[]{lb, ub});
+                lb = arr[0];
+                ub = arr[1];
             }
         }
-        list.add(new int[]{lb,ub}); //adding the last interval
+        list.add(new int[]{lb, ub}); //adding the last interval
         return list.toArray(new int[list.size()][2]); //here toArray() method converts the list into a 2d array with
         // specified format. Note that this method works only with lists of type int[].
     }
@@ -325,19 +324,19 @@ public class Array {
     // to create the path.
 
     public int findDuplicate(int[] nums) {
-        int slow=nums[0];
-        int fast=nums[0];
-        do{
+        int slow = nums[0];
+        int fast = nums[0];
+        do {
             //O(N)
-            slow=nums[slow];
-            fast=nums[nums[fast]];
-        }while(slow!=fast);
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
         //after first collision
-        fast=nums[0];
+        fast = nums[0];
         //O(N)
-        while(slow!=fast){
-            slow=nums[slow];
-            fast=nums[fast];
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
         }
         //second collisiodn occurred
         return slow;
@@ -351,42 +350,42 @@ public class Array {
 
     //better O(N) time and space - using frequency array
     public int[] findErrorNums(int[] nums) {
-        int[] freq=new int[nums.length];
-        List<Integer> list=new ArrayList<>();
-        for(int i:nums){
-            freq[i-1]++;
+        int[] freq = new int[nums.length];
+        List<Integer> list = new ArrayList<>();
+        for (int i : nums) {
+            freq[i - 1]++;
         }
-        for(int i=0;i<nums.length;i++){
-            if(freq[i]>1){
-                list.add(0,i+1);
+        for (int i = 0; i < nums.length; i++) {
+            if (freq[i] > 1) {
+                list.add(0, i + 1);
             }
-            if(freq[i]==0){
-                list.add(i+1);
+            if (freq[i] == 0) {
+                list.add(i + 1);
             }
         }
-        int[] arr=new int[2];
-        for(int i=0;i<list.size();i++){
-            arr[i]=list.get(i);
+        int[] arr = new int[2];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
         }
         return arr;
     }
 
     //optimal O(N) time and O(1) space - using maths
     public int[] findErrorNums1(int[] nums) {
-        long n=nums.length;
-        long s=n*(n+1)/2;
-        long p=(n*(n+1)*((2*n)+1))/6;
-        long s1=0;
-        long p1=0;
-        for(int i:nums){
-            s1+=i;
-            p1+=(long)i*(long)i;
+        long n = nums.length;
+        long s = n * (n + 1) / 2;
+        long p = (n * (n + 1) * ((2 * n) + 1)) / 6;
+        long s1 = 0;
+        long p1 = 0;
+        for (int i : nums) {
+            s1 += i;
+            p1 += (long) i * (long) i;
         }
-        long sDash=s-s1;
-        long pDash=p-p1;
-        long missingNum=((pDash/sDash)+sDash)/2;
-        long duplicateNum=missingNum-sDash;
-        return new int[]{(int)duplicateNum,(int)missingNum};
+        long sDash = s - s1;
+        long pDash = p - p1;
+        long missingNum = ((pDash / sDash) + sDash) / 2;
+        long duplicateNum = missingNum - sDash;
+        return new int[]{(int) duplicateNum, (int) missingNum};
     }
 
     //count inversions
@@ -409,46 +408,48 @@ public class Array {
         }
         return count;
     }
+
     public static long getInversions1(long arr[], int n) {
-        return mergeSort(0,n-1,arr);
+        return mergeSort(0, n - 1, arr);
     }
-    public static int mergeSort(int start,int end, long[] arr){
-        int count=0;
-        if(start>=end){
+
+    public static int mergeSort(int start, int end, long[] arr) {
+        int count = 0;
+        if (start >= end) {
             return count;
         }
-        int mid=(start+end)/2;
-        count+=mergeSort(start,mid,arr);
-        count+=mergeSort(mid+1,end,arr);
-        count+=merge(start,mid,end,arr);
+        int mid = (start + end) / 2;
+        count += mergeSort(start, mid, arr);
+        count += mergeSort(mid + 1, end, arr);
+        count += merge(start, mid, end, arr);
         return count;
     }
-    public static int merge(int start,int mid,int end,long[] arr){
-        int left=start;
-        int right=mid+1;
-        List<Integer> temp=new ArrayList<>();
-        int count=0;
-        while(left<=mid&&right<=end){
-            if(arr[left]<arr[right]){
-                temp.add((int)arr[left]);
+
+    public static int merge(int start, int mid, int end, long[] arr) {
+        int left = start;
+        int right = mid + 1;
+        List<Integer> temp = new ArrayList<>();
+        int count = 0;
+        while (left <= mid && right <= end) {
+            if (arr[left] < arr[right]) {
+                temp.add((int) arr[left]);
                 left++;
-            }
-            else{
-                temp.add((int)arr[right]);
-                count+=mid+1-left;
+            } else {
+                temp.add((int) arr[right]);
+                count += mid + 1 - left;
                 right++;
             }
         }
-        while(left<=mid){
-            temp.add((int)arr[left]);
+        while (left <= mid) {
+            temp.add((int) arr[left]);
             left++;
         }
-        while(right<=end){
-            temp.add((int)arr[right]);
+        while (right <= end) {
+            temp.add((int) arr[right]);
             right++;
         }
-        for(int i=start;i<=end;i++){
-            arr[i]=temp.get(i-start);
+        for (int i = start; i <= end; i++) {
+            arr[i] = temp.get(i - start);
         }
         return count;
     }
@@ -465,16 +466,15 @@ public class Array {
     //better - this approach is better for leetcode & optimal for gfg
     //O(N) tc, O(1) sc
     public boolean searchMatrix(int[][] matrix, int target) {
-        int row=0;
-        int col=matrix[0].length-1;
-        while(row<matrix.length&&col>=0){
-            if(matrix[row][col]==target){
+        int row = 0;
+        int col = matrix[0].length - 1;
+        while (row < matrix.length && col >= 0) {
+            if (matrix[row][col] == target) {
                 return true;
             }
-            if(matrix[row][col]>target){
+            if (matrix[row][col] > target) {
                 col--;
-            }
-            else{
+            } else {
                 row++;
             }
         }
@@ -485,22 +485,20 @@ public class Array {
     //O(log(M*N)) tc, O(1) sc
 
     public boolean searchMatrix1(int[][] matrix, int target) {
-        int n=matrix.length;
-        int m=matrix[0].length;
-        int start=0;
-        int end=n*m-1;
-        while(start<=end){
-            int mid=start+(end-start)/2;
-            int row=mid/m;
-            int col=mid%m;
-            if(matrix[row][col]==target){
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int start = 0;
+        int end = n * m - 1;
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            int row = mid / m;
+            int col = mid % m;
+            if (matrix[row][col] == target) {
                 return true;
-            }
-            else if(matrix[row][col]<target){
-                start=mid+1;
-            }
-            else{
-                end=mid-1;
+            } else if (matrix[row][col] < target) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
         return false;
@@ -511,26 +509,25 @@ public class Array {
 
     //optimal O(logN) tc, O(1) sc - binary exponentiation
     public double myPow(double x, int n) {
-        double ans=1.0;
-        long nCopy=n; //we take a long copy of n because there might be a case where n is negative. In that case we have
+        double ans = 1.0;
+        long nCopy = n; //we take a long copy of n because there might be a case where n is negative. In that case we have
         // to convert it to a positive value and calculate pow(x,n) and then return 1/ans. If n is a large negative value,
         // making it positive would cause int overflow and that would throw an error. Thus, we make it long beforehand to
         // handle such cases.
-        if(nCopy<0){
-            nCopy=-1*nCopy; //making n +ve
+        if (nCopy < 0) {
+            nCopy = -1 * nCopy; //making n +ve
         }
-        while(nCopy>0){
-            if(nCopy%2==0){ //even n
-                x=x*x;
-                nCopy/=2;
-            }
-            else{
-                ans*=x;
-                nCopy-=1;
+        while (nCopy > 0) {
+            if (nCopy % 2 == 0) { //even n
+                x = x * x;
+                nCopy /= 2;
+            } else {
+                ans *= x;
+                nCopy -= 1;
             }
         }
-        if(n<0){
-            return 1/ans;
+        if (n < 0) {
+            return 1 / ans;
         }
         return ans;
     }
@@ -546,16 +543,15 @@ public class Array {
 
     //optimal O(N) tc, O(1) sc - using Moore's voting algo
     public int majorityElement(int[] nums) {
-        int candidate=0;
-        int count=0;
-        for(int i=0;i<nums.length;i++){
-            if(count==0){
-                candidate=nums[i];
+        int candidate = 0;
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (count == 0) {
+                candidate = nums[i];
             }
-            if(candidate==nums[i]){
+            if (candidate == nums[i]) {
                 count++;
-            }
-            else{
+            } else {
                 count--;
             }
         }
@@ -568,28 +564,24 @@ public class Array {
     //brute, better - same as before
     //optimal O(N) tc, O(1) sc - using Moore's voting algo
     public List<Integer> majorityElement1(int[] nums) {
-        int count1=0;
-        int count2=0;
-        int candidate1=-1;
-        int candidate2=-1;
-        List<Integer> ans=new ArrayList<>();
-        for(int i:nums){
-            if(i==candidate1){
+        int count1 = 0;
+        int count2 = 0;
+        int candidate1 = -1;
+        int candidate2 = -1;
+        List<Integer> ans = new ArrayList<>();
+        for (int i : nums) {
+            if (i == candidate1) {
                 count1++;
-            }
-            else if(i==candidate2){
+            } else if (i == candidate2) {
                 count2++;
-            }
-            else if(count1==0){
-                candidate1=i;
-                count1=1;//here we have to explicitly set count to 1 whenever it reaches 1 because here we cannot use
+            } else if (count1 == 0) {
+                candidate1 = i;
+                count1 = 1;//here we have to explicitly set count to 1 whenever it reaches 1 because here we cannot use
                 // multiple if statements as we are dealing with 2 elements
-            }
-            else if(count2==0){
-                candidate2=i;
-                count2=1;
-            }
-            else{
+            } else if (count2 == 0) {
+                candidate2 = i;
+                count2 = 1;
+            } else {
                 count1--;
                 count2--;
             }
@@ -597,27 +589,26 @@ public class Array {
         // it is not ensured that candidate 1 and 2 will always be majority elements as it is not given in the question
         // that there will always be majority elements. There might be a case where each element appears equal number of times
         // & thus we make sure that they actually are in majority
-        count1=0;
-        count2=0;
-        for(int i:nums){
-            if(i==candidate1){
+        count1 = 0;
+        count2 = 0;
+        for (int i : nums) {
+            if (i == candidate1) {
                 count1++;
             }
-            if(i==candidate2){
+            if (i == candidate2) {
                 count2++;
             }
         }
 
-        if(count1>nums.length/3){
-            if(candidate1==candidate2){
-                List<Integer> list=new ArrayList<>();
+        if (count1 > nums.length / 3) {
+            if (candidate1 == candidate2) {
+                List<Integer> list = new ArrayList<>();
                 list.add(candidate1);
                 return list;
-            }
-            else
+            } else
                 ans.add(candidate1);
         }
-        if(count2>nums.length/3){
+        if (count2 > nums.length / 3) {
             ans.add(candidate2);
         }
         return ans;
@@ -625,41 +616,43 @@ public class Array {
 
     //unique grid paths
     //https://leetcode.com/problems/unique-paths/
-    
+
     //brute O(2^N) tc, O(2^N) sc (recursive stack space) - recursively find all possible paths from start to end (in down
     // and right directions) and return the total unique paths
     public int uniquePaths(int m, int n) {
-        return uP(0,0,m,n);
+        return uP(0, 0, m, n);
     }
-    public int uP(int i, int j, int m,int n){
-        if(i>=m||j>=n){
+
+    public int uP(int i, int j, int m, int n) {
+        if (i >= m || j >= n) {
             return 0;
         }
-        if(i==m-1&&j==n-1){
+        if (i == m - 1 && j == n - 1) {
             return 1;
         }
-        return uP(i+1,j,m,n)+uP(i,j+1,m,n);
+        return uP(i + 1, j, m, n) + uP(i, j + 1, m, n);
     }
 
     //better O(N*M) time and space - memoization
     public int uniquePaths1(int m, int n) {
-        int[][] dp=new int[m+1][n+1];
-        for(int [] arr: dp){
-            Arrays.fill(arr,-1);
+        int[][] dp = new int[m + 1][n + 1];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, -1);
         }
-        return uP(0,0,m,n,dp);
+        return uP(0, 0, m, n, dp);
     }
-    public int uP(int i, int j, int m,int n,int[][] dp){
-        if(i>=m||j>=n){
+
+    public int uP(int i, int j, int m, int n, int[][] dp) {
+        if (i >= m || j >= n) {
             return 0;
         }
-        if(i==m-1&&j==n-1){
+        if (i == m - 1 && j == n - 1) {
             return 1;
         }
-        if(dp[i][j]!=-1){
+        if (dp[i][j] != -1) {
             return dp[i][j];
         }
-        return dp[i][j]=uP(i+1,j,m,n,dp)+uP(i,j+1,m,n,dp);
+        return dp[i][j] = uP(i + 1, j, m, n, dp) + uP(i, j + 1, m, n, dp);
     }
 
     //optimal O(N) tc, O(1) - using combinations approach
@@ -682,59 +675,60 @@ public class Array {
     //optimal O(NlogN)+O(N)tc, O(N- temp array)sc - Merge sort variation
 
     public int reversePairs(int[] nums) {
-        int n=nums.length;
-        return mergeSort2(0,n-1,nums);
+        int n = nums.length;
+        return mergeSort2(0, n - 1, nums);
     }
-    public int mergeSort2(int start,int end, int[] arr){
-        int pairs=0;
-        if(start>=end){
+
+    public int mergeSort2(int start, int end, int[] arr) {
+        int pairs = 0;
+        if (start >= end) {
             return pairs;
         }
-        int mid=(start+end)/2;
-        pairs+=mergeSort2(start,mid,arr);
-        pairs+=mergeSort2(mid+1,end,arr);
-        pairs+=merge2(start,mid,end,arr);
+        int mid = (start + end) / 2;
+        pairs += mergeSort2(start, mid, arr);
+        pairs += mergeSort2(mid + 1, end, arr);
+        pairs += merge2(start, mid, end, arr);
         return pairs;
     }
-    public int merge2(int start,int mid,int end,int[] arr){
-        int pairs=0;
-        int j=mid+1;
-        for(int i=start;i<=mid;i++){
-            while(j<=end&&arr[i]>2*(long)arr[j]){
+
+    public int merge2(int start, int mid, int end, int[] arr) {
+        int pairs = 0;
+        int j = mid + 1;
+        for (int i = start; i <= mid; i++) {
+            while (j <= end && arr[i] > 2 * (long) arr[j]) {
                 j++;
             }
-            pairs+=j-(mid+1);
+            pairs += j - (mid + 1);
         }
-        int left=start;
-        int right=mid+1;
-        List<Integer> temp=new ArrayList<>();
-        while(left<=mid&&right<=end){
-            if(arr[left]<arr[right]){
+        int left = start;
+        int right = mid + 1;
+        List<Integer> temp = new ArrayList<>();
+        while (left <= mid && right <= end) {
+            if (arr[left] < arr[right]) {
                 temp.add(arr[left]);
                 left++;
-            }
-            else{
+            } else {
                 temp.add(arr[right]);
                 right++;
             }
         }
-        while(left<=mid){
+        while (left <= mid) {
             temp.add(arr[left]);
             left++;
         }
-        while(right<=end){
+        while (right <= end) {
             temp.add(arr[right]);
             right++;
         }
-        for(int i=start;i<=end;i++){
-            arr[i]=temp.get(i-start);
+        for (int i = start; i <= end; i++) {
+            arr[i] = temp.get(i - start);
         }
         return pairs;
     }
 
     //Two Sum
     //https://leetcode.com/problems/two-sum/
-    
+
     //brute O(N2) time, O(1) space - iterate over the array and for each element check on its right if its sum with an element equals target and
     // in case it does, then return indices of both the elements
 
@@ -743,33 +737,31 @@ public class Array {
     // here because there might be a case where two equal elements form the target sum and in that case the hashmap would store only one value for both of those elements
 
     public int[] twoSum1(int[] nums, int target) {
-        int[] temp=new int[nums.length];
-        for(int i=0;i<nums.length;i++){
-            temp[i]=nums[i];
+        int[] temp = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            temp[i] = nums[i];
         }
         Arrays.sort(nums);
-        int left=0;
-        int right=nums.length-1;
-        while(left<right){
-            if(nums[left]+nums[right]==target){
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            if (nums[left] + nums[right] == target) {
                 break;
-            }
-            else if(nums[left]+nums[right]<target){ //use of else if is necessary. otherwise the pointers would be moved unnecessarily
-            }
-            else{
+            } else if (nums[left] + nums[right] < target) { //use of else if is necessary. otherwise the pointers would be moved unnecessarily
+            } else {
                 right--;
             }
         }
-        int[] ans={-1,-1};
-        for(int i=0;i<nums.length;i++){
-            if(temp[i]==nums[left]){
-                ans[0]=i;
+        int[] ans = {-1, -1};
+        for (int i = 0; i < nums.length; i++) {
+            if (temp[i] == nums[left]) {
+                ans[0] = i;
                 break;
             }
         }
-        for(int i=nums.length-1;i>=0;i--){
-            if(temp[i]==nums[right]){
-                ans[1]=i;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (temp[i] == nums[right]) {
+                ans[1] = i;
                 break;
             }
         }
@@ -781,13 +773,13 @@ public class Array {
     // return the indices of these two elements
 
     public int[] twoSum(int[] nums, int target) {
-        HashMap<Integer,Integer> map=new HashMap<>();
-        for(int i=0;i<nums.length;i++){
-            if(map.containsKey(target-nums[i]))
-                return new int[] {map.get(target-nums[i]),nums[i]};
-            map.put(nums[i],i);
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i]))
+                return new int[]{map.get(target - nums[i]), nums[i]};
+            map.put(nums[i], i);
         }
-        return new int[] {-1,-1};
+        return new int[]{-1, -1};
     }
 
     //4 Sum
@@ -796,39 +788,41 @@ public class Array {
     //brute O(N4) - take 4 pointers, i from 0 to n, j from i+1 to n, k from j+1 to n, and l from k+1 to n and check if the
     // elements at the 4 positions make a valid sum and return them if they do
 
-    //better O(NlogN+N3logN+M(where M is the number of quadruples, and to iterate over the quadruples in the set and store them in the list it would take O(M) time)) - three pointers+binary search: we basically sort the array, then take three pointers at i at the
+    //better O(NlogN+N3logN+M(where M is the number of quadruples, and to iterate over the quadruples in the set and store
+    // them in the list it would take O(M) time)) - three pointers+binary search: we basically sort the array, then take three pointers at i at the
     // start, j from i+1, and k from j+1. Now the quadruple includes arr[i],arr[j],arr[k], and the 4th element, which lies
     // in the right half. So we use binary search to find the 4th element. We can use hashset to avoid duplicate quadruples.
 
     public List<List<Integer>> fourSum(int[] nums, int target) {
-        int n=nums.length;
+        int n = nums.length;
         Arrays.sort(nums);
-        HashSet<List<Integer>> set=new HashSet<>();
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                for(int k=j+1;k<n;k++){
-                    long sum=nums[i]+nums[j];
-                    sum+=nums[k];
+        HashSet<List<Integer>> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    long sum = nums[i] + nums[j];
+                    sum += nums[k];
                     long x = target - sum;
-                    if(binarySearch(x,Arrays.copyOfRange(nums,k+1,n))){
-                        List<Integer> list=new ArrayList<>();
+                    if (binarySearch(x, Arrays.copyOfRange(nums, k + 1, n))) {
+                        List<Integer> list = new ArrayList<>();
                         list.add(nums[i]);
                         list.add(nums[j]);
                         list.add(nums[k]);
-                        list.add((int)x);
-                        Collections.sort(list); //here we basically sort the list so that set can identify the duplicates bettek
+                        list.add((int) x);
+                        Collections.sort(list); //here we basically sort the list so that set can identify the duplicates better
                         set.add(list);
                     }
                 }
             }
         }
-        List<List<Integer>> ans=new ArrayList<>(set);
+        List<List<Integer>> ans = new ArrayList<>(set);
         return ans;
     }
-    public boolean binarySearch(long target, int[] nums){
-        int start=0;
-        int end=nums.length-1;
-        while(start<=end) {
+
+    public boolean binarySearch(long target, int[] nums) {
+        int start = 0;
+        int end = nums.length - 1;
+        while (start <= end) {
             int mid = start + (end - start) / 2;
             if (nums[mid] == target) {
                 return true;
@@ -901,48 +895,47 @@ public class Array {
     // otherwise set it to 1
 
     public int longestConsecutive(int[] nums) {
-        int n=nums.length;
-        if(n==0||n==1){
+        int n = nums.length;
+        if (n == 0 || n == 1) {
             return n;
         }
         Arrays.sort(nums);
-        int count=1;
-        int maxCount=1;
-        for(int i=0;i<n-1;i++){
-            if(nums[i]+1==nums[i+1]){
+        int count = 1;
+        int maxCount = 1;
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i] + 1 == nums[i + 1]) {
                 count++;
+            } else if (nums[i + 1] != nums[i]) {
+                count = 1;
             }
-            else if(nums[i+1]!=nums[i]) {
-                count=1;
-            }
-            maxCount=Math.max(count,maxCount);
+            maxCount = Math.max(count, maxCount);
         }
         return maxCount;
     }
 
     //optimal O(N+N+N(while loop wc)) tc , O(N) sc - insert elements into a hash set,then iterate over the array and check if num-1
-    // exists in set and if it doesn't then it means that this is the first element of its sequence and then we run a
+    // exists in set and if it doesn't then it means that this is the first element of its sequence, and thus, we run a
     // while loop till the current num + 1 exists in the set, increasing the count and current num accordingly. Then,
     // out of all counts, we return the max count
 
     public int longestConsecutive1(int[] nums) {
-        HashSet<Integer> set=new HashSet<>();
-        int count=1;
-        int maxCount=1;
-        for(int i:nums){
+        HashSet<Integer> set = new HashSet<>();
+        int count = 1;
+        int maxCount = 1;
+        for (int i : nums) {
             set.add(i);
         }
-        for(int i=0;i<nums.length-1;i++){
-            if(nums[i]==nums[i+1]){
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] == nums[i + 1]) { //skipping duplicates
                 continue;
             }
-            if(!set.contains(i-1)){
-                while(set.contains(i+1)){
+            if (!set.contains(i - 1)) {
+                while (set.contains(i + 1)) {
                     count++;
                     i++;
                 }
             }
-            count=Math.max(count,maxCount);
+            count = Math.max(count, maxCount);
         }
         return maxCount;
     }
@@ -952,41 +945,37 @@ public class Array {
 
     //brute - O(N2)tc, O(1)sc - find all possible sub arrays, calculate sum in all and if it is 0, find length of current
     // sub array and update accordingly in max if greater
-    int maxLen(int arr[], int n)
-    {
-        if(n==0||n==1){
+    int maxLen(int arr[], int n) {
+        if (n == 0 || n == 1) {
             return 1;
         }
-        int maxLen=Integer.MIN_VALUE;
-        int sum=0;
-        for(int i=0;i<n;i++){
-            sum=arr[i];
-            for(int j=i+1;j<n;j++){
-                sum+=arr[j];
-                if(sum==0){
-                    maxLen=Math.max(maxLen,j-i+1);
+        int maxLen = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum = arr[i];
+            for (int j = i + 1; j < n; j++) {
+                sum += arr[j];
+                if (sum == 0) {
+                    maxLen = Math.max(maxLen, j - i + 1);
                 }
             }
         }
-        return maxLen==Integer.MIN_VALUE?0:maxLen;
+        return maxLen == Integer.MIN_VALUE ? 0 : maxLen;
     }
 
-    //optimal - O(NlogN - map+traversal)tc, O(N)sc
-    int maxLen1(int arr[], int n)
-    {
-        HashMap<Integer,Integer> map=new HashMap<>();
-        int prefixSum=0;
-        int maxSum=0;
-        for(int i=0;i<n;i++){
-            prefixSum+=arr[i];
-            if(prefixSum==0){
-                maxSum=i+1; //this will be longest yet thus no need to compare
-            }
-            else if(!map.containsKey(prefixSum)){
-                map.put(prefixSum,i);
-            }
-            else{ //map contains prefix sum
-                maxSum=Math.max(maxSum,i-map.get(prefixSum));
+    //optimal - O(NlogN(map+traversal))tc, O(N)sc
+    int maxLen1(int arr[], int n) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int prefixSum = 0;
+        int maxSum = 0;
+        for (int i = 0; i < n; i++) {
+            prefixSum += arr[i];
+            if (prefixSum == 0) {
+                maxSum = i + 1; //this will be longest yet thus no need to compare
+            } else if (!map.containsKey(prefixSum)) {
+                map.put(prefixSum, i);
+            } else { //map contains prefix sum
+                maxSum = Math.max(maxSum, i - map.get(prefixSum));
             }
         }
         return maxSum;
@@ -999,16 +988,16 @@ public class Array {
     // of elements of a sub array equals k. one extra condition to check: if the current element ie the one in at the ith
     // index is itself equal to B, then also we increase the count
     public int solve(ArrayList<Integer> A, int B) {
-        int xor=0;
-        int count=0;
-        for(int i=0;i<A.size();i++){
-            xor=A.get(i);
-            if(xor==B){ //case when the element itself is equal to B
+        int xor = 0;
+        int count = 0;
+        for (int i = 0; i < A.size(); i++) {
+            xor = A.get(i);
+            if (xor == B) { //case when the element itself is equal to B
                 count++;
             }
-            for(int j=i+1;j<A.size();j++){
-                xor=xor^A.get(j);
-                if(xor==B){
+            for (int j = i + 1; j < A.size(); j++) {
+                xor = xor ^ A.get(j);
+                if (xor == B) {
                     count++;
                 }
             }
@@ -1018,23 +1007,22 @@ public class Array {
 
     //optimal - O(NlogN: map+traversal)tc, O(N)sc
     public int solve1(ArrayList<Integer> A, int B) {
-        HashMap<Integer,Integer> map=new HashMap<>();
-        int xor=0;
-        int count=0;
-        for(int i=0;i<A.size();i++){
-            xor^=A.get(i);
-            int y=xor^B;
-            if(xor==B){
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int xor = 0;
+        int count = 0;
+        for (int i = 0; i < A.size(); i++) {
+            xor ^= A.get(i);
+            int y = xor ^ B;
+            if (xor == B) {
                 count++;
             }
-            if(map.containsKey(y)){
-                count+=map.get(y);
+            if (map.containsKey(y)) {
+                count += map.get(y);
             }
-            if(map.containsKey(xor)){
-                map.put(xor,map.get(xor)+1);
-            }
-            else{
-                map.put(xor,1);
+            if (map.containsKey(xor)) {
+                map.put(xor, map.get(xor) + 1);
+            } else {
+                map.put(xor, 1);
             }
         }
         return count;
@@ -1043,72 +1031,71 @@ public class Array {
     //longest substring without repeating characters
     //https://leetcode.com/problems/longest-substring-without-repeating-characters\
 
-    //brute O(N2)time,O(N (HashSet))space - find all possible substrings and obtain length of the valid ones, then return max length overall
+    //brute O(N2)time,O(N (HashSet))space - find all possible substrings and obtain length of the valid ones, then return
+    // max length overall
     public int lengthOfLongestSubstring(String s) {
-        int n=s.length();
-        int len=0;
-        int ans=0;
-        HashSet<Character> set=new HashSet<>();
-        for(int i=0;i<n;i++){
-            len=1;
+        int n = s.length();
+        int len = 0;
+        int ans = 0;
+        HashSet<Character> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            len = 1;
             set.add(s.charAt(i));
-            for(int j=i+1;j<n;j++){
-                if(set.contains(s.charAt(j))){ //repeating character
+            for (int j = i + 1; j < n; j++) {
+                if (set.contains(s.charAt(j))) { //repeating character
                     break;
-                }
-                else{
+                } else {
                     set.add(s.charAt(j));
                     len++;
                 }
             }
             set.clear();
-            ans=Math.max(ans,len);
+            ans = Math.max(ans, len);
         }
         return ans;
     }
 
-    //better - when u revise this 2mrw watch striver video
-    //(O(2N)tc as we initally loop right pointer from left till we reach a duplicate, then we loop the left pointer till the duplicate has been removed,
-    // O(1)space because the set will at most store 26 characters)
+    //optimal1 - when u revise this 2mrw watch striver video
+    //(O(2N)tc as we initially loop right pointer from left till we reach a duplicate, then we loop the left pointer till
+    // the duplicate has been removed, O(1)space because the set will at most store 26 characters)
+
     public int lengthOfLongestSubstring1(String s) {
-        int ans=0;
-        HashSet<Character> set=new HashSet<>();
-        int left=0;
-        int right=0;
-        while(right<s.length()){
-            if(set.contains(s.charAt(right))){
-                while(left<right&&set.contains(s.charAt(right))){
+        int ans = 0;
+        HashSet<Character> set = new HashSet<>();
+        int left = 0;
+        int right = 0;
+        while (right < s.length()) {
+            if (set.contains(s.charAt(right))) {
+                while (left < right && set.contains(s.charAt(right))) {
                     set.remove(s.charAt(left));
                     left++;
                 }
             }
             set.add(s.charAt(right));
-            ans=Math.max(ans,right-left+1);
+            ans = Math.max(ans, right - left + 1);
             right++;
 
         }
         return ans;
     }
 
-    //optimal
-    //This reduces tc to O(N) as we don't have to iterate the left pointer however sc is increased to O(N) as the map might
-    // store all of the elements in the string since we don't remove anything
+    //optimal2
+    //This reduces tc to O(N) as we don't have to iterate the left pointer & sc is still O(26) in the worst case as the map might
+    // store at max all the 26 letters of alphabet
     public int lengthOfLongestSubstring2(String s) {
-        int ans=0;
-        HashMap<Character,Integer> map=new HashMap<>();
-        int left=0;
-        int right=0;
-        while(right<s.length()){
-            if(map.containsKey(s.charAt(right))){
-                left=Math.max(left,map.get(s.charAt(right))+1); //there might be a case when left is already ahead of the
+        int ans = 0;
+        HashMap<Character, Integer> map = new HashMap<>();
+        int left = 0;
+        int right = 0;
+        while (right < s.length()) {
+            if (map.containsKey(s.charAt(right))) {
+                left = Math.max(left, map.get(s.charAt(right)) + 1); //there might be a case when left is already ahead of the
                 // last occurence of the repeating element, thus we always take max
             }
-            map.put(s.charAt(right),right); //storing the most recent occurrence of current element in the map
-            ans=Math.max(ans,right-left+1);
+            map.put(s.charAt(right), right); //storing the most recent occurrence of current element in the map
+            ans = Math.max(ans, right - left + 1);
             right++;
         }
         return ans;
     }
-
-
 }

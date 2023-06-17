@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        int a=3*1000000000;
+
     }
     public static long getInversions1(long arr[], int n) {
         return mergeSort(0,n-1,arr);
