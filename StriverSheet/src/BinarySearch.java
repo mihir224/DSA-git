@@ -7,14 +7,16 @@ public class BinarySearch {
 
     //nth root of a number
     //https://www.codingninjas.com/codestudio/problems/1062679?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website&leftPanelTab=0
-    //although bs is used to search an element in an array, we can also use it in functions which are monotonic (ie they
+    // although bs is used to search an element in an array, we can also use it in functions which are monotonic (ie they
     // return increasing or decreasing values). Now we know for sure that the nth root of an integer will never be greater than it.
-    // Thus we apply binary search from 1 till the given integer such that if the current mid when multiplied n times gives a value>M
+    // Thus, we apply binary search from 1 till the given integer such that if the current mid when multiplied n times gives a value>M
     // ie the given integer, we reduce the search space from 1 till mid. Otherwise, if the multiplied value is less than M, we reduce
     // search space from mid till end. Now since we have to return the ans close to 6 decimal places, we stop the search when start
-    // and end become nearly equal ie their difference is close to 6 decimal places and since we are doing binary search on elements
-    // between 1 to M considering elements upto say, k decimal places, then for that the complexity becomes O(logbase2(M*(10)^k)) and
-    // in each iteration we are multiplying mid N times itself and thus the overall complexity becomes - O(N*logbase2(M*(10)^k))
+    // and end become nearly equal ie their difference is close to 6 decimal places (10^-6) since we are doing binary search
+    // on elements between 1 to M considering elements upto say, 6 decimal places, so from 1 to 2, M can vary from 1.000001
+    // to 2.999999 and similarly we can think of all elements till M), and thus the complexity becomes O(logbase2(M*(10)^k))
+    // where k is the number of decimal places upto which we have to find the ans and in each iteration we are multiplying
+    // mid N times itself and thus the overall time complexity becomes - O(N*logbase2(M*(10)^k)), sc is O(1)
 
     public static double findNthRootOfM(int n, int m) {
         double start=1;
@@ -35,6 +37,32 @@ public class BinarySearch {
         }
         return (start+(end-start)/2);
     }
+
+    //this problem has been updated on coding ninjas and now we just have to return the ans as integer
+    //updated code:
+
+    //O(N*logbase2(M)) tc, O(1) sc
+    public static int NthRootM(int n, int m) {
+        int start=1;
+        int end=m;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            int temp = (int)Math.pow(mid, n);
+            if(temp==m){
+                return mid;
+            }
+            else if(temp>m){
+                end=mid-1;
+            }
+            else{
+                start=mid+1;
+            }
+
+        }
+        return -1;
+    }
+
+
     //gfg question for nth root wants us to return the nth root only if it is an integer
     //https://practice.geeksforgeeks.org/problems/find-nth-root-of-m5843/1
     //solution for the same
@@ -51,7 +79,8 @@ public class BinarySearch {
     //matrix median
     //https://www.codingninjas.com/codestudio/problems/873378?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website&leftPanelTab=1
     //brute force - O((n*m)log(n*m)) to sort the flat array and O(n*m) to flatten the given matrix
-    //we simply flatten the given matrix, sort it and return the middle element since it is given that m*n will always be odd and thus median will always be middle
+    //we simply flatten the given matrix, sort it and return the middle element since it is given that m*n will always be
+    // odd and thus median will always be middle
     public static int getMedian(ArrayList<ArrayList<Integer>> matrix)
     {
         int n=matrix.size();
@@ -87,8 +116,9 @@ public class BinarySearch {
     // less than current mid for each row, we apply another bs in each row. The logic is that the number of elements less than or
     // equal to the current element in a sorted array can be obtained by finding the index of the number just greater than the current
     // element. So for the current row, we find the mid and check if it is greater than main mid. If it isn't then it means we have
-    // to search in the right and thus start=md+1 otherwise we search in left. At the end when start crosses end, it will have the
-    // index of the element just greater than the current element.
+    // to search in the right and thus start=md+1 otherwise we search in left. At the end when start crosses end, it will point
+    // to the immediate index where arr[mid]>main_mid. Basically we try to move in the optimal direction until we find the
+    // most optimal ans (breakpoint) ie we move left if arr[mid]>main mid otherwise we move left
     public static int getMedian2(ArrayList<ArrayList<Integer>> matrix)
     {
         int n=matrix.size();
@@ -99,7 +129,8 @@ public class BinarySearch {
             int mid=(start+end)/2;
             int count=0;
             for(int i=0;i<n;i++){
-                count+=findLessThanMid(matrix.get(i),mid);
+                count+=findLessThanMid(matrix.get(i),mid); //we basically try to saturate this count such that it is equal
+                // both on the left and right of the current element and the optimal value for which it is will be our ans
             }
             if(count<=(n*m)/2){
                 start=mid+1;
@@ -125,24 +156,37 @@ public class BinarySearch {
         return start;
     }
 
-    //single element in a sorted array
+    //find element that appears only once in a sorted array
     //https://leetcode.com/problems/single-element-in-a-sorted-array/
-    //O(logbase2N) - bs
-    //we simply need to find the break point at which we find the single element. We can observe a pattern that all elements
-    // on the left of the single element are such that 1st instance of an element is at even index and the other is at an
+
+    //brute - create a frequency map for each element and return the key with freq<2
+    //O(logN + N)tc, O(N) sc
+
+    //better - perform xor of all the numbers in the array. since the xor of two similar numbers is 0 and the xor of a number
+    // with 0 is the number itself, at the end after xoring all the elements, the ans would be the unique element
+    //O(N)tc, O(1)sc
+
+    //optimal - binary search
+    //we simply need to find the break point at which is the point where the left half ends because just after that we have our unique element. We can observe a pattern that all elements
+    // on the left of the unique element are such that 1st instance of an element is at even index and the other is at an
     // odd index whereas in the second half, 1st instance is at an odd index and other instance is at even index. Thus,
     // for each mid we check if it is equal to its other instance. We do this for both odd and even cases by using the
     // xor trick where simply xor-ing the mid with 1 will return the index before it if mid is odd and it will return
-    // the index after it if mid is even. If the instances are equal, we simply move the search space using low=mid+1
+    // the index after it if mid is even. If the instances are equal ie we're in left half, we simply move the search space using low=mid+1
     // otherwise ie the case when the instances are not equal, ie we are in the right half, we reduce hi to mid-1 and
-    // when low crosses high, we've found our single element
+    // when low crosses high, then that would be our breakpoint, meaning we've found our single element.
+    // The reason we took high at n-2 is that there might be a possibility that the unique element lies at the last element.
+    // In that case, since we took high at n-2, it will never move and low will automatically reach past high in further
+    // iterations, and at the end when it crosses high, it'll stand at the last index at which we have our unique element
+
+    //O(logbase2N)tc, O(1) sc
 
     public int singleNonDuplicate(int[] nums) {
         int start=0;
         int end=nums.length-2;
         while(start<=end){
-            int mid=(start+end)/2;
-            if(nums[mid]==nums[mid^1]){ //we're in the left half
+            int mid=start+(end-start)/2;
+            if(nums[mid]==(nums[mid^1])){ //ie we're in left half
                 start=mid+1;
             }
             else{
@@ -152,57 +196,58 @@ public class BinarySearch {
         return nums[start];
     }
 
-    //rotated bs
-    //https://leetcode.com/problems/search-in-rotated-sorted-array/
-    static int search(int[] arr,int target){
-        int pivot=findPivot(arr);
-        if(pivot==-1){ //no rotation
-            return binarySearch(arr,target,0,arr.length-1);
+    public int search(int[] nums, int target) {
+        int pivot=getPivot(nums);
+        if(pivot==-1){ //array wasn't rotated, applying bs in the whole array
+            return binarySearch(0,nums.length-1,target,nums);
         }
-        else if(arr[pivot]==target){
+        if(target==nums[pivot]){ //pivot is the target
             return pivot;
         }
-        else if(target>=arr[0]){ //target lies between start and pivot
-            return binarySearch(arr,target,0,pivot);
+        else if(target>=nums[0]){ //target>start, but is not equal to pivot thus it lies b/w start and pivot
+            return binarySearch(0,pivot,target,nums);
         }
-        return binarySearch(arr,target,pivot+1,arr.length-1); //target lies between pivot and end
+        return binarySearch(pivot+1,nums.length-1,target,nums); //target<start, thus it lies b/w pivot+1 and end
     }
-    public static int binarySearch(int[] arr, int target,int start,int end){
-        while(start<=end){
-            int mid=start+(end-start)/2;
-            if(arr[mid]==target) {
-                return mid;
-            }
-            else if(arr[mid]<target){
-                start=mid+1;
-            }
-            else {
-                end=mid-1;
-            }
-        }
-        return -1;
-    }
-    static int findPivot(int[] arr){
+    public int getPivot(int[] nums){
         int start=0;
-        int end=arr.length-1;
+        int end=nums.length-1;
         while(start<=end){
             int mid=start+(end-start)/2;
-            if(mid<end&&arr[mid]>arr[mid+1]){
+            //4 cases
+            if(mid<end&&nums[mid]>nums[mid+1]){ //mid is the pivot, checking mid<end because end is the upperbound so to
+                // make sure that mid is in the valid range
                 return mid;
             }
-            else if(mid>start&&arr[mid-1]>arr[mid]){
+            if(mid>start&&nums[mid-1]>nums[mid]){ //mid-1 is the pivot, checking mid>start because start is the lowerbound
+                // so to make sure that mid is in the valid range
                 return mid-1;
             }
-            else if(arr[start]>=arr[mid]){
+            if(nums[start]>=nums[mid]){ //pivot lies in the left
                 end=mid-1;
             }
             else{
+                start=mid+1;  //pivot lies in the right
+            }
+        }
+        return -1; //nothing was returned, ie pivot not found ==> array is not rotated
+    }
+
+    public int binarySearch(int start, int end, int target, int[] nums){
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(nums[mid]==target){
+                return mid;
+            }
+            if(nums[mid]<target){
                 start=mid+1;
+            }
+            else{
+                end=mid-1;
             }
         }
         return -1;
     }
-
     //median of two sorted arrays
     //https://leetcode.com/problems/median-of-two-sorted-arrays
 

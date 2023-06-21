@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Array {
     //Set matrix zeroes
+    //https://leetcode.com/problems/set-matrix-zeroes/
     //brute
     public void setZeroes(int[][] matrix) {
         Set<Integer> rows = new HashSet<>();
@@ -52,6 +53,7 @@ public class Array {
     }
 
     //Pascal's triangle
+    //https://leetcode.com/problems/pascals-triangle/
     public List<List<Integer>> generate(int numRows) {
         //this soln doesn't take into account the case where a row might have numbers with more than one digit
         //        int sq=0;
@@ -344,55 +346,49 @@ public class Array {
     }
 
     //optimal-merge sort variation (O(nlogn)tc,O(n)sc)
-    public static long getInversions2(long arr[], int n) {
-        int[] temp = new int[n];
-        return mergeSort(arr, temp, 0, arr.length - 1);
+    public static long getInversions1(long arr[], int n) {
+        return mergeSort(0,n-1,arr);
     }
-
-    public static int mergeSort(long[] arr, int[] temp, int low, int hi) {
-        int count = 0;
-        int mid = 0;
-        if (low < hi) {
-            mid = (low + hi) / 2;
-            count += mergeSort(arr, temp, low, mid);
-            count += mergeSort(arr, temp, mid + 1, hi);
-            count += merge(arr, temp, low, mid + 1, hi);
+    public static int mergeSort(int start,int end, long[] arr){
+        int count=0;
+        if(start>=end){
+            return count;
         }
+        int mid=(start+end)/2;
+        count+=mergeSort(start,mid,arr);
+        count+=mergeSort(mid+1,end,arr);
+        count+=merge(start,mid,end,arr);
         return count;
     }
-
-    public static int merge(long[] arr, int[] temp, int left, int mid, int right) {
-        int i = left;
-        int j = mid;
-        int k = left;
-        int count = 0;
-        while (i <= mid - 1 && j <= right) {
-            if (arr[i] <= arr[j]) {
-                temp[k] = (int) arr[i];
-                i++;
-            } else {
-                temp[k] = (int) arr[j];
-                count += mid - i;
-                j++;
+    public static int merge(int start,int mid,int end,long[] arr){
+        int left=start;
+        int right=mid+1;
+        List<Integer> temp=new ArrayList<>();
+        int count=0;
+        while(left<=mid&&right<=end){
+            if(arr[left]<arr[right]){
+                temp.add((int)arr[left]);
+                left++;
             }
-            k++;
+            else{
+                temp.add((int)arr[right]);
+                count+=mid+1-left;
+                right++;
+            }
         }
-        while (i <= mid - 1) {
-            temp[k] = (int) arr[i];
-            i++;
-            k++;
+        while(left<=mid){
+            temp.add((int)arr[left]);
+            left++;
         }
-        while (j <= right) {
-            temp[k] = (int) arr[j];
-            j++;
-            k++;
+        while(right<=end){
+            temp.add((int)arr[right]);
+            right++;
         }
-        for (i = left; i <= right; i++) {
-            arr[i] = temp[i];
+        for(int i=start;i<=end;i++){
+            arr[i]=temp.get(i-start);
         }
         return count;
     }
-
     //search in 2d matrix
     //https://leetcode.com/problems/search-a-2d-matrix/
 
@@ -639,12 +635,12 @@ public class Array {
     // the possible number of row directions or column directions) tc, O(1) space
     public int uniquePaths3(int m, int n) {
         double ans = 1;
-        int N = m + n - 2; //total number of directions we can move to reach end
-        int r = m - 1; //total number of possible row directions
+        int totalWays = m + n - 2; // total number of times we are allowed to move in a path
+        int r = m - 1; // total number of times we are allowed to go down in a path
         for (int i = 1; i <= r; i++) {
-            ans = ans * (N - r + i) / i; //formula to calculate ncr
+            ans = ans * (totalWays - i + 1) / i;
         }
-        return (int) ans;
+        return (int) Math.round(ans); // Round the result to the nearest integer
     }
 
     //reverse pairs

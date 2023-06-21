@@ -113,51 +113,77 @@ public class Strings {
     }
 
     //integer to roman
+    //https://leetcode.com/problems/integer-to-roman/
+    //O (1)time and space
+
+    //we know there are six instances when subtraction takes place - CM,CD,XC,XL,IX,IV. Now we have the roman symbols:
+    // I,V,X,L,C,D,M. If didn't had the six conditions of subtraction, what we could've done to solve this problem would
+    // that we would've taken the largest number M ie 1000 and dividing the given number by it would've given us the number
+    // of times M appears in the roman version of this number. Then to get the balance, we would've updated num by doing mod
+    // as num%M's value ie 1000 which would've given us the updated value of num that we would try dividing with the rest of
+    // the numbers and doing the same thing with them. Now since we have these six extra instances, we can update the mapping
+    // table of roman numerals and their integers, adding these six instances ie - 900,400,90,40,9,4 in their respective
+    // positions and following the same approach to obtain the ans without them
+
     public String intToRoman(int num) {
-        int[] arr = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-        String[] str = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-        String ans = "";
-        for (int i = 0; i < str.length; i++) {
-            while (num >= arr[i]) {
-                ans += str[i];
-                num -= arr[i];
+        int[] arr={1000,900,500,400,100,90,50,40,10,9,5,4,1};
+        String[] str={"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+        String ans="";
+        for(int i=0;i<arr.length;i++){
+            if((num/arr[i])>0){ // arr[i] can be placed in the string
+                int count=num/arr[i]; //how many arr[i] should be placed in the ans string
+                while(count>0){
+                    ans+=str[i];
+                    count--;
+                }
+                num%=arr[i]; //updating num
             }
         }
         return ans;
     }
+
+
 
     //longest common prefix
-    //https://leetcode.com/problems/longest-common-prefix/
+    //https://practice.geeksforgeeks.org/problems/longest-common-prefix-in-an-array5129/1
 
-    //O(n*m where m is the length of the shortest string) brute
-    //we find length of the shortest string in the given array(since the whole shortest string can be a prefix in other strings)
-    // and then iterate till this min length. In each iteration, we take the ith character of the first string and then run another
-    // loop starting from the second string, checking if the ith character of the jth string matches the first string.
-    // If it does, we add that character to the ans string otherwise we return the ans
-    public String longestCommonPrefix(String[] str) {
-        int minLen = findMinLen(str);
-        String ans = "";
-        for (int i = 0; i < minLen; i++) {
-            char ch = str[0].charAt(i);
-            for (int j = 1; j < str.length; j++) {
-                if (str[j].charAt(i) != ch) {
-                    return ans;
+    //find min length string, iterate till that length (since in worst case lcp would be the whole shortest string) and
+    // compare the char at ith position of first string with the rest of the strings. if it matches with their ith char,
+    // add the char to the ans (here we check if flag is set to true meaning there was no mismatch), otherwise make flag
+    // false and break.
+    //O(N+(N*length of shortest string))
+
+    public String longestCommonPrefix(String[] strs,int n) {
+        if(strs.length==0){
+            return "-1";
+        }
+        if(strs.length==1){
+            return strs[0];
+        }
+        int minLength=Integer.MAX_VALUE;
+        boolean flag=true;
+        String ans="";
+        for(String str:strs){
+            if(str.length()<minLength){
+                minLength=str.length();
+            }
+        }
+        for(int i=0;i<minLength;i++){
+            char ch=strs[0].charAt(i);
+            for(int j=1;j<n;j++){
+                if(strs[j].charAt(i)!=ch){ //found diff char
+                    flag=false;
+                    break;
                 }
             }
-            ans += ch;
-        }
-        return ans;
-    }
-
-    public int findMinLen(String[] str) {
-        int minLen = str[0].length();
-        for (int i = 1; i < str.length; i++) {
-            if (str[i].length() < minLen) {
-                minLen = str[i].length();
+            if(flag){
+                ans+=ch; //adding common char to the ans
             }
         }
-        return minLen;
+        return ans.isEmpty()?"-1":ans;
     }
+
+
 
     //longest palindromic substring
     //https://leetcode.com/problems/longest-palindromic-substring/submissions/
@@ -166,10 +192,12 @@ public class Strings {
     //here we combine three approaches - lps, lcsubstring, & print lcs ie we reverse the given string, then we find the
     // longest commom substring between them and then print it. Here a problem might occur that there might be a case where
     // the common substring between a string and its reverse is not palindromic. Thus we have to additionally check if the
-    // resultant string is palindromic and largest. Moreover, some cases are not passing so there might be a bug in the code
-    // which I'm currently not able to find. The expand around center approach works better for this problem as it does not take any space
+    // resultant string is palindromic and largest and if the returned string is not palindromic, we can try all possible
+    // substrings of that string and return the longest palindromic one. Moreover, some cases are not passing so there might
+    // be a bug in the code which I'm currently not able to find. The expand around center approach works better for this
+    // problem as it does not take any space
 
-    public String longestPalindrom(String a) {
+    public String longestPalindrome1(String a) {
         int n = a.length();
         int[][] dp = new int[n + 1][n + 1];
         for (int i = 0; i < n + 1; i++) {
@@ -186,7 +214,7 @@ public class Strings {
         int i = n;
         int j = n;
         while (i > 0 && j > 0) {
-            if (a.charAt(i - 1) == b.charAt(i - 1)) {
+            if (a.charAt(i - 1) == b.charAt(j - 1)) {
                 ans.append(a.charAt(i - 1));
                 i--;
                 j--;
@@ -202,7 +230,7 @@ public class Strings {
     public void longestPalinSub(String a, String b, int[][] dp, int n) {
         for (int i = 1; i < n + 1; i++) {
             for (int j = 1; j < n + 1; j++) {
-                if (a.charAt(i - 1) == b.charAt(i - 1)) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
                     dp[i][j] = 1 + dp[i - 1][j - 1];
                 } else {
                     dp[i][j] = 0;
@@ -327,8 +355,6 @@ public class Strings {
                 continue;
             } else if (ch > '9' || ch < '0') { //not an integer
                 break;
-            } else if (ch == ' ') {
-                continue;
             } else {
                 if (ans < Integer.MIN_VALUE || ans > Integer.MAX_VALUE) { //incase ans goes out of bounds we break out from the loop and return ans;
                     break;
@@ -470,50 +496,42 @@ public class Strings {
         return 0; //completely traversed both versions and thus they are same
     }
 
-    //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
-    public int solve(String a) {
-        int n=a.length();
-        StringBuilder sb=new StringBuilder(a);
-        String b=sb.reverse().toString();
-        int[][] dp=new int[n+1][n+1];
-        for(int i=0;i<n+1;i++){
-            for(int j=0;j<n+1;j++){
-                if(i==0||j==0){
-                    dp[i][j]=0;
-                }
-            }
-        }
-        for(int i=1;i<n+1;i++){
-            for(int j=1;j<n+1;j++){
-                if(a.charAt(i-1)==b.charAt(j-1)){
-                    dp[i][j]=1+dp[i-1][j-1];
-                }
-                else{
-                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
-                }
-            }
-        }
-        return n-dp[n][n];
-    }
+    //min number of insertions in the FRONT to make string palindrome
+    //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic
 
-    //min number of insertions in the front to make string palindrome
-    //O(N)
+    //O(N)time and space
+
     //Here we use the concept of pattern matching (KMP algo). We are only allowed to make insertions in the front of the
     // string, and thus we make use of the lps array by concatenating the given string and its reverse and calculating the
     // lps of the whole string. This way, the last element of lps[] array will give us the length of the longest prefix that is
     // same as suffix. So, subtracting that from the length of the given string will give us the number of characters to
-    // be inserted at the front to make the string palindrome. Intuition behind this is that -  in a palindrome, the longest
+    // be inserted at the front to make the string palindrome. Intuition behind this is that - in a palindrome, the longest
     // prefix ie the whole string is equal to the longest suffix ie the whole string and thus using the lps logic we find
     // the longest prefix equal to suffix. So if it is of length 1, then we will need str.length()-1 more characters as prefix to
     // make the longest prefix(ie of length of string) equal to the longest suffix(of length of string). For eg: if the
     // string is abc, then the longest suffix and prefix would be abc.
+    //basically, the idea is that in a palindrome, the longest prefix ie whole string is equal to the longest suffix ie
+    // the whole string. Thus for the given string the last element of its lps with its reverse would give the length of the longest suffix
+    // equal to prefix. So if it is 0, then it means that there are no characters common between the string and its palindrome
+    // and thus we need to add n characters to the string to make it a palindrome so that longest prefix equals suffix
+    // (as it is in a palindrome). If the lps value of last element is 1 then it means that part of the reverse of the
+    // string that is same as given string is of length 1. So, to make it completely palindromic, we'd have to add N-1
+    // more characters to it since suffix same as prefix of length 1 is already present and thus remaining length of
+    // suffix containing characters same as prefix=N-1.
 
-    //We add a '&' in between the string and its reverse so that it can be differentiated in case the string is already a palindrome
-    public static int minChar(String str) {
-        int n=str.length();
+    //We add a '&' in between the string and its reverse so that it can be differentiated in case the string is already
+    // a palindrome otherwise it would've considered the whole string as one, resulting in different lps value and then
+    // lps[lps.length()-1] would give a value>n
+
+    public int solve1(String a) {
+        StringBuilder sb=new StringBuilder(a);
+        String b=sb.reverse().toString();
+        String str=a+"$"+b;
         int[] lps=findLps(str);
-        return n-lps[n-1];
+        int n=a.length();
+        return n-lps[lps.length-1];
     }
+
     public static int[] findLps(String a){
         int n=a.length();
         int len=0;
