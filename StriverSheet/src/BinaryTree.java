@@ -796,8 +796,8 @@ class BinaryTree {
     //populate next pointers in each node
     //https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
 
-    //O(N) -  we simply follow a preorder traversal where we check if the root is null we return it. ]
-    // Now since the given tree is a perfect BT, each node must be having 2 children or none. Now if the current root is
+    //O(N) -  we simply follow a preorder traversal where we check if the root is null we return it.
+    // Now since the given tree is a perfect BT, each node must be having 2 children except the leaves. Now if the current root is
     // not null, we check if its left child exists or not and if does, then we assign its left child's next to the node's right.
     // Now since the left child is !null we surely know that there will also be a right child, since given tree is perfect BT.
     // Thus, within the same condition, we check if the root's next is not null. If it isn't then we simply assign its left to right child's next.

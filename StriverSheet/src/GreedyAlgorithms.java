@@ -52,10 +52,8 @@ public class GreedyAlgorithms {
     // earlier come first. We don't have to worry about the fact that it would distort the co-relation between the arrival
     // and departure times at a given index. This is because we just scroll through the time in the day ie if a train arrives,
     // a platform is assigned to it and if a train departs, it leaves a platform empty. We don't deal with the departure
-    // and arrival of the same train simultaneously. So first we assume that the first train (the one with the least arrival
-    // time) has arrived at the station and has taken a platform (thus the platforms occupied is 1 initially).
-    // Then, we take two pointers i and j - one at the arrival array and another at the departure array. Now since we
-    // have assumed that 1st train has already arrived, we start i from 1 index ie the arrival of second train. So we
+    // and arrival of the same train simultaneously..
+    // Then, we take two pointers i and j - one at the arrival array and another at the departure array. So we
     // iterate through both the arrays using a while loop and if the arrival time of the train to which i is pointing
     // to is <=departure time of train that j is pointing to, then it means that ith train arrives at a time before jth
     // train leaves. Equal sign is necessary since it was given in the question that if the arrival of a train equals departure
@@ -65,28 +63,31 @@ public class GreedyAlgorithms {
     // platformsOccupied by 1 and move to the next departing train time. Out of all iterations, we store the max value of
     // platforms occupied at any time
 
+    //the reason for sorting the arrays was because we're trying to scroll through time to calculate the number of
+    // platforms occupied at any point of time. This is only possible if the times are sorted (then only we'll be able to
+    // make co relation between an arriving train and a departing train and assign to calculate the platforms occupied in
+    // the most optimal way)
+    //O(2NlogN) + O(2N) time
 
-    //O(2NlogN + 2n) tc, O(1) sc
     static int findPlatform(int arr[], int dep[], int n)
     {
         Arrays.sort(arr);
         Arrays.sort(dep);
-        int platformsOcc=1; // considering 1st train has arrived
         int minPlatforms=1;
-        int i=1;
+        int i=0;
         int j=0;
+        int platformsOcc=0;
         while(i<n&&j<n){
-            if(arr[i]<=dep[j]){ // if at any time arrival time of a train equals departure time of another train, we
+            if(arr[i]<=dep[j]){// if at any time arrival time of a train equals departure time of another train, we
                 // cannot put them on the same platform (this is specified in the problem) and thus we use the equal sign here
                 platformsOcc++;
                 i++;
             }
-            else if(arr[i]>dep[j]){
+            else {
                 platformsOcc--;
                 j++;
             }
-            //tricky part
-            if(platformsOcc>minPlatforms){ //since we need to find min required, we have to look for the max amount of
+            if(platformsOcc>minPlatforms){//since we need to find min required, we have to look for the max amount of
                 // platforms that were occupied at any given time to prepare for worst case
                 minPlatforms=platformsOcc;
             }
@@ -96,7 +97,6 @@ public class GreedyAlgorithms {
 
     //job sequencing problem
     //https://practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1
-
 
     //since we have to perform the jobs to get the max profit, we sort the given job array in decreasing order of profits
     // so that we can perform the jobs with higher profits at first. This is what we can think of greedily. Now to find when
@@ -115,6 +115,8 @@ public class GreedyAlgorithms {
 
     //intuition: we try to perform the job with the longer deadline as late as possible so that we can perform another job
     // with shorted deadline in the earlier days (this way we can make best use of all jobs)
+
+    //we can also return the sequence in which jobs were performed if asked, basically using the order in which we did each job
 
     //tc O(NLogN + N*M) considering that size of the longest deadline is M
     //sc O(M)

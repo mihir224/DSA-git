@@ -356,11 +356,13 @@ class Heaps {
 
     //merge k sorted arrays
     //brute - merge all the arrays in the given order, storing them in a DS and then sort that DS
-    //O((N*K)log(N*K)) - assuming each array is of size N
+    //O((N*K)+(N*K)log(N*K)) - assuming each array is of size N
 
-    //optimal
+    //optimal - this solution works well with different sized arrays
     //inserting first element of all arrays into the pq, then iterating over the pq and retrieving the top, adding it to
     // the ans and inserting its next into the pq if it exists, then repeating this till pq is not empty
+
+    //(N*K)logK time, O(N*k) space
     public static ArrayList<Integer> mergeKArrays(int[][] arr,int K)
     {
         PriorityQueue<ListNode> pq=new PriorityQueue<>();
@@ -390,10 +392,6 @@ class Heaps {
             this.first=first;
             this.second=second;
             this.third=third;
-        }
-        public ListNode(int first, ListNode next){
-            this.first=first;
-            this.next=next;
         }
         @Override
         public int compareTo(ListNode o) {
@@ -548,6 +546,21 @@ class Heaps {
             ans.add(map.size());
         }
         return ans;
+    }
+
+    public String smallestString(String s) {
+        List<String> list=new ArrayList<>();
+        String str="";
+        for(int i=0;i<s.length();i++){
+            str+=(char)(s.charAt(i)-1);
+            for(int j=i+1;j<s.length();j++){
+                str+=(char)(s.charAt(j)-1);
+                list.add(str);
+            }
+            str="";
+        }
+        Collections.sort(list);
+        return list.get(0);
     }
 
 

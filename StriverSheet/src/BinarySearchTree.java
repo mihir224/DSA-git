@@ -327,7 +327,7 @@ class BinarySearchTree{
     // thing. We store the maximum sum and then return it at the end.
     //O(N*N)tc - validate bst takes O(N) time and finding the sum of all nodes of the tree where the nth node is taken as root
 
-    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
+    //Optimal - O(N)time - postorder, O(1) space (if we don't consider recursive stack space)
     //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
     // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
     // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
@@ -357,7 +357,8 @@ class BinarySearchTree{
             if(root.val>left.largest&&root.val<right.smallest){ //valid bst
                 return new Node(left.size+right.size+1,Math.max(right.largest,root.val),Math.min(left.smallest,root.val));
             }
-            return new Node(Math.max(left.size,right.size),Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst
+            return new Node(0 ,Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst. since it is not a bst, we mark it's
+            // size as zero because its parent will also never be a bst and we don't have to use its size doesn't concern us
         }
         public  int largestBST(TreeNode root) {
             return helpThis(root).size;

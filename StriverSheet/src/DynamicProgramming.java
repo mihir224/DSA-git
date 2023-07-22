@@ -56,8 +56,9 @@ class DynamicProgramming{
     // we move forward, making the current element as prev for next element. If however, the current element is less than
     // the prev element, then we can not pick that element in our LIS, and thus we move onto the next element, not changing
     // the prev element. Now if we pick an element, we take the max of what we got from not picking the element and from
-    // what we got from picking that element. For this reason,we calculate the result from not picking up the element beforehand,
-    // and then we calculate the max from this result and the result from picking up the element.`
+    // what we got from picking that element.
+
+    //we can also decide to make the pick call first and then the not pick call, returning the max from both
 
     //memoization (O(N2)) - check tabulation also for this
     public int lengthOfLIS(int[] nums) {
@@ -137,27 +138,31 @@ class DynamicProgramming{
         return max;
     }
 
-    // now to print LIS, we make use of a hash array (each element initialised with their index) . This hash will store the index of the prev element for each element
-    // after the dp array has been formed to help us identify where the current element came from in forming the IS which
-    // ended with that element. Then, we can access the prev of the element that gave us the LIS ie the one with the max
-    // value in the dp array through the hash array and then we can back track to find all elements involved in forming
-    // the LIS
+    //print LIS
+    //https://practice.geeksforgeeks.org/problems/printing-longest-increasing-subsequence/1
 
-    public String lengthOfLIS4(int[] nums) {
-        int n=nums.length;
-        int[] dp=new int[n];
+    // now to print LIS, we make use of a hash array (each element initialised with their index) .
+    // This hash will store the index of the prev element for each element after the dp array has been formed to help us
+    // identify where the current element came from in forming the IS which ended with that element. Then, we can access
+    // the prev of the element that gave us the LIS ie the one with the max value in the dp array through the hash array
+    // and then we can back track to find all elements involved in forming the LIS
+    
+    public ArrayList<Integer> longestIncreasingSubsequence(int n, int nums[]){
         int max=Integer.MIN_VALUE;
-        int[] hash=new int[n];
-        int lastIndex=0;
-        Arrays.fill(dp,1); //initialization
+        ArrayList<Integer> lis=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
+        int lastIndex=0;
+        int[] dp=new int[n];
+        int[] hash=new int[n];
+        Arrays.fill(dp,1);
         for(int i=0;i<n;i++){
             hash[i]=i;
         }
-        for(int i=0;i<n;i++){
-            for(int prev=0;prev<=i-1;prev++){
-                if(nums[i]>nums[prev]){
-                    dp[i]=Math.max(dp[i],1+dp[prev]);
+        for(int i=0;i<nums.length;i++){
+            for(int prev=0;prev<i;prev++){
+                if((nums[prev]<nums[i])&&(1+dp[prev]>dp[i])){ //prev is valid. here we check beforehand if dp[prev]+1 is
+                    // greater than dp[i] since we have to assign prev to hash[i] accordingly
+                    dp[i]=1+dp[prev];
                     hash[i]=prev;
                 }
             }
@@ -166,12 +171,12 @@ class DynamicProgramming{
                 lastIndex=i;
             }
         }
-        while(hash[lastIndex]!=lastIndex){
-            sb.append(dp[lastIndex]);
+        lis.add(0,nums[lastIndex]);
+        while(hash[lastIndex]!=lastIndex){ //backtracking
             lastIndex=hash[lastIndex];
+            lis.add(0,nums[lastIndex]);
         }
-        sb.append(hash[lastIndex]);
-        return sb.reverse().toString();
+        return lis;
     }
 
     //longest common subsequence
