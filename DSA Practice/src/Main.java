@@ -1,10 +1,46 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        char[] ch={'s','p','d'};
+        String s=new String(ch);
+        System.out.println(s);
+        String[] input = {"geeksforgeeks", "geeks", "geek", "geezer"};
+        Arrays.sort(input);
+        System.out.println(
+                Arrays.toString(input));
+    }
+    public String sortVowels(String s) {
+        List<Character> list=new ArrayList<>();
+        StringBuilder sb=new StringBuilder();
 
+        for(char ch:s.toCharArray()){
+            if(isVowel(ch)){
+                list.add(ch);
+            }
+            sb.append(ch);
+        }
+        Collections.sort(list);
+        int index=0;
+        for(int i=0;i<s.length();i++){
+            if(isVowel(s.charAt(i))){
+                sb.setCharAt(i,list.get(index));
+                index++;
+            }
+        }
+        return sb.toString();
+    }
+    public boolean isVowel(char ch){
+        return ch=='a'||ch=='A'||ch=='e'||ch=='E'||ch=='i'||ch=='I'||ch=='o'||ch=='O'||ch=='u'||ch=='U';
+    }
+    static boolean test(int n){
+        while (n > 1) {
+            if (n % 5 != 0) {
+                return false;
+            }
+            n /= 5;
+        }
+        return true;
     }
     public static long getInversions1(long arr[], int n) {
         return mergeSort(0,n-1,arr);
@@ -91,4 +127,6 @@ public class Main {
         }
         return ans;
     }
+
+
 }

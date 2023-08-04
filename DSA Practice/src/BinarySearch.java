@@ -14,10 +14,14 @@ class BinarySearch{
     // search space from mid till end. Now since we have to return the ans close to 6 decimal places, we stop the search when start
     // and end become nearly equal ie their difference is close to 6 decimal places (10^-6) so that we get an ans upto or
     // greater than 6 decimal places since we are doing binary search on elements between 1 to M considering elements upto
-    // say, 6 decimal places, so from 1 to 2, M can vary from 1.000001 to 2.999999 and similarly we can think of all
+    // say, 6 decimal places, so from 1 to 2, M can vary from 1.000000 to 2.999999 and similarly we can think of all
     // elements till M), and thus the complexity becomes O(logbase2(M*(10)^k)) where k is the number of decimal places
     // upto which we have to find the ans and in each iteration we are multiplying mid N times itself and thus the overall
     // time complexity becomes - O(N*logbase2(M*(10)^k)), sc is O(1)
+
+    //basically we're performing binary search until start and end become nearly equal (equal upto k decimal places). now
+    // if we have to find the ans upto 5 decimal places, we will perform bs until difference between start and end becomes
+    // almost 1e6 because that would make sure that upto 5 decimal places their values are same
 
     public static double NthRootofM(int n, int m) {
         double eps=1e-6;
@@ -65,13 +69,17 @@ class BinarySearch{
         return -1;
     }
 
+    //matrix median
     //https://www.interviewbit.com/problems/matrix-median
+
+    //it is given that n*m will always be odd
+
     //brute - flatten the matrix, then sort and return the middle element - O(N*M + (N*M)log(N*M)) tc, O(N*M) sc
 
     //optimal - using nested binary search
 
     //consider the array - [1,2,3,3,6,6,6,9,9]
-    //approach - We know that for a number to be a median in a search space, that number should have all numbers less than
+    //approach - We know that for a number to be a median in a search space (considering number of elements are odd), it should have all numbers less than
     // equal to it on the left equal to all the numbers greater than or equal to it on the right. So, we apply a sort of nested bs
     // where the outer one is to search for the median and the inner one is to search for all numbers less than the current
     // mid in the outer bs in each row. In the outer binary search we know that our median can be any integer in the int range,
@@ -83,18 +91,22 @@ class BinarySearch{
     // elements ie n*m ie number of elements less than or =equal to the mid INCLUDING MID are less than or equal to half of total
     // elements then we reduce our search space so that start=mid+1. This is because ideally we want all the elements on the left
     // as less than or equal than the mid (EXCLUDING MID) equal to total elements greater than or equal to mid EXCLUDING MID on
-    // the right. When start will cross end, the start will be at the ideal position of median. Now to count the number of elements
+    // the right. When start will cross end, the start will be at the ideal position of median. This is because if we consider the above example, when mid is anything less than 6, the count we're getting is 4. However when mid is 6, then even though it is the median, all of its occurrences are being taken into consideration in the count. so to find the first occurrence of this 6, we have to go to the immediate next index which happens when start goes beyond end. Now to count the number of elements
     // less than current mid for each row, we apply another bs in each row. The logic is that the number of elements less than or
     // equal to the current element in a sorted array can be obtained by finding the index of the number just greater than the current
     // element. So for the current row, we find the mid and check if it is greater than main mid. If it isn't then it means we have
     // to search in the right and thus start=mid+1 otherwise we search in left because we want to find the immediate value
     // that is greater than the current mid. At the end when start crosses end, it will point to the immediate index
-    // where arr[mid]>main_mid. Basically we try to move in the optimal direction until we find the ost optimal ans
-    // (breakpoint) ie we move left if arr[mid]>main mid otherwise we move left
+    // where arr[mid]>main_mid. Basically we try to move in the optimal direction until we find the most optimal ans
+    // (breakpoint) ie we move right if arr[mid]>main mid otherwise we move left
 
     // O((logbase2(2^32) ie 32-for applying bs in a search space of 1e9 where 1e9 equates to 2^32)*(N to find less than mid for
     // each row)*logbase2(M) - applying bs inside each row of size m to find the num of elements less than mid in that row)
 
+
+    //IMP!!!! - VERY IMP CONCEPT AND INTUITION FOR BINARY SEARCH
+    //intuition - shrinking the search space in order to reach the break point and find the most optimal value (which in
+    // this particular problem is supposed to be the first occurrence of the median)
 
     public int findMedian(ArrayList<ArrayList<Integer>> matrix)
     {
@@ -119,6 +131,9 @@ class BinarySearch{
         }
         return start;
     }
+
+    //using this function we're trying to search for the element that is immediately greater than the current mid. whatever
+    // index this el would have will give us the no. of elements <= mid
     public int findLessThanMid(ArrayList<Integer> list,int mainMid){
         int start=0;
         int end=list.size()-1;
@@ -138,26 +153,27 @@ class BinarySearch{
     //https://leetcode.com/problems/single-element-in-a-sorted-array/
 
     //brute - create a frequency map for each element and return the key with freq<2
-    //O(logN + N)tc, O(N) sc
+    //O(NlogN)tc, O(N) sc
 
     //better - perform xor of all the numbers in the array. since the xor of two similar numbers is 0 and the xor of a number
     // with 0 is the number itself, at the end after xoring all the elements, the ans would be the unique element
     //O(N)tc, O(1)sc
 
     //optimal - binary search
-    //we simply need to find the break point at which is the point where the left half ends because just after that we have our unique element. We can observe a pattern that all elements
-    // on the left of the unique element are such that 1st instance of an element is at even index and the other is at an
-    // odd index whereas in the second half, 1st instance is at an odd index and other instance is at even index. Thus,
-    // for each mid we check if it is equal to its other instance. We do this for both odd and even cases by using the
-    // xor trick where simply xor-ing the mid with 1 will return the index before it if mid is odd and it will return
-    // the index after it if mid is even. If the instances are equal ie we're in left half, we simply move the search space using low=mid+1
-    // otherwise ie the case when the instances are not equal, ie we are in the right half, we reduce hi to mid-1 and
-    // when low crosses high, then that would be our breakpoint, meaning we've found our single element.
-    // The reason we took high at n-2 is that there might be a possibility that the unique element lies at the last element.
-    // So in this case if took high at n-1, we know for sure that high would never move as mid would always be in the left half.
-    // Thus we'd keep moving start towards right and when it moves past high, it will go out of bounds and nums[start] would
-    // then throw an error. Now since we took high at n-2, when low automatically moves past high in further iterations,
-    // it'll stand at the last index at which we have our unique element
+    //we simply need to find the break point ie the point where the left half ends because just after that we have our
+    // unique element. We can observe a pattern that all elements on the left of the unique element are such that 1st
+    // instance of an element is at even index and the other is at an odd index whereas in the second half, 1st instance
+    // is at an odd index and other instance is at even index. Thus, for each mid we check if it is equal to its other
+    // instance. We do this for both odd and even cases by using the xor trick where simply xor-ing the mid with 1 will
+    // return the index before it if mid is odd and, it will return the index after it if mid is even. If the instances are
+    // equal ie we're in left half, we simply move the search space using low=mid+1 otherwise ie the case when the instances
+    // are not equal, ie we are in the right half, we reduce hi to mid-1 and when low crosses high, then that would be our
+    // breakpoint, meaning we've found our single element. The reason we took high at n-2 is that if unique is last, we'll
+    // keep on moving start until it meets end. Now we know for sure that there will always be odd number of elements, and
+    // thus last index would be even and mid^1 would give out of bounds. This also covers the case when there's only 1 el
+    // in the arr as in that case, bs would never be executed
+
+    //SAME INTUITION AS ABOVE - Trying to reduce the search space in order to reach the breakpoint
 
     //O(logbase2N)tc, O(1) sc
 
@@ -187,10 +203,10 @@ class BinarySearch{
         if(target==nums[pivot]){ //pivot is the target
             return pivot;
         }
-        else if(target>=nums[0]){ //target>start, but is not equal to pivot thus it lies b/w start and pivot
+        else if(target>=nums[0]){ //target>start, thus it lies in the left half
             return binarySearch(0,pivot,target,nums);
         }
-        return binarySearch(pivot+1,nums.length-1,target,nums); //target<start, thus it lies b/w pivot+1 and end
+        return binarySearch(pivot+1,nums.length-1,target,nums); //target<start, thus it lies in the right half
     }
     public int getPivot(int[] nums){
         int start=0;
@@ -207,6 +223,7 @@ class BinarySearch{
                 return mid-1;
             }
             if(nums[start]>=nums[mid]){ //pivot lies in the left
+                //whatever el is after pivot, would obv be smaller than the start as array has been rotated
                 end=mid-1;
             }
             else{
@@ -316,26 +333,33 @@ class BinarySearch{
     // smaller elements also went to r1. Thus, we make the partition in left half a bit further so that r1 starts from
     // larger elements and, thus we make start=cut1+1
 
-    //O(logbase2(min(m,n))tc - since we're applying bs on array of min size, O(1)sc
+    //O(logbase2(min(m,n))tc - we always apply binary search in the smaller array because there might be a case when arr1 has only
+    //1 element and arr2 has 0 elements, due to which arr2[cut2] would give out of bounds error. Moreover, by applying
+    // bs on smaller array, complexity is also reduced, O(1)sc
 
     public double findMedianSortedArrays1(int[] nums1, int[] nums2) {
         int n=nums1.length;
         int m=nums2.length;
-        if(n>m){
+        //imp!!!!
+        if(n>m){  //we always apply binary search in the smaller array because otherwise what could happen is that if el
+            // in arr1 are more than el in arr2, & if we take zero el from arr1, we'd have to take all el from arr2
+            // in the left half, this can lead to an error because in this case leftLen would be greater than size of arr2.
+            //for eg, if there are 6 elements in arr1 and 4 elements in arr2, then leftLen would be 5. Now if we consider not taking
+            // any el from arr1, then we'd have to take 5 from arr2 and thus cuts2 would be 5-0=5. this way arr2[cuts2-1]=arr2[4] would give out of bounds error
             return findMedianSortedArrays1(nums2,nums1);
         }
         int leftLen=(n+m+1)/2;
         int start=0;
         int end=n; //at max we can take n elements in the left half
         while(start<=end){
-            int cut1=start+(end-start)/2; //partition pt of arr1, stores the number of elements in the left half from arr1
+            int cut1=start+(end-start)/2; //partition pt of arr1, ie the number of elements we have to take from the 1st
+            // array in left half
             int cut2=leftLen-cut1; //partition pt of arr2, stores the number of elements in the left half from arr2
             int l1=cut1==0?Integer.MIN_VALUE:nums1[cut1-1]; //checking in case we took no elements from arr1, thus putting l1 as int min
             int l2=cut2==0?Integer.MIN_VALUE:nums2[cut2-1];
             int r1=cut1==n?Integer.MAX_VALUE:nums1[cut1]; //in case we took all elements from arr1 in the left half, leaving 0 for r1
             int r2=cut2==m?Integer.MAX_VALUE:nums2[cut2];
-
-            if(l1<=r2&&l2<=r1){  // ie all elements in the left half of imaginary merged array < right half
+            if(l1<=r2&&l2<=r1){ // ie all elements in the left half of imaginary merged array < right half
                 if((n+m)%2==0){ //merged array of even length
                     return (Math.max(l1,l2)+Math.min(r1,r2))/2.0;
                 }
@@ -358,7 +382,7 @@ class BinarySearch{
     //kth element of two sorted arrays
     //https://practice.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array1317/1
 
-    //brute - merge the 2 sorted arrays and then return the kth element. Can be done through the count approach discussed
+    //brute - merge the 2 sorted arrays and then return the el at the (k-1)th index. Can be done through the count approach discussed
     // in prev ques's better approach
     //O(n+m) time, O(1) space
 
@@ -373,8 +397,12 @@ class BinarySearch{
         if(n>m){
             return kthElement(arr2,arr1,m,n,k);
         }
-        int start=k>m?k-m:0; //in case k>n2  ie we have to pick at least k-n2 elements from array 1
-        int end=k<n?k:n; //in case k<n1 ie at max we can pick only k elements from array1
+        int start=k>m?k-m:0; //in case k>n2  ie we have to pick at least k-n2 elements from array 1. we don't have to check
+        // this in prev ques because in that problem, k is leftLen which is basically calc through (n+m+1)/2. Now since we
+        // make sure m is always greater, the val that we calc for leftLen would always be <= m
+
+        int end=k<n?k:n; //in case k<n1 ie at max we can pick only k elements from array1. again, we didn't check this in
+        // prev problem because we knew it with certainty that leftLen would always be >= n
         while(start<=end){
             int cut1=start+(end-start)/2;
             int cut2=k-cut1;  //since we have to find the kth element, we take first k elements in the left half
@@ -397,13 +425,24 @@ class BinarySearch{
 
     //allocate books
     //https://www.interviewbit.com/problems/allocate-books/
-    // we wish to return the min number of max books that can be allocated to a student
+    // we wish to return the min number of max pages that can be allocated to a student
+
+    //brute - find all possible combinations, take max num books that can be allocated to each student and return the min
+    // of those
+
+    //complexity - O(exponential)
+
+    //better - we know the min and max possible val of the ans (check in the optimal approach). so we can perform a linear
+    // search in this search space and look for our min value for all possible values. for every value between min and max
+    // possible ans, we can check if it is possible to allocate all books with the that val as a barrier and out of all
+    // possible values, we'll return the min one. Can take O(N2) time in worst case since we're checking each el from min
+    // possible val to max possible val and for each no. we're checking if it is possible to take the current val as a
+    // barrier
 
     //optimal - bs
-    // approach - consider the case when there are 4 books each having the same number of pages say, 1 and there are 4
-    // students. Thus, we can assign only one book to each student and thus the min number of max pages that can be
-    // allowed to each student is 1 and therefore the lowest possible ans is the min of the total number of pages.
-    // Thus, we take start as min of all pages. Similarly consider the case where there's only one student, and we have
+    // approach - Suppose there are 4 books and there are 4 students. So we have only one option that we can assign only
+    // one book to each student. in this case this is the only way we can allocate the books. thus the min of max would
+    // be the max of all the elements in the array. Similarly consider the case where there's only one student, and we have
     // 4 books. Thus, we'd have to allocate all 4 books to that one student and thus the ans in this case would be the
     // sum of all pages. Thus, the max possible ans will be sum of all pages and therefore end is taken as sum of all pages.
     // Now we apply bs by finding mid such that, we check if it is possible to distribute the books with min of max pages
@@ -422,69 +461,70 @@ class BinarySearch{
 
     //O(NlogN)time and O(1)space
 
-    public int books(ArrayList<Integer> A, int B) {
-        if(A.size()<B){ //ie number of books < number of students and thus we won't be able to allocate at least one book
-            // to each student
-            return -1;
-        }
-        int total=0;
-        int minPages=Integer.MAX_VALUE;
-        for(int i:A){
-            if(i<minPages){
-                minPages=i;
+    public class Solution {
+        public int books(ArrayList<Integer> A, int B) {
+            if(A.size()<B){ //number of books less than number of students, thus can't allocate a min of one book to every student
+                return -1;
             }
-            total+=i;
-        }
-        int start=minPages;
-        int end=total;
-        int ans=0;
-        while(start<=end){
-            int mid=start+(end-start)/2;
-            if(isPossible(A,B,mid)){ //checking if mid can be taken as a barrier for the max no. of pages that can be
-                // allocated to each student
-                ans=mid;
-                end=mid-1; //moving left to find optimal(min) value of mid
+            int max=Integer.MIN_VALUE;
+            int sum=0;
+            for(int i:A){
+                if(i>max){
+                    max=i;
+                }
+                sum+=i;
             }
-            else{ //ie mid as a barrier is too low, due to which we couldn't allocate all pages among all student and
-                // some pages were left behind
-                start=mid+1;
+            int s=max;
+            int e=sum;
+            while(s<=e){
+                int mid=s+(e-s)/2;
+                if(isPossible(mid,A,B)){ //find possible candidate for max num pages that can be allocated to a student
+                    e=mid-1; //moving left to find a better value, ie reducing the search space to get to the break point
+                }else{
+                    s=mid+1;
+                }
             }
+            return s;
         }
-        return ans;
-    }
-    public boolean isPossible(ArrayList<Integer> A, int B, int barrier){
-        int allocatedStudents=1; //tracks the number of students to which the pages have been allocated
-        int pages=0; //tracks the number of pages allocated to a student at any moment
-        for(int i=0;i<A.size();i++){
-            if(A.get(i)>barrier){ // a book had more pages than the barrier, thus it would be impossible to allocate this book to any student
+        public boolean isPossible(int barrier, ArrayList<Integer> list, int n){
+            int allocatedStudents=1;
+            int pages=0;
+            for(int i:list){
+                if(i>barrier){ //found a book with pages>maxPages allowed, thus we cannot allocate this book to any student
+                    return false;
+                }
+                if(pages+i>barrier)
+                {
+                    allocatedStudents++;
+                    pages=i;
+                }
+                else{
+                    pages+=i;
+                }
+            }
+            if(allocatedStudents>n){ //ie we were unable to allocate all the books among n students with the given barrier ie we needed more students as there were some books left meaning the barrier was too low
                 return false;
             }
-            if(A.get(i)+pages>barrier){ //no more pages can be allocated to current student, thus we move to the next student
-                allocatedStudents++;
-                pages=A.get(i);
-            }
-            else{
-                pages+=A.get(i); //adding current book's pages to the current student
-            }
+            return true;
         }
-        if(allocatedStudents>B) { //all pages could not be distributed amongst all students and some pages were left
-            return false;
-        }
-        return true;
     }
+
+
 
     //aggressive cows
     //https://www.spoj.com/problems/AGGRCOW/
+
+    //we basically have to place C cows among N stalls such that the min distance between two cows is as large as possible
 
     //approach  - we follow a similar approach as we did in the previous ques. First, we sort our coordinates array.
     // sorting the coordinate array is necessary so that we can obtain the correct value for end and apply binary search accordingly.
     // We see that the min possible ans would be 1 as no two cows can be at the same coordinate and thus start is 1 and
     // the max possible ans is the difference between the last and first coordinate and that will be our end. Now we find
-    // the middle and check if it is possible to place all the cows with the mid as the max of min distance between them.
-    // mid here signifies the min distance at which cows can be placed. we wish to maximize this value of mid.
-    // If it is possible, then that means we have a valid ans and, thus we put current mid, equal to our ans a try to
+    // the middle and check if it is possible to place all the cows with the mid as the max of min distance between any 2 cows.
+    // mid here signifies the min distance at which any 2 cows can be placed. we wish to maximize this value of mid.
+    // If it is possible, then that means we have a valid ans and, thus we put current mid, equal to our ans and try to
     // find a better ans by moving forward and reducing the search space such that start=mid+1. If it is not possible
-    // to place the cows with the current mid ie the distance between them is too large, we reduce the search space such
+    // to place the cows with the current mid ie the min distance between any two cows is too large, we reduce the search space such
     // that end=mid-1. Now to implement the canPlace() function we just place the first cow at first coordinate and then
     // try placing other cows at the remaining coordinates such that the distance between them is always >= current mid.
     // We keep a counter to count the number of cows that have been placed and once the counter equals the total number of

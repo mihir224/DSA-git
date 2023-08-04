@@ -1,11 +1,19 @@
 import java.util.*;
 
 class LL{
+    ListNode head;
+    ListNode tail;
+    HashMap<Integer,ListNode> map;
+    int capacity;
+
     class ListNode{
         int val;
         ListNode next;
         ListNode bottom;
         ListNode random;
+        int key;
+        ListNode prev;
+
         public ListNode(){}
         public ListNode(int val){
             this.val=val;
@@ -13,6 +21,11 @@ class LL{
         public ListNode(int val, ListNode next){
             this.val=val;
             this.next=next;
+        }
+        public ListNode(int key,int val){
+            this.key=key;
+            this.val=val;
+            this.next=this.prev=null;
         }
     }
 
@@ -740,5 +753,159 @@ class LL{
             ans=Math.max(count,ans);
         }
         return ans;
+    }
+
+    //LRU cache
+   //https://leetcode.com/problems/lru-cache
+
+    class LRUCache {
+        ListNode head;
+        ListNode tail;
+        HashMap<Integer,ListNode> map;
+        int capacity;
+        public LRUCache(int capacity) {
+            this.head=new ListNode(0,0);
+            this.tail=new ListNode(0,0);
+            this.head.next=tail;
+            this.tail.prev=head;
+            this.map=new HashMap<>();
+            this.capacity=capacity;
+        }
+
+        public int get(int key) {
+            if(map.containsKey(key)){
+                int val=map.get(key).val;
+                remove(map.get(key));
+                insert(new ListNode(key,val));
+                return val;
+            }
+            return -1;
+        }
+
+        public void put(int key, int value) {
+            ListNode node=new ListNode(key,value);
+            if(map.containsKey(key)){
+                remove(map.get(key));
+            }
+            if(map.size()==capacity){
+                remove(tail.prev); //removing lrc
+            }
+            insert(node);
+        }
+
+        public void insert(ListNode node){
+            map.put(node.key,node);
+            ListNode headNext=head.next;
+            head.next=node;
+            node.prev=head;
+            node.next=headNext;
+            headNext.prev=node;
+        }
+        public void remove(ListNode node){
+            map.remove(node.key);
+            ListNode nodePrev=node.prev;
+            ListNode nodeNext=node.next;
+            nodePrev.next=nodeNext;
+            nodeNext.prev=nodePrev;
+        }
+    }
+
+    //LFU cache
+    //https://leetcode.com/problems/lfu-cache/
+
+    class LFUCache {
+        int capacity;
+        int maxCapacity;
+        int minFreq;
+        HashMap<Integer,DoublyLinkedList> freqMap;
+        HashMap<Integer,ListNode> map;
+        class ListNode{
+            int key;
+            int val;
+            int freq;
+            ListNode next;
+            ListNode prev;
+            public ListNode(int key,int val){
+                this.key=key;
+                this.val=val;
+                this.freq=1;
+                this.next=this.prev=null;
+            }
+        }
+        class DoublyLinkedList{
+            ListNode head;
+            ListNode tail;
+            int size; //to track the number of nodes in the list (excluding head and prev)
+            public DoublyLinkedList(){
+                this.head=this.tail=new ListNode(0,0);
+                head.next=tail;
+                tail.prev=head;
+                this.size=0;
+            }
+            public void insert(ListNode node){
+                ListNode headNext=head.next;
+                head.next=node;
+                node.prev=head;
+                node.next=headNext;
+                headNext.prev=node;
+                size++;
+            }
+            public void remove(ListNode node){
+                ListNode nodePrev=node.prev;
+                ListNode nodeNext=node.next;
+                nodePrev.next=nodeNext;
+                nodeNext.prev=nodePrev;
+                size--;
+            }
+        }
+        public LFUCache(int capacity) {
+            this.maxCapacity=capacity;
+            this.minFreq=0;
+            this.freqMap=new HashMap<>();
+            this.map=new HashMap<>();
+        }
+
+        public int get(int key) {
+            if(map.containsKey(key)){
+                ListNode node=map.get(key);
+                updateNode(node); //updating freq
+                return node.val;
+            }
+            return -1;
+        }
+
+        public void put(int key, int value) {
+            ListNode node=new ListNode(key,value);
+            if(map.containsKey(key)){
+                ListNode temp=map.get(key);
+                temp.val=value; //updating val of this already existing node and then updating its list
+                updateNode(temp); //update freq of this node
+            }else{
+                if(map.size()>=maxCapacity){ //cache is full
+                    DoublyLinkedList list=freqMap.get(minFreq); //retrieving min freq list and removing lfn or lrn accordingly
+                    map.remove(list.tail.prev.key);
+                    list.remove(list.tail.prev);
+                }
+                minFreq=1; //we're certain this node is new thus its freq is 1
+                map.put(key,node);
+                DoublyLinkedList list=freqMap.getOrDefault(minFreq,new DoublyLinkedList());
+                list.insert(node);
+                freqMap.put(minFreq,list);
+            }
+        }
+
+        public void updateNode(ListNode node){
+            //node that address of this node won't change. we're just updating its list ie putting it in the list of higher frequency thats it
+            DoublyLinkedList list=freqMap.get(node.freq);
+            list.remove(node);
+            if(node.freq==minFreq&&list.size==0){ //in case the list containing this node has become empty after its removal, we update the minFreq
+                minFreq++;
+            }
+            node.freq++;
+            DoublyLinkedList newList=freqMap.getOrDefault(node.freq,new DoublyLinkedList());
+            newList.insert(node);
+            freqMap.put(node.freq,newList);
+        }
+
     }
 }

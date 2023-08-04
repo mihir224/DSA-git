@@ -48,6 +48,10 @@ class Greedy{
     // the most optimal way)
     //O(2NlogN) + O(2N) time
 
+
+    //first ask the interviewer if the arrival time is sorted. that would automatically sort the departure time and then
+    // we can apply our approach directly. just assume in this case that first train has arrived for a much more intuitive
+    // approach
     static int findPlatform(int arr[], int dep[], int n)
     {
         Arrays.sort(arr);
@@ -197,7 +201,7 @@ class Greedy{
     //minimum number of coins
     //https://practice.geeksforgeeks.org/problems/-minimum-number-of-coins4426/1
 
-    //tc O(V) wc (since we're using 1 rupee denomination)
+    //tc (min number of coins)
 
     //why greedy works for this case only:
 
@@ -208,7 +212,7 @@ class Greedy{
     // the actual ans is 2 (5+6). Since 5+6>9 ie an element beyond 5 & 6, then it means that their sum can be equal to
     // the change required and if we apply greedy here, these elements will be skipped after we take 9 and thus greedy
     // doesn't work here
-    
+
     static List<Integer> minPartition(int N)
     {
         int[] arr={1,2,5,10,20,50,100,200,500,2000};

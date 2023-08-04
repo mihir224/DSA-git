@@ -418,7 +418,7 @@ class StackQueues{
 
     //min stack
 
-    //just store min yet along with whatever trying to push in stack. at any point of time, min would be in the top's min
+    // just store min yet along with whatever trying to push in stack. at any point of time, min would be in the top's min
     // O(1) time, O(2N) space - since storing pairs
 
     class MinStack {

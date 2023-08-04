@@ -324,7 +324,7 @@ public class Heaps{
 
     //takes O(N2) time (for 1st insertion, loop runs for 0 times as the size of list is 0 initially, for 2nd insertion,
     // it runs for 1 time, as the size of the DS is now 1, then for 3rd insertion, it runs for 2 times and so on. So for
-    // N insertions, we can accumulate the total time as - 0 + 1 + 2 + 3 + upto N times)=N*(N+1)/2=O(N2). Also, we shifting
+    // N insertions, we can accumulate the total time as - 0 + 1 + 2 + 3 + upto N times)=N*(N+1)/2=O(N2). Also, we're shifting
     // elements to the right to accommodate the new element at a specific index would also take O(N) time in the worst case
     //O(N)space to store N inserted elements
 
@@ -510,6 +510,10 @@ public class Heaps{
 
     //O(logD hashmap (retrieval, insertion) + D for inserting D elements into map + DlogK for inserting D distinct elements
     // in pq of size K + KlogK for retrieving k elements from the pq) , O(D+K) sc
+
+    //explanation for DlogK complexity: The complexity of the pq would vary till only the first k insertions and after
+    // that it would become logk for each insertions. Thus overall time taken to insert D elements is considered as O(DlogK),
+    // logK being the avg insertion time for the pq.
 
     public int[] topKFrequent1(int[] nums, int k) {
         HashMap<Integer,Integer> map=new HashMap<>();

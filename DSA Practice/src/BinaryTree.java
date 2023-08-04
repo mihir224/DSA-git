@@ -1,5 +1,3 @@
-import com.sun.source.tree.Tree;
-
 import java.util.*;
 
 class BinaryTree{
@@ -824,8 +822,8 @@ class BinaryTree{
         prev=root;
     }
 
-    //iterative approach (same complexity as recursive) - the final linked-list nodes appear to be in preorder thus we try to traverse the tree in preorder
-    // fashion doing the necessary bits to attach the parent's right to the valid children
+    //iterative approach (same complexity as recursive) - the final linked-list nodes appear to be in preorder thus we try
+    // to traverse the tree in preorder fashion doing the necessary bits to attach the parent's right to the valid children
     public void flatten1(TreeNode root) {
         if(root==null){
             return;
@@ -867,7 +865,6 @@ class BinaryTree{
             root=root.right;
         }
     }
-
 
     //convert bt into its mirror image
     //https://practice.geeksforgeeks.org/problems/mirror-tree/1
@@ -921,8 +918,79 @@ class BinaryTree{
         if(root.left!=null||root.right!=null){ //assigning the sum to current only if it its not a leaf node
             root.val=sum;
         }
-
     }
 
+    //serialize-deserialize binary
+    //https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+
+    //Brute force - We use the valid bst function() to check whether a node is a valid bst or not. If it is, we first
+    // move left, and again check and if the current node is a valid bst, we traverse all the nodes of the tree with
+    // current node taken as its root and find their sum. Then we move right of the previous current node and do the same
+    // thing. We store the maximum sum and then return it at the end.
+    //O(N*N)tc - validate bst takes O(N) time and finding the sum of all nodes of the tree where the nth node is taken as root
+
+    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
+    //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
+    // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
+    // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
+    // satisfies the above condition,we save that node's largest value on the left as the min of (smallest val on left, node's val)
+    // and its smallest value on right as max of (largest val on right, node's val). If it isn't a bst, we keep track of the max sum
+    // val up till now and set that node's greatest on left as int max and that node's smallest on right as int min so that there's
+    // no comparison further. If a root's left and right are null, we set its greatest and smallest to node.val
+    // DRY RUN FOR BETTER UNDERSTANDING.- really imp
+
+    //using level order traversal as the string
+    public String serialize(TreeNode root) {
+        if(root==null){
+            return "";
+        }
+        StringBuilder sb=new StringBuilder();
+        Queue<TreeNode> q=new LinkedList<>();
+        q.offer(root);
+        while(!q.isEmpty()){
+            TreeNode node=q.poll();
+            if(node==null){
+                sb.append("null ");
+                continue;
+            }
+            sb.append(node.val + " ");
+            q.offer(node.left);
+            q.offer(node.right);
+        }
+        return sb.toString();
+    }
+
+    public TreeNode deserialize(String data) {
+        if(data==""){
+            return null;
+        }
+        Queue<TreeNode> q=new LinkedList<>();
+        String[] st=data.split(" ");
+        Set<Integer> set=new HashSet<>();
+        set.add(1);
+        set.add(4);
+
+        set.remove(1);
+        for(int i:set){
+            System.out.println(i);
+        }
+
+        TreeNode root=new TreeNode(Integer.parseInt(st[0]));
+        q.offer(root);
+        for(int i=1;i< st.length;i++){
+            TreeNode node=q.poll();
+            if(!st[i].equals("null")){
+                TreeNode left=new TreeNode(Integer.parseInt(st[i]));
+                node.left=left;
+                q.offer(left);
+            }
+            if(!st[++i].equals("null")){
+                TreeNode right=new TreeNode(Integer.parseInt(st[i]));
+                node.right=right;
+                q.offer(right);
+            }
+        }
+        return root;
+    }
 
 }

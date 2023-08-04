@@ -1,11 +1,18 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
 class Strings {
+
+    //reverse words in a string
+    //https://leetcode.com/problems/reverse-words-in-a-string
+
     //brute and optimal for leetcode problem where the trailing spaces before and after each word are taken into account
     // and removed accordingly
-    //O(N+N+N)tc, O(1)sc - other than storing the ans, the program takes constant space
+
+    //when there are no spaces in the string, and the string is a single word, j would run from i to n
+    //O(N)tc, O(1)sc - other than storing the ans, the program takes constant space
     public String reverseWords(String s) {
         int n = s.length();
         int i = 0;
@@ -33,6 +40,7 @@ class Strings {
         return ans;
     }
 
+
     //case when trailing spaces before and after the words are not taken into account and the order of spaces is also reversed
     // as it is along with order of words and the trailing spaces are not removed
     //brute - O(N) time and space - using a stack to store all the words so that when we remove them from the stack,
@@ -59,6 +67,8 @@ class Strings {
     }
 
     //optimal - O(N) time, O(1) space - reversing the order as we move through the string
+
+    //doesn't take leading spaces before a string into account
     public String reverseWords2(String s) {
         String word = "";
         String ans = "";
@@ -79,49 +89,54 @@ class Strings {
     }
 
     //longest palindromic substring
-    //dp approach O(N2) - combining lcsubstring,lps, and print lcs
-    //again this approach does not work for all test cases as there might be a case when the lcsubstring between a string
-    // and its reverse is not palindromic. Thus, we explicitly have to check if the final lps is actually palindromic and
-    // the largest one.
+    //https://leetcode.com/problems/longest-palindromic-substring
 
-    public String longestPalindrome(String a) {
-        int n = a.length();
-        int[][] dp = new int[n + 1][n + 1];
-        String ans = "";
-        String b = new StringBuilder(a).reverse().toString();
-        for (int i = 0; i < n + 1; i++) {
-            for (int j = 0; j < n + 1; j++) {
-                if (i == 0 || j == 0) {
-                    dp[i][j] = 0;
+    //https://www.youtube.com/watch?v=Y0ZRYuL_S2Q
+
+    //brute - we can try to find all possible substrings, and for the ones that are palindromic, we can compare their length
+    //with the max len. the problem with this approach is that we might have to tackle some extra edge cases
+
+    public String longestPalindrome(String s) {
+        String ans="";
+        int len=Integer.MIN_VALUE;
+        for(int i=0;i<s.length();i++){
+            for(int j=i;j<s.length();j++){
+                if(isPalindrome(s,i,j)){
+                    if((j-i+1)>len){
+                        len=j-i+1;
+                        ans=s.substring(i,j+1);
+                    }
                 }
-            }
-        }
-        for (int i = 1; i < n + 1; i++) { //obtaining lcsubstring
-            for (int j = 1; j < n + 1; j++) {
-                if (a.charAt(i - 1) == b.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
-                } else {
-                    dp[i][j] = 0;
-                }
-            }
-        }
-        int i = n;
-        int j = n;
-        while (i > 0 && j > 0) { //print lps
-            if (a.charAt(i - 1) == b.charAt(j - 1)) {
-                ans += a.charAt(i - 1);
-                i--;
-                j--;
-            } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                i--;
-            } else {
-                j--;
             }
         }
         return ans;
     }
+    public boolean isPalindrome(String s, int i, int j){
+        while(i<j){
+            if(s.charAt(i)!=s.charAt(j)){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
 
-    //better - O(N2) - expand around center
+    //dp approach O(N2) (prefer not to tell in interview coz this approach takes extra space. Moreover, printing longest
+    // common substring is cumbersome and difficult to explain)- combining lcsubstring,lps, and print lcs
+    //basically we try to find the longest common substring between a string and its reverse. that would be the longest
+    // palindromic substring in the given string. the only problem is that currently I don't know how to print lcsubstring
+    // and & if we try to print it using print lcs mthod then it would give invalid results as the tabulation in both lcs
+    // and  lcsubstring is different
+
+    //if however an interviewer asks how would you print a lcsubstring: just tell them i'd store the row,col of the cell
+    // with the largest length and then try to backtrack in order to find the lcsubstring
+
+    //better - O(N2) - expand around center. Although this has the same time complexity as brute, but the number of comparisons
+    // are reduced significantly and thus it takes less avg time than brute. Thus this is the best approach. Try dry running
+
+    // for each index we try to expand from it in both directions left and right and move till left!=right. this way when
+    // left becomes!=right, we know for sure that whatever is between left and right is a palindrome
     public String longestPalindrome1(String a) {
         int n = a.length();
         int maxLen = 0;
@@ -239,6 +254,8 @@ class Strings {
 
     //integer to roman
     //https://leetcode.com/problems/integer-to-roman/
+
+    //https://www.youtube.com/watch?v=ohBNdSJyLh8
     //O (1)time and space
 
     //we know there are six instances when subtraction takes place - CM,CD,XC,XL,IX,IV. Now we have the roman symbols:
@@ -290,7 +307,9 @@ class Strings {
             } else if (ch > '9' || ch < '0') {//char not a valid digit
                 break;
             } else {
-                if (ans < Integer.MIN_VALUE || ans > Integer.MAX_VALUE) {
+                if (ans < Integer.MIN_VALUE || ans > Integer.MAX_VALUE) { //we have to make sure that as soon as we get
+                    // an out of range ans, we clamp and return it otherwise if we don't clamp it until we've traversed
+                    // the whole string, value of ans might change
                     break;
                 }
                 ans = ans * 10 + (ch - '0');
@@ -342,6 +361,27 @@ class Strings {
             }
         }
         return ans.isEmpty() ? "-1" : ans;
+    }
+
+    //optimal - O(m+NLOGN)
+    //lexicographically sort the array, then the longest common prefix in first and last string would be the lcp among all
+
+    public String longestCommonPrefix(String[] strs) {
+        int minLen=Integer.MAX_VALUE;
+        int n=strs.length;
+        String ans="";
+        for(String str: strs){
+            if(str.length()<minLen){
+                minLen=str.length();
+            }
+        }
+        Arrays.sort(strs);
+        int i=0;
+        while(i<minLen&&strs[0].charAt(i)==strs[n-1].charAt(i)){
+            ans+=strs[0].charAt(i);
+            i++;
+        }
+        return ans;
     }
 
     //rabin karp algo
@@ -405,23 +445,23 @@ class Strings {
     // O(1) sc
 
     public int strStr(String haystack, String needle) {
-        int i=0;
-        int j=0;
-        int m=needle.length();
-        int n=haystack.length();
-        if(needle.equals(haystack)){
+        int i = 0;
+        int j = 0;
+        int m = needle.length();
+        int n = haystack.length();
+        if (needle.equals(haystack)) {
             return 0;
         }
-        if(m>n){
+        if (m > n) {
             return -1;
         }
-        for(i=0;i<=n-m;i++){ //iterating till the start of the last window ie n-m
-            for(j=0;j<m;j++){
-                if(haystack.charAt(i+j)!=needle.charAt(j)){ //mismatch
+        for (i = 0; i <= n - m; i++) { //iterating till the start of the last window ie n-m
+            for (j = 0; j < m; j++) {
+                if (haystack.charAt(i + j) != needle.charAt(j)) { //mismatch
                     break;
                 }
             }
-            if(j==m){ //traversed the whole window w/o any mismatch
+            if (j == m) { //traversed the whole window w/o any mismatch
                 return i; //ie start of window
             }
         }
@@ -451,58 +491,56 @@ class Strings {
     //O(M+N) time
 
     public int strStr2(String haystack, String needle) {
-        int i=0; //here instead of 1-based indexing (as discussed in approach), we follow 0-based indexing and thus both
+        int i = 0; //here instead of 1-based indexing (as discussed in approach), we follow 0-based indexing and thus both
         // i & j start at 0 and so wherever we were using j+1 before, we use j there and wherever we were using j, we use
         // j-1 there
-        int j=0;
-        int n=haystack.length();
-        int m=needle.length();
-        int[] lps=formLps(needle);
-        if(n==0){
+        int j = 0;
+        int n = haystack.length();
+        int m = needle.length();
+        int[] lps = formLps(needle);
+        if (n == 0) {
             return -1; //haystack is empty
         }
-        if(m==0){
+        if (m == 0) {
             return 0; //needle is empty, thus it can be said that it starts at index 0 of the haystack as an empty string
             // does not affect the positioning of other elements
         }
-        while(i<n&&j<m){
-            if(haystack.charAt(i)==needle.charAt(j)){
+        while (i < n && j < m) {
+            if (haystack.charAt(i) == needle.charAt(j)) {
                 i++;
                 j++;
-            }
-            else{
-                if(j>0){
-                    j=lps[j-1];
-                }else{
+            } else {
+                if (j > 0) {
+                    j = lps[j - 1];
+                } else {
                     i++;
                 }
             }
         }
-        if(j==m){ //completely traversed the pattern, thus it exists in the string and starts from index i-j
-            return i-j;
+        if (j == m) { //completely traversed the pattern, thus it exists in the string and starts from index i-j
+            return i - j;
         }
         return -1; //pattern does not exist in string
     }
+
     //function to form lps table
-    public int[] formLps(String s){
-        int i=1;
-        int index=0;
-        int[] lps=new int[s.length()];
-        while(i<s.length()){
-            if(s.charAt(i)==s.charAt(index)){
-                lps[i]=index+1;
+    public int[] formLps(String s) {
+        int i = 1;
+        int index = 0;
+        int[] lps = new int[s.length()];
+        while (i < s.length()) {
+            if (s.charAt(i) == s.charAt(index)) {
+                lps[i] = index + 1;
                 index++;
                 i++;
-            }
-            else{
-                if(index>0){
-                    index=lps[index-1]; //there was a valid prefix/suffix match before the current position.
+            } else {
+                if (index > 0) {
+                    index = lps[index - 1]; //there was a valid prefix/suffix match before the current position.
                     // The line index = lps[index-1] updates the value of index to the length of the longest proper
                     // prefix which is also a suffix before the current position. This allows the algorithm to check
                     // for another possible match starting from the updated index position.
-                }
-                else{
-                    lps[i]=0;
+                } else {
+                    lps[i] = 0;
                     i++;
                 }
             }
@@ -538,12 +576,12 @@ class Strings {
     // lps[lps.length()-1] would give a value>n
 
     public int solve(String a) {
-        StringBuilder sb=new StringBuilder(a);
-        String b=sb.reverse().toString();
-        String str=a+"$"+b;
-        int[] lps=formLps(str);
-        int n=a.length();
-        return n-lps[lps.length-1];
+        StringBuilder sb = new StringBuilder(a);
+        String b = sb.reverse().toString();
+        String str = a + "$" + b;
+        int[] lps = formLps(str);
+        int n = a.length();
+        return n - lps[lps.length - 1];
     }
 
     //valid anagram
@@ -556,19 +594,18 @@ class Strings {
     // reduce the frequency of characters of string 2 in the map. At the end if map is empty, return true
     //O(N) time, O(N) space
     public boolean isAnagram(String s, String t) {
-        HashMap<Character,Integer> map=new HashMap<>();
-        for(char ch:s.toCharArray()){
-            map.put(ch,map.getOrDefault(ch,0)+1);
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (char ch : s.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
         }
-        for(char ch:t.toCharArray()){
-            if(map.containsKey(ch)){
-                if(map.get(ch)==1){
+        for (char ch : t.toCharArray()) {
+            if (map.containsKey(ch)) {
+                if (map.get(ch) == 1) {
                     map.remove(ch);
-                }
-                else {
+                } else {
                     map.put(ch, map.get(ch) - 1);
                 }
-            }else{
+            } else {
                 return false;
             }
         }
@@ -581,15 +618,15 @@ class Strings {
     //O(N) time, O(1) space
 
     public boolean isAnagram1(String s, String t) {
-        int[] freq=new int[d];
-        for(char ch:s.toCharArray()){
+        int[] freq = new int[d];
+        for (char ch : s.toCharArray()) {
             freq[ch]++;
         }
-        for(char ch:t.toCharArray()){
+        for (char ch : t.toCharArray()) {
             freq[ch]--;
         }
-        for(int i:freq){
-            if(i!=0){
+        for (int i : freq) {
+            if (i != 0) {
                 return false;
             }
         }
@@ -607,25 +644,26 @@ class Strings {
     // we are sure to include the last character as well (as when we reach the end of the string, we compare the delimiter &
     // with the last character of the string ie the one at str[i-1] and since they are not the same we add str[i-1]
     // to the ans and the iteration is over)
+
     public String countAndSay(int n) {
-        if(n==1){
+        if (n == 1) {
             return "1";
         }
-        String ans="1"; //stored ans for n==1 initially
-        for(int i=2;i<=n;i++){
-            String t="";
-            ans+='&'; //delimiter
-            int count=1; //count of a specific digit
-            for(int j=1;j<ans.length();j++){
-                if(ans.charAt(j)!=ans.charAt(j-1)){
-                    t+=count;
-                    t+=ans.charAt(j-1);
-                    count=1;
-                }else{
+        String ans = "1"; //we start from second level, initialising ans with 1st level
+        for (int i = 2; i <= n; i++) {
+            String t = "";
+            ans += '&'; //delimiter
+            int count = 1; //count of a specific digit
+            for (int j = 1; j < ans.length(); j++) {
+                if (ans.charAt(j) != ans.charAt(j - 1)) {
+                    t += count;
+                    t += ans.charAt(j - 1);
+                    count = 1;
+                } else {
                     count++;
                 }
             }
-            ans=t;
+            ans = t;
         }
         return ans;
     }
@@ -641,25 +679,24 @@ class Strings {
     // In case both versions have been completely traversed then that would imply that both versions are equal,
     // and thus we return 0.
     public int compareVersion(String version1, String version2) {
-        int i=0;
-        int j=0;
-        int n=version1.length();
-        int m=version2.length();
-        while(i<n||j<m){ //here we use OR to completely traverse one string if it is greater than the other
-            int num1=0;
-            int num2=0;
-            while(i<n&&version1.charAt(i)!='.'){
-                num1=num1*10+(version1.charAt(i)-'0');
+        int i = 0;
+        int j = 0;
+        int n = version1.length();
+        int m = version2.length();
+        while (i < n || j < m) { //here we use OR to completely traverse one string if it is greater than the other
+            int num1 = 0;
+            int num2 = 0;
+            while (i < n && version1.charAt(i) != '.') {
+                num1 = num1 * 10 + (version1.charAt(i) - '0');
                 i++;
             }
-            while(j<m&&version2.charAt(j)!='.'){
-                num2=num2*10+(version2.charAt(j)-'0');
+            while (j < m && version2.charAt(j) != '.') {
+                num2 = num2 * 10 + (version2.charAt(j) - '0');
                 j++;
             }
-            if(num1<num2){
+            if (num1 < num2) {
                 return -1;
-            }
-            else if(num1>num2){
+            } else if (num1 > num2) {
                 return 1;
             }
             i++;
@@ -667,10 +704,8 @@ class Strings {
         }
         return 0;
     }
-
-
-
-
-
-
+    public void reverseString5(char[] s) {
+        String sp=new String(s);
+    }
 }
+

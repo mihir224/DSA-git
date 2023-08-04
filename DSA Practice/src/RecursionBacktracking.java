@@ -185,7 +185,7 @@ class RecursionBacktracking{
     // where we try to place the remaining n-2 elements. Thus for each of the N elements, we're making N factorial recursive
     // calls. Therefore, total time complexity is - O(N factorial * N)) and space is O(N + N)
 
-    //optimal - we are picking N numbers for the N positions in our ans and for each number we perform deletions in the
+    //optimal - we are picking N numbers to place at N positions in our ans and for each number we perform deletions in the
     // DS which takes O(N) time thus total time is O(N2) and space is O(N to store the number of the group numbers+N to
     // store the ans)
 
@@ -448,6 +448,7 @@ class RecursionBacktracking{
 
     //word break
     //https://www.codingninjas.com/codestudio/problems/983635?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website
+
     //we basically try to recursively form valid sentences through all possible combinations of substrings that are present
     // in the dictionary. We start from the first letter (we do index+1 in each call since we try taking the substring in
     // which upperbound is written 1 index further)and try to move till end where in each iteration we check if the substring
@@ -461,6 +462,9 @@ class RecursionBacktracking{
     // the recursive call when we've reached the last word, index becomes>s.length() because i was at s.length() since no
     // space was added after the last word
 
+    //in case every substring is a valid substring, the recursive function is called for every index from 0 to n-1 resulting
+    // in n recursive calls and in each of these calls we iterate from currentIndex+1 to n thus it takes n-currentIndex
+    // time which is equivalent to n. thus time complexity is near about O(N2) and space is O(N) ie recursive stack space
 
     public static ArrayList<String> wordBreak(String s, ArrayList<String> dictionary) {
         ArrayList<String> ans=new ArrayList<>();

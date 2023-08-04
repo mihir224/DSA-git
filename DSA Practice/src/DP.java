@@ -1040,7 +1040,7 @@ class DP{
     }
 
     //egg drop
-    //
+    //https://practice.geeksforgeeks.org/problems/egg-dropping-puzzle-1587115620/1
 
     //recursive
     static int eggDrop(int e, int f)
@@ -1054,16 +1054,23 @@ class DP{
         int min=Integer.MAX_VALUE;
         for(int k=1;k<=f;k++){
             int tempAns=1+Math.max(helperED(e-1,k-1),helperED(e,f-k)); //current attempt+case if egg breaks, thus checking
-            // floors down+case if egg doesn't break, thus checking all floors up
+            // floors down+case if egg doesn't break, thus checking all floors up calculating the max of worst case for current floor
             min=Math.min(min,tempAns);
         }
         return min;
     }
 
-    //memoization - here instead of applying linear search to find the max no. of attempts with worst case and then finding
-    // min among all maxes, we use binary search for the same. this is done solely for improving time complexity for larger
-    // test cases
+    //memoization - here we add a check before each recursive call to check if its ans is already stored in
+    // the dp table otherwise code would give tle for larger test cases
     static int eggDro1p(int e, int f)
+    {
+        int[][] dp=new int[e+1][f+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helperE1D(e,f,dp);
+    }
+    static int eggDrop1(int e, int f)
     {
         int[][] dp=new int[e+1][f+1];
         for(int[] arr:dp){
@@ -1093,9 +1100,9 @@ class DP{
                 dp[e][f-k]=high;
             }
             int tempAns=1+Math.max(low,high);
-            dp[e][f]=min=Math.min(min,tempAns);
+            min=Math.min(min,tempAns);
         }
-        return min;
+        return dp[e][f]=min;
     }
 
 
@@ -1165,8 +1172,4 @@ class DP{
         }
         return dp[i][j]=min;
     }
-
-    //word break
-    //https://leetcode.com/problems/word-break/
-
 }

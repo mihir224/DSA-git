@@ -203,6 +203,9 @@ public class Array {
     //https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 
     //O(N) tc O(1) sc
+
+    //on each day we're trying to see what would be the profit if we try to sell the stock on the present day considering
+    // we bought the stock for the least price till that day
     //this is basically a sort of DP as we store the ans we got from previous iterations (least price till day) and use
     // it in future iterations
     public int maxProfit(int[] prices) {
@@ -338,7 +341,7 @@ public class Array {
             slow = nums[slow];
             fast = nums[fast];
         }
-        //second collisiodn occurred
+        //second collision occurred
         return slow;
     }
 
@@ -564,24 +567,28 @@ public class Array {
     //brute, better - same as before
     //optimal O(N) tc, O(1) sc - using Moore's voting algo
     public List<Integer> majorityElement1(int[] nums) {
-        int count1 = 0;
-        int count2 = 0;
-        int candidate1 = -1;
-        int candidate2 = -1;
-        List<Integer> ans = new ArrayList<>();
-        for (int i : nums) {
-            if (i == candidate1) {
+        int count1=0;
+        int count2=0;
+        int candidate1=Integer.MIN_VALUE;
+        int candidate2=Integer.MIN_VALUE;
+        List<Integer> ans=new ArrayList<>();
+        for(int i:nums){
+            if(i==candidate1){
                 count1++;
-            } else if (i == candidate2) {
+            }
+            else if(i==candidate2){
                 count2++;
-            } else if (count1 == 0) {
-                candidate1 = i;
-                count1 = 1;//here we have to explicitly set count to 1 whenever it reaches 1 because here we cannot use
+            }
+            else if(count1==0){
+                candidate1=i;
+                count1=1;//here we have to explicitly set count to 1 whenever it reaches 1 because here we cannot use
                 // multiple if statements as we are dealing with 2 elements
-            } else if (count2 == 0) {
-                candidate2 = i;
-                count2 = 1;
-            } else {
+            }
+            else if(count2==0){
+                candidate2=i;
+                count2=1;
+            }
+            else{
                 count1--;
                 count2--;
             }
@@ -589,26 +596,22 @@ public class Array {
         // it is not ensured that candidate 1 and 2 will always be majority elements as it is not given in the question
         // that there will always be majority elements. There might be a case where each element appears equal number of times
         // & thus we make sure that they actually are in majority
-        count1 = 0;
-        count2 = 0;
-        for (int i : nums) {
-            if (i == candidate1) {
+        count1=0;
+        count2=0;
+        for(int i:nums){
+            if(i==candidate1){
                 count1++;
             }
-            if (i == candidate2) {
+            if(i==candidate2){
                 count2++;
             }
         }
 
-        if (count1 > nums.length / 3) {
-            if (candidate1 == candidate2) {
-                List<Integer> list = new ArrayList<>();
-                list.add(candidate1);
-                return list;
-            } else
-                ans.add(candidate1);
+        if(count1>nums.length/3){
+
+            ans.add(candidate1);
         }
-        if (count2 > nums.length / 3) {
+        if(count2>nums.length/3){
             ans.add(candidate2);
         }
         return ans;
@@ -846,12 +849,8 @@ public class Array {
         }
         Arrays.sort(nums);
         for (int i = 0; i < nums.length; i++) {
-            long t1 = target - nums[i]; //we take this expression explicitly instead of just writing t=target-nums[i]-nums[j]
-            // because in that case if target and input are very large, subtracting a very large number from target would
-            // exceed the integer range for target and will thus produce a wrong output. Thus, we store target-nums[i] in
-            // a long variable to avoid this and then we use it with nums[j].
             for (int j = i + 1; j < nums.length; j++) {
-                long t = t1 - nums[j];
+                long t=(long)target-(long)(nums[i]+nums[j]);
                 int left = j + 1;
                 int right = nums.length - 1;
                 while (left < right) { //two pointer
@@ -1098,4 +1097,6 @@ public class Array {
         }
         return ans;
     }
+
+
 }
