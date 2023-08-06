@@ -818,7 +818,7 @@ class DP{
         if(coins[n-1]<=amount){
             return Math.min(1+helperC1C(coins,amount-coins[n-1],n),helperC1C(coins,amount,n-1));
         }
-        return helperC1C(coins,amount,n-1);
+        return helperC1C(coins,amount,n-1); //can't take
     }
 
     //memoization

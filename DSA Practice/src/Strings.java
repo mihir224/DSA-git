@@ -8,8 +8,15 @@ class Strings {
     //reverse words in a string
     //https://leetcode.com/problems/reverse-words-in-a-string
 
-    //brute and optimal for leetcode problem where the trailing spaces before and after each word are taken into account
-    // and removed accordingly
+    //can use the s.trim() function to clamp all the leading and trailing spaces but that won't remove the spaces in
+    // between different words. thus this is not feasible and we try the soln below
+
+    //brutel for leetcode problem where the trailing spaces before and after each word are taken into account
+    // and removed accordingly - just extract the words from s and put them in a stack, then retrieve them and attach in ans
+
+    //O(N) time and space
+
+    //optimal - instead of using a stack, just reverse while iterating over the string
 
     //when there are no spaces in the string, and the string is a single word, j would run from i to n
     //O(N)tc, O(1)sc - other than storing the ans, the program takes constant space
@@ -69,14 +76,19 @@ class Strings {
     //optimal - O(N) time, O(1) space - reversing the order as we move through the string
 
     //doesn't take leading spaces before a string into account
-    public String reverseWords2(String s) {
+    public String reverseWords3(String s) {
         String word = "";
         String ans = "";
         s += " ";
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) == ' ') {
                 if (ans == "") {
-                    ans = word;
+                    if(word==""){ //if there are leading spaces in the given string
+                        ans=" ";
+                    }
+                    else{
+                        ans = word;
+                    }
                 } else {
                     ans = word + " " + ans;
                 }
@@ -309,7 +321,7 @@ class Strings {
             } else {
                 if (ans < Integer.MIN_VALUE || ans > Integer.MAX_VALUE) { //we have to make sure that as soon as we get
                     // an out of range ans, we clamp and return it otherwise if we don't clamp it until we've traversed
-                    // the whole string, value of ans might change
+                    // the whole string, value of ans might change as it can also exceed the long range
                     break;
                 }
                 ans = ans * 10 + (ch - '0');
@@ -409,9 +421,9 @@ class Strings {
             p = (d * p + pat.charAt(i)) % mod; //mod because p might exceed int range
             t = (d * t + S.charAt(i)) % mod;
         }
-        for (i = 0; i <= n - m; i++) {
+        for (i = 0; i <= n - m; i++) { //iterating n-m+1 times
             if (p == t) { //hash code of window and pattern match
-                for (j = 0; j < m; j++) {
+                for (j = 0; j < m; j++) { //checking each char
                     if (pat.charAt(j) != S.charAt(i + j)) { //mismatch
                         break;
                     }
@@ -445,24 +457,20 @@ class Strings {
     // O(1) sc
 
     public int strStr(String haystack, String needle) {
-        int i = 0;
-        int j = 0;
-        int m = needle.length();
-        int n = haystack.length();
-        if (needle.equals(haystack)) {
-            return 0;
-        }
-        if (m > n) {
-            return -1;
-        }
-        for (i = 0; i <= n - m; i++) { //iterating till the start of the last window ie n-m
-            for (j = 0; j < m; j++) {
-                if (haystack.charAt(i + j) != needle.charAt(j)) { //mismatch
-                    break;
+        int n=haystack.length();
+        int m=needle.length();
+        int j=0;
+        for(int i=0;i<=n-m;i++){
+            if(haystack.charAt(i)==needle.charAt(0)){ //only comparing if the first char of the needle matches the current
+                // substring's first char
+                for(j=0;j<m;j++){
+                    if(needle.charAt(j)!=haystack.charAt(i+j)){
+                        break;
+                    }
                 }
-            }
-            if (j == m) { //traversed the whole window w/o any mismatch
-                return i; //ie start of window
+                if(j==m){ //found needle in haystack;
+                    return i;
+                }
             }
         }
         return -1;
@@ -485,8 +493,10 @@ class Strings {
     // that comparison and not move i. consider the pattern ababd, now if we follow 1 based indexing, and if we find a mismatch
     // at j=4, ie arr[j+1]!=arr[i], then we know we can straight away move to the second index because that is where we found
     // the prefix ab at first. This way, we didn't have to move i backwards, repeatedly checking the same characters again and
-    //also we did not move j to the start after mismatch which also reduced time as we started from the first occurrence
+    // also we did not move j to the start after mismatch which also reduced time as we started from the first occurrence
     // of the prefix and checked from there
+
+    //https://www.youtube.com/watch?v=JoF0Z7nVSrA&t=64s
 
     //O(M+N) time
 
@@ -524,22 +534,45 @@ class Strings {
     }
 
     //function to form lps table
+    //O(2N) time in worst case
     public int[] formLps(String s) {
         int i = 1;
         int index = 0;
         int[] lps = new int[s.length()];
         while (i < s.length()) {
-            if (s.charAt(i) == s.charAt(index)) {
+            if (s.charAt(i) == s.charAt(index)) {//as soon as we find a suffix that starts with the same char as
+                // the 1st char of prefix, we start checking the other characters, updating the lps accordingly until we
+                // find a mismatch
                 lps[i] = index + 1;
-                index++;
+                index++; //until we find a suffix that starts with the same char as the prefix, we don't move index pointer.
+                // ie if we're moving the index ptr, we're certain that whatever elements of the prefix the index is passing
+                // through are same in a particular suffix. now tht we have moved the index ptr, it is compared with the
+                // same positioned elements of the suffix we're comparing it with
                 i++;
             } else {
                 if (index > 0) {
-                    index = lps[index - 1]; //there was a valid prefix/suffix match before the current position.
-                    // The line index = lps[index-1] updates the value of index to the length of the longest proper
-                    // prefix which is also a suffix before the current position. This allows the algorithm to check
-                    // for another possible match starting from the updated index position.
-                } else {
+                    //see the thing is that we wish to find the longest prefix same as suffix. consider
+                    // the eg "aaacaaaa". in this particular case, when we reach index=a and i=c we see that the prefix
+                    // aaa is not same as suffix aac. so we know for sure that there would be no prefix that is equal to aac.
+                    // if there were, it we would've updated the lps for this to 3. but since there isn't, we can try the
+                    // next possible suffix that might exist as prefix ie ac. how will we do this? by going to the 2nd element of
+                    // the prefix aaa in this case. in most cases doing index-- here would work but this doesn't work for "adcadde"
+                    // and we might get a wrong val. so basically doing index=lps[index-1] will make sure that we go to 0th
+                    // index in case the suffix is entirely different from prefix. like in the previous case, when b and c
+                    // were in comparison, we knew that although aab and aac were not same, but then we also checked aa of
+                    // the prefix with ac of the suffix because both of them started with a so there was a possibility that
+                    // they could've been same. now since we knew both of them started with a, we directly compared the second
+                    // char of both skipping the first. we were able to do this by directly jumping to the index where we
+                    // found the prefix aa but in case of "adcadde" when we reach the prefix adc and suffix add, we know
+                    // that they aren't equal, and also, we can't take a smaller suffix from add as we did before (like ac)
+                    // because we have to include the second d and if we do tht, the suffix would be dd. so in this case,
+                    // we know for sure that there's no way there would be a prefix that equals dd because all prefixes
+                    // start with a. thus in this case, lps[index-1] would directly take us to 0th index & we'll directly
+                    // start comparing from the first position.
+
+                     index = lps[index - 1];
+                }
+                else { //ie the current suffix doesn't start with the first char of prefix
                     lps[i] = 0;
                     i++;
                 }
@@ -551,12 +584,15 @@ class Strings {
     //min number of insertions in the front to make string palindrome
     //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic
 
+    //this is different from the dp problem coz in that problem we had the flexibility to place elements anywhere in the
+    // given string to form it a palindrome. We can't do the same here.
     //O(N)time and space
 
     //Here we use the concept of pattern matching (KMP algo). We are only allowed to make insertions in the front of the
     // string, and thus we make use of the lps array by concatenating the given string and its reverse and calculating the
     // lps of the whole string. This way, the last element of lps[] array will give us the length of the longest prefix that is
-    // same as suffix. So, subtracting that from the length of the given string will give us the number of characters to
+    // same as suffix. this means that whatever is not same as prefix in the reverse is to be added at the front
+    //So, subtracting that from the length of the given string will give us the number of characters to
     // be inserted at the front to make the string palindrome. Intuition behind this is that - in a palindrome, the longest
     // prefix ie the whole string is equal to the longest suffix ie the whole string and thus using the lps logic we find
     // the longest prefix equal to suffix. So if it is of length 1, then we will need str.length()-1 more characters as prefix to
@@ -583,6 +619,8 @@ class Strings {
         int n = a.length();
         return n - lps[lps.length - 1];
     }
+
+    //one more approach that we can think of for this problem would be to find the longest palindromic substring in given array
 
     //valid anagram
     //https://leetcode.com/problems/valid-anagram

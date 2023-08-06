@@ -2,13 +2,9 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        char[] ch={'s','p','d'};
-        String s=new String(ch);
-        System.out.println(s);
-        String[] input = {"geeksforgeeks", "geeks", "geek", "geezer"};
-        Arrays.sort(input);
-        System.out.println(
-                Arrays.toString(input));
+        int a=8;
+        int b=000;
+        System.out.println(a+b);
     }
     public String sortVowels(String s) {
         List<Character> list=new ArrayList<>();
