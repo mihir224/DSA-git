@@ -179,7 +179,8 @@ class StackQueues{
     class MyQueue1 {
         Stack<Integer> input;
         Stack<Integer> output;
-        int peakElement; //this will be used to store the top of st1 incase pop was never called and peek() was called making peek() an O(1) operation as we don't have to insert everything from st1 to st2 if st2 is empty
+        int peakElement; //this will be used to store the top of st1 incase pop was never called and peek() was called
+        // making peek() an O(1) operation as we don't have to insert everything from st1 to st2 if st2 is empty
         public MyQueue1() {
             this.input=new Stack<>();
             this.output=new Stack<>();
@@ -312,6 +313,74 @@ class StackQueues{
         return pse;
     }
 
+    //lru cache
+
+    class LRUCache {
+        ListNode head;
+        ListNode tail;
+        HashMap<Integer,ListNode> map;
+        int capacity;
+        class ListNode{
+            int key;
+            int val;
+            ListNode next;
+            ListNode prev;
+            public ListNode(int key,int val){
+                this.key=key;
+                this.val=val;
+                this.next=this.prev=null;
+            }
+        }
+        public LRUCache(int capacity) {
+            this.head=new ListNode(0,0);
+            this.tail=new ListNode(0,0);
+            this.head.next=tail;
+            this.tail.prev=head;
+            this.map=new HashMap<>();
+            this.capacity=capacity;
+        }
+
+        public int get(int key) {
+            if(map.containsKey(key)){
+                int val=map.get(key).val;
+                remove(map.get(key));
+                insert(new ListNode(key,val)); //updating this node to most recently used
+                return val;
+            }
+            return -1;
+        }
+
+        public void put(int key, int value) {
+            ListNode node=new ListNode(key,value);
+            if(map.containsKey(key)){
+                remove(map.get(key));
+            }
+            if(map.size()==capacity){
+                remove(tail.prev); //removing lrc
+            }
+            insert(node);
+        }
+
+        public void insert(ListNode node){
+            map.put(node.key,node);
+            ListNode headNext=head.next;
+            head.next=node;
+            node.prev=head;
+            node.next=headNext;
+            headNext.prev=node;
+        }
+
+        public void remove(ListNode node){
+            map.remove(node.key);
+            ListNode nodePrev=node.prev;
+            ListNode nodeNext=node.next;
+            nodePrev.next=nodeNext;
+            nodeNext.prev=nodePrev;
+        }
+    }
+
+    //lfu cache
+
     //largest rectangle in histogram
     //https://leetcode.com/problems/largest-rectangle-in-histogram
 
@@ -399,18 +468,20 @@ class StackQueues{
 
     public int[] maxSlidingWindow(int[] nums, int k) {
         int n=nums.length;
+        int index=0;
         int[] arr=new int[n-k+1];
         Deque<Integer> d=new ArrayDeque<>();
         for(int i=0;i<n;i++){
-            if(d.peek()==i-k){
+            if(!d.isEmpty()&&d.peek()==i-k){
                 d.poll();
             }
-            while(!d.isEmpty()&&d.peekLast()<=nums[i]){
+            while(!d.isEmpty()&&nums[d.peekLast()]<=nums[i]){
                 d.pollLast();
             }
             d.offer(i);
-            if(i>=i-k){
-                arr[i-k]=d.peek();
+            if(i>=k-1){
+                arr[index]=nums[d.peek()];
+                index++;
             }
         }
         return arr;
@@ -458,10 +529,13 @@ class StackQueues{
     }
 
     //space optimized
-    //O(1) time, O(N) space
+    //see what we can do is that we can store the min till any particular instant of time in a min variable and whenever
+    // min is asked we can return it. we can also check when this min has been removed from the stack. the problem arises
+    // when we wish to go back to the prevMin after the current min has been removed from the stack
+    // thus,whenever we find a min val, we store its modified version in the stack instead of original.
     //the whole reason for using modified val for new min is because through this modified val we'll be able to obtain
     // the prev min in case the current min has been removed from the stack
-
+    //O(1) time, O(N) space
     class MinStack1 {
         Stack<Long> st;
         Long min; //to store min till now
@@ -501,8 +575,6 @@ class StackQueues{
         }
     }
 
-
-    //optimised - whenever we find a min val, we store its modified version in the stack instead of original
 
     //rotten oranges
     //https://leetcode.com/problems/rotting-oranges
@@ -600,7 +672,42 @@ class StackQueues{
     //max of min of every window size
     //https://practice.geeksforgeeks.org/problems/maximum-of-minimum-for-every-window-size3453/1
 
-    //brute - for each element iterating left and right to find its pse and nse
+    //brute - for every window size from 1 to N, find the max of min of every window, store it in a list and then return
+    //Function to find maximum of minimums of every window size.
+
+    //O(N3)
+    static int[] maxOfMin(int[] arr, int n)
+    {
+        ArrayList<Integer> list=new ArrayList<>();
+        int min=Integer.MAX_VALUE;
+        int max=Integer.MIN_VALUE;
+        for(int k=1;k<=n;k++){
+            max=Integer.MIN_VALUE;
+            for(int i=0;i<n-k+1;i++){
+                min=(int)1e9;
+                for(int j=i;j<i+k;j++){
+                    min=Math.min(min,arr[j]);
+                }
+                max=Math.max(max,min);
+            }
+            list.add(max);
+        }
+        int[] ans=new int[list.size()];
+        for(int i=0;i<list.size();i++){
+            ans[i]=list.get(i);
+        }
+        return ans;
+    }
+
+    //better - for each element iterating left and right to find its pse and nse
+    //through this approach, assuming the arr is sorted, we'll be able to find potential candidates for being max of min
+    // of every window of a given size. if we're not able to fill values for some windows, then that'll mean that the value
+    // that was supposed to be taken for these window sizes was already taken by other windows of larger size. thus we'll
+    // assign the ans for these sizes as the immediate val that we find which is not 0 after these sizes because we'll
+    // know for sure that when we took the el for that window size, the el for these smaller window sizes was also covered
+    // in that (otherwise we would've gotten an el for these sizes separately. we didn't get an el for these because it
+    // was already covered in a window of larger size). if there was a valid candidate for these, then we would've taken it.
+    // but since we haven't, we're certain that the el is the next immediate non zero el
     //O(N2) time
 
     //optimal
@@ -661,6 +768,7 @@ class StackQueues{
         }
 
     }
+
 
     //celebrity problem
     //https://practice.geeksforgeeks.org/problems/the-celebrity-problem/1

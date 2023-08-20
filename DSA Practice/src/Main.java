@@ -2,9 +2,38 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        int a=8;
-        int b=000;
-        System.out.println(a+b);
+        int[] arr={2};
+        System.out.println(test(arr));
+    }
+    static int test(int[] arr){
+        for(int i=0;i<arr.length;i++){
+            if(arr[i]!=i+1){
+                return i+1;
+            }
+        }
+        return -1;
+    }
+    static class Triad implements Comparable<Triad>{
+        int first;
+        int second;
+        int third;
+        public Triad(int first, int second, int third){
+            this.first=first;
+            this.second=second;
+            this.third=third;
+        }
+
+        @Override
+        public int compareTo(Triad o) {
+            if(this.first!=o.first){
+                return Integer.compare(this.first,o.first);
+            }
+            if(this.second!=o.second){
+                return Integer.compare(this.second,o.second);
+            }
+            return Integer.compare(this.third,o.third); //first and second elements of both instances equal, thus comparing
+            // third instance
+        }
     }
     public String sortVowels(String s) {
         List<Character> list=new ArrayList<>();

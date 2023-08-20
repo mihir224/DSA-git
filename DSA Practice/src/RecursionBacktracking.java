@@ -451,12 +451,12 @@ class RecursionBacktracking{
 
     //we basically try to recursively form valid sentences through all possible combinations of substrings that are present
     // in the dictionary. We start from the first letter (we do index+1 in each call since we try taking the substring in
-    // which upperbound is written 1 index further)and try to move till end where in each iteration we check if the substring
+    // which upperbound is written 1 index further) and try to move till end where in each iteration we check if the substring
     // up till this point is a valid substring ie if it exists in the dictionary. If it does, then we place a gap between
     // this substring and the rest of the substring. now we recursively process the rest of the string(ie after the white
     // space) the same way, passing the combined string to the recursive function. If in any call we see that index>s.length,
-    // then that would mean we've completely traversed the string and thus we add the current string to the ans. Now to
-    // try out other possible combinations, after a recursive call is over, we simply re format the string such that the
+    // then that would mean we've completely traversed the string, and thus we add the current string to the ans. Now to
+    // try out other possible combinations, after a recursive call is over, we simply re-format the string such that the
     // white space is removed and thus in further iterations of i we can try other valid combinations and do the same for
     // them. for the last word, we don't add a space after it since i has reached s.length. So, when we try to make
     // the recursive call when we've reached the last word, index becomes>s.length() because i was at s.length() since no

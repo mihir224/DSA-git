@@ -1,8 +1,5 @@
 import javax.lang.model.type.ArrayType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 class DP{
     //max product sub-array
@@ -98,7 +95,7 @@ class DP{
         }
         int len=0;
         if(prev_index==-1||nums[index]>nums[prev_index]){
-            len=1+helperLis(index+1,index,dp,n,nums);
+            len=1+helperLis(index+1,index,dp,n,nums); //pick
         }
         len=Math.max(len,0+helperLis(index+1,prev_index,dp,n,nums)); //taking the max from pick and not pick
         return dp[index][prev_index+1]=len;
@@ -111,7 +108,7 @@ class DP{
     public int lengthOfLIS2(int[] nums) {
         int n=nums.length;
         int[][] dp=new int[n+1][n+1]; // i is also n+1 here we the base case is for index==n thus we have to take index==n into account
-        //base case in recursion and memoization was that if index==n, we return 0 . Here initially every row and col is 0
+        //base case in recursion and memoization was that if index==n, we return 0. Here, initially every row and col is 0
         // and thus we don't have to explicitly initialise the dp with the base case
         for(int index=n-1;index>=0;index--){
             for(int prev_index=index-1;prev_index>=-1;prev_index--){
@@ -348,7 +345,7 @@ class DP{
     //edit distance (min operations(insert, delete or replace) to convert string a to b)
     //https://leetcode.com/problems/edit-distance/
 
-    //recursive (string matching) - try all possible operations on each element of both the strings, return the minimal ans
+    //recursive (string matching) - try all possible operations on each element of a, return the ans with min operations
 
     //base case - f(-1,1) would try to find the min distance (ie number of operations) to convert an empty string a to a
     // string b from index 0 to 1. The ans would definitely be 2 (since we wish to convert an empty string to a string from
@@ -378,7 +375,7 @@ class DP{
         if(j==0){ //ie string b has 0 length
             return i;
         }
-        if(a.charAt(i-1)==b.charAt(j-1)){ //mismatch
+        if(a.charAt(i-1)==b.charAt(j-1)){
             return 0+ed(i-1,j-1,a,b);
         }
         return 1+Math.min(ed(i,j-1,a,b),Math.min(ed(i-1,j,a,b),ed(i-1,j-1,a,b)));
@@ -771,7 +768,7 @@ class DP{
         int n=grid.length;
         int m=grid[0].length;
         int[][] dp=new int[n][m];
-        //here we have the base case as when i==0&&j==0 we return 0, ie for every value of j we don't have to return 0
+        //here we have the base case as when i==0&&j==0 we return grid[i][j], ie for every value of j we don't have to return 0
         // when i=0 and vice versa and thus we can initialise and fill the table simultaneously
         for(int i=0;i<n;i++){
             for(int j=0;j<m;j++){
@@ -781,7 +778,7 @@ class DP{
                 else{
                     int up=grid[i][j];
                     if(i>0){
-                        up+=dp[i-1][j]; //ie we're at 0th row, there's no way we can go upward
+                        up+=dp[i-1][j]; //if we're at 0th row, there's no way we can go upward
                     }
                     else{
                         up+=(int)1e9;
@@ -844,7 +841,8 @@ class DP{
         if(coins[n-1]<=amount){
             return dp[n][amount]=Math.min(1+helperCC(coins,amount-coins[n-1],n,dp),helperCC(coins,amount,n-1,dp));
         }
-        return dp[n][amount]=helperCC(coins,amount,n-1,dp);
+        return dp[n][amount]=helperCC(coins,amount,n-1,dp); //instead of writing this call twice, we can first store
+        // the res from pick call and then compare it with this not pick call thus returning the min of both
     }
 
     //tabulation
@@ -874,7 +872,7 @@ class DP{
         return dp[n][amount]>=Integer.MAX_VALUE-1?-1:dp[n][amount];
     }
 
-    //equal sum partition sum
+    //equal sum partition
     //https://leetcode.com/problems/partition-equal-subset-sum
 
     public boolean canPartition(int[] nums) {
@@ -1036,7 +1034,8 @@ class DP{
                 dp[i][j]=min;
             }
         }
-        return dp[1][c]; //since we have to find the ans for when i is 1 and j is c
+        return dp[1][c]; //since we have to find the ans for when i is 1 and j is c, basically this will give us the most
+        // optimal ans when i is 1 and j is c which is what we were initially trying to find
     }
 
     //egg drop
@@ -1060,8 +1059,34 @@ class DP{
         return min;
     }
 
-    //memoization - here we add a check before each recursive call to check if its ans is already stored in
-    // the dp table otherwise code would give tle for larger test cases
+    //memoization - although nominal soln works fine, but here we can add a check before each recursive call to check if its ans is already stored in
+    // the dp table otherwise code might give tle for larger test cases. both approaches fine however.
+
+    //nominal
+    static int eggDro23p(int e, int f)
+    {
+        int[][] dp=new int[e+1][f+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(e,f,dp);
+    }
+    static int helper(int e, int f,int[][] dp){
+        if(e==1||f==0||f==1){
+            return f;
+        }
+        if(dp[e][f]!=-1){
+            return dp[e][f];
+        }
+        int ans=Integer.MAX_VALUE;
+        for(int k=1;k<=f;k++){
+            int tempAns=1+Math.max(helper(e-1,k-1,dp),helper(e,f-k,dp));
+            ans=Math.min(ans,tempAns);
+        }
+        return dp[e][f]=ans;
+    }
+
+    //slightly optimised
     static int eggDro1p(int e, int f)
     {
         int[][] dp=new int[e+1][f+1];
@@ -1105,7 +1130,37 @@ class DP{
         return dp[e][f]=min;
     }
 
+    //word break (leetcode version) - quite similar to wb that we did in recursion. also, this soln is memoized
+    //https://leetcode.com/problems/word-break
+    public boolean wordBreak(String s, List<String> wordDict) {
+        return helper(0,s,wordDict,new HashMap<>());
+    }
+    public boolean helper(int index, String s, List<String> wordDict, HashMap<String,Boolean> map){
+        if(index>s.length()){
+            return true;
+        }
 
+        String key=s.substring(index); //will help identify if the ans for substring from index has already been calculated or not. The thing is that, if we had used index to store the ans from a particular call then that would've resulted in wrong ans because in each recursive call the size of the string is changing and thus for whatever index we would store the ans, in further recursive calls that index might be pointing to other characters and thus we'd return the wrong ans directly in those calls
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        int temp=s.length();
+        for(int i=index+1;i<=temp;i++){
+            String str=s.substring(index,i);
+            if(wordDict.contains(str)){
+                if(i!=temp)
+                    s=s.substring(0,i) + " " + s.substring(i);
+                if(helper(i+1,s,wordDict,map)){
+                    map.put(key,true);
+                    return true;
+                }
+                if(i!=temp)
+                    s=s.substring(0,i) + s.substring(i+1);
+            }
+        }
+        map.put(key,false);
+        return false;
+    }
 
     //palindrome partitioning (find min number of partitions required)
     //https://practice.geeksforgeeks.org/problems/palindromic-patitioning4845/1
@@ -1171,5 +1226,41 @@ class DP{
             min=Math.min(min,tempAns);
         }
         return dp[i][j]=min;
+    }
+
+
+    //Check if There is a Valid Partition For The Array
+    //https://leetcode.com/problems/check-if-there-is-a-valid-partition-for-the-array
+    //here the catch is that, if we start partitioning from the start, a valid subarray would be of length 2 or 3. if it
+    // isn't then it means that the array cannot be partitioned as in this case we would never be able to partition the
+    // string (as there's no subarray right from the start which is valid) and thus we'll return 0. otherwise, we'll try
+    // to partition it further and if we're able to partition the entire array, we return true
+    public boolean validPartition(int[] nums) {
+        int n=nums.length;
+        int[] dp=new int[n];
+        Arrays.fill(dp,-1);
+
+        return helper(0,nums,dp)==1?true:false;
+    }
+    public int helper(int i, int[] nums,int[] dp){
+        if(i==nums.length){
+            return 1;
+        }
+        if(dp[i]!=-1){
+            return dp[i];
+        }
+        int ans=0;
+        if(i+1<nums.length&&nums[i]==nums[i+1]){
+            ans=ans|helper(i+2,nums,dp);
+        }
+        if(i+2<nums.length){
+            if(nums[i]==nums[i+1]&&nums[i+1]==nums[i+2]){
+                ans=ans|helper(i+3,nums,dp);
+            }
+            if(nums[i]+1==nums[i+1]&&nums[i+1]+1==nums[i+2]){
+                ans=ans|helper(i+3,nums,dp);
+            }
+        }
+        return dp[i]=ans;
     }
 }

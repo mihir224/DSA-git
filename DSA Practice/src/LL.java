@@ -493,6 +493,23 @@ class LL{
     //brute: create a copy of all nodes in a hashmap, then connect all the next and random pointers of the nodes stored
     // in the hashmap according to the original list
     //O(N) time, O(N) space
+    public ListNode copyRandomList2(ListNode head) {
+        HashMap<ListNode,ListNode> map=new HashMap<>();
+        ListNode temp=head;
+        while(temp!=null){
+            map.put(temp,new ListNode(temp.val));
+            temp=temp.next;
+        }
+        temp=head;
+        while(temp!=null){
+            ListNode node=map.get(temp);
+            node.next=map.get(temp.next);
+            node.random=map.get(temp.random);
+            temp=temp.next;
+        }
+        temp=head;
+        return map.get(temp);
+    }
 
     //optimal: 3 steps - O(3N) ie O(N) time,O(1) space
 
@@ -522,7 +539,7 @@ class LL{
         }
         temp=head;
 
-        //step 3 - connecting next pointers of the deep copy list retrieving the original list
+        //step 3 - connecting next pointers of the deep copy list & retrieving the original list
         ListNode dummy=new ListNode(0);
         ListNode copy=dummy;
         while(temp!=null){
@@ -544,7 +561,9 @@ class LL{
     // from i+1 till the length of thr array and iterate over the array. In each iteration, check if -(a[i]+a[j]) exists
     //in the hashmap, if it does, then we have found a triplet, thus we add  a[i],a[j] and the element -(a[i]+a[j]) into a set
     //to ensure no duplicates are added, we sort the triplet before adding it to the set. In each iteration, we first reduce
-    //the frequency of i and jth elements in the hashmap (this will make sure that we don't add an element in the triplet that does not exist in the array - DRY RUN!!)
+    //the frequency of i and jth elements in the hashmap (this will make sure that we don't add an element in the triplet
+    // that does not exist in the array. this can happen when the sum of two numbers when negated gives one of the two numbers.
+    // in this case we might end up taking the same number again from the map. for eg 1st 2 numbers are 1 and -2, negation of their sum wil give 1  - DRY RUN!!)
     //and then after each iteration we again increase their frequencies back to normal so that they can be used in further iterations
 
     public List<List<Integer>> threeSum(int[] nums) {
@@ -554,6 +573,7 @@ class LL{
         }
         HashMap<Integer,Integer> map=new HashMap<>();
         HashSet<List<Integer>> set=new HashSet<>();
+        //O(logN) insertion of N elements in hashmap
         for(int i:nums){
             map.put(i,map.getOrDefault(i,0)+1);
         }
@@ -589,33 +609,28 @@ class LL{
     // Sorting is done inorder to skip duplicate elements in a particular iteration
 
     public List<List<Integer>> threeSum1(int[] nums) {
-        List<List<Integer>> list=new ArrayList<>();
-        if(nums.length<3){
-            return list;
-        }
+        List<List<Integer>> ans=new ArrayList<>();
         Arrays.sort(nums);
         for(int i=0;i<nums.length-2;i++){
             if(i==0||(nums[i]!=nums[i-1])){
-                List<Integer> liz=new ArrayList<>();
-                int left=i+i;
-                int right=nums.length-1;
                 int sum=0-nums[i];
+                int left=i+1;
+                int right=nums.length-1;
                 while(left<right){
                     if(nums[left]+nums[right]==sum){
-                        liz.add(nums[left]);
-                        liz.add(nums[right]);
-                        liz.add(nums[i]);
-                        list.add(liz);
-                        while(left<right&&nums[left]==nums[left+1]){ //skipping duplicates
+                        List<Integer> list=new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[left]);
+                        list.add(nums[right]);
+                        ans.add(list);
+                        while(left<right&&list.get(1)==nums[left]){ //skipping duplicates
                             left++;
                         }
-                        while(left<right&&nums[right]==nums[right-1]){
+                        while(left<right&&list.get(2)==nums[right]){
                             right--;
                         }
-                        left++;
-                        right--;
                     }
-                    else if(nums[left]+nums[right]>sum){
+                    else if((nums[left]+nums[right])>sum){
                         right--;
                     }
                     else{
@@ -624,7 +639,7 @@ class LL{
                 }
             }
         }
-        return list;
+        return ans;
     }
 
 
@@ -637,7 +652,7 @@ class LL{
 
     //better - using prefix and suffix sum arrays to store left and right max for each element
     //think of prefix max array as the array which at any index i contains the max element from index 0 till index i.
-    //suffix max array is similar to prefix max array but instead of storing the max from index 0 to i, it stores the maximun for index i to n-1
+    //suffix max array is similar to prefix max array but instead of storing the max from index 0 to i, it stores the maximu for index i to n-1
     //O(3N)tc - 2N for prefix and suffix max array and N for traversing each index, O(2N)space
     //O(3N) time, O(2N) space
     public int trap(int[] height) {
@@ -648,7 +663,7 @@ class LL{
         prefixSum[0]=height[0];
         suffixSum[n-1]=height[n-1];
         for(int i=1;i<n;i++){
-            prefixSum[i]=Math.max(prefixSum[i-1],height[i]);
+            prefixSum[i]=Math.max(prefixSum[i-1],height[i]); //comparing el at i with largest till i-1
         }
         for(int i=n-2;i>=0;i--){
             suffixSum[i]=Math.max(suffixSum[i+1],height[i]);
@@ -667,17 +682,20 @@ class LL{
     //O(N)
 
     //intuition
-    //if im using rightmax to find the units of water for a particular elevation, i'll make sure that the right max is
-    // smaller than leftmax and if im using leftmax to find the units of water for a particular elevation, i'll make sure
-    // that the leftmax is smaller than the right max. from whatever leftmax I took, basically whenever I updated leftmax,
-    // i updated it only because its value for lesser than something on the right. then in the next iterations when I tried
-    // moving left immediately after finding a new leftmax, then again if i was finding smaller elements than r it would
-    // automatically mean that leftmax is smaller than the right max because the leftmax was only calculated as it was
-    // lesser than something on the right. as soon as I found an element greater on the left, then I will straight away
-    // go to rightmax and try to update it if it was possible (ie if r was greater than current rightmax) then I would've
-    // moved left (basically decreasing r) immediately after I found a valid rightmax and obv for these iterations rightmax
-    // is currently smaller than leftmax and I can accordingly calculate the units of water from it. THIS IS THE INTUITION
+    //intuition basically is that whatever is the valid candidate for being leftmax or right max, say we're dealing with
+    // left max, then we know for sure that this candidate that we tried to compare with leftmax, we were only able to do
+    // it because this candidate was smaller than something on the right. now if this cand becomes a valid leftmax, then I
+    // know for sure that on the right there's someone greater. similarly when the next el is also smaller than something
+    // on the right and is also smaller than left max, i can ideally find its unit of water by deducting its height from
+    // lm because i know lm is smaller than something on the right and current el is smaller than lm
 
+    //while the left is smaller than the right, we won't be moving right ptr. for this reason we know for sure that currently
+    // any el that left points to, if it is smaller than right, we know that either that el can be the leftmax or it can be
+    // smaller than that. in the former case we simply update leftmax and in the latter case we know that this el is smaller
+    // than right. now the fact that we're able to reach this el was because left max was smaller than this right(because
+    // that execution only lead us to this element). otherwise we would've moved right. so till it is larger, it won't be
+    // moved and we're certain if an el is smaller on the left, it will either be leftmax or not in which case we calc the
+    // units of water.
     public int trap1(int[] height) {
         int n=height.length;
         int left=0;
@@ -726,7 +744,9 @@ class LL{
         int i=0;
         int j=1;
         while(j<nums.length){
-            if(nums[i]!=nums[j]){
+            if(nums[i]!=nums[j]){ //we're certain that i will always be <=j because when i equals j, then that means they're
+                // pointing to the same el and thus j will be incremented as soon as it becomes equal to i. now since we're
+                // ensuring j is always < n, since i<=j, i will also be always less than n
                 i++;
                 nums[i]=nums[j];
             }

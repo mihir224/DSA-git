@@ -445,7 +445,7 @@ class BinarySearch{
     // be the max of all the elements in the array. Similarly consider the case where there's only one student, and we have
     // 4 books. Thus, we'd have to allocate all 4 books to that one student and thus the ans in this case would be the
     // sum of all pages. Thus, the max possible ans will be sum of all pages and therefore end is taken as sum of all pages.
-    // Now we apply bs by finding mid such that, we check if it is possible to distribute the books with min of max pages
+    // Now we apply bs by finding mid such that, we check if it is possible to distribute the books max pages allowed
     // as mid to all students. mid here signifies the maximum amt of pages that can be distributed to a student and through bs,
     // we try to optimize the value of mid such that it is minimum. This is done by checking if current value of mid can act as a barrier of pages such that
     // no student gets more than mid pages and each student gets some pages. If it is possible to do this then it means
@@ -488,7 +488,7 @@ class BinarySearch{
         }
         public boolean isPossible(int barrier, ArrayList<Integer> list, int n){
             int allocatedStudents=1;
-            int pages=0;
+            int pages=0; //pages allocated to current student
             for(int i:list){
                 if(i>barrier){ //found a book with pages>maxPages allowed, thus we cannot allocate this book to any student
                     return false;
@@ -520,7 +520,7 @@ class BinarySearch{
     // sorting the coordinate array is necessary so that we can obtain the correct value for end and apply binary search accordingly.
     // We see that the min possible ans would be 1 as no two cows can be at the same coordinate and thus start is 1 and
     // the max possible ans is the difference between the last and first coordinate and that will be our end. Now we find
-    // the middle and check if it is possible to place all the cows with the mid as the max of min distance between any 2 cows.
+    // the middle and check if it is possible to place all the cows with the mid as the min distance between any 2 cows.
     // mid here signifies the min distance at which any 2 cows can be placed. we wish to maximize this value of mid.
     // If it is possible, then that means we have a valid ans and, thus we put current mid, equal to our ans and try to
     // find a better ans by moving forward and reducing the search space such that start=mid+1. If it is not possible

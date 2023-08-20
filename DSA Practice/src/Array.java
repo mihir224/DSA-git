@@ -247,8 +247,31 @@ public class Array {
 
     //brute O(NlogN+N2) tc, O(N) sc
     //sort the intervals array, then iterate over all the intervals and for each interval check if there are any valid
-    // intervals on its right that can be merged to it and if there are, then merge them with te current interval.
+    // intervals on its right that can be merged to it and if there are, then merge them with the current interval.
     // After merging all valid intervals, add the resultant to a DS and then move to the next interval
+
+    public int[][] merge1(int[][] intervals) {
+        int n=intervals.length;
+        Arrays.sort(intervals,(a,b)->a[0]-b[0]);
+        List<int[]> list=new ArrayList<>();
+        int lb=intervals[0][0];
+        int ub=intervals[0][1];
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if(ub>=intervals[j][0]){
+                    ub=Math.max(ub,intervals[j][1]);
+                }
+                else{
+                    list.add(new int[]{lb,ub});
+                    lb=intervals[j][0];
+                    ub=intervals[j][1];
+                }
+            }
+        }
+        list.add(new int[]{lb,ub});
+
+        return list.toArray(new int[list.size()][2]);
+    }
 
     //optimal O(NlogN+N) tc, O(N) sc
 
@@ -566,14 +589,15 @@ public class Array {
 
     //brute, better - same as before
     //optimal O(N) tc, O(1) sc - using Moore's voting algo
-    public List<Integer> majorityElement1(int[] nums) {
+    public List<Integer> majorityElement2(int[] nums) {
         int count1=0;
         int count2=0;
         int candidate1=Integer.MIN_VALUE;
         int candidate2=Integer.MIN_VALUE;
         List<Integer> ans=new ArrayList<>();
         for(int i:nums){
-            if(i==candidate1){
+            if(i==candidate1){ //this will make sure that candidate 1 and 2 never point to the same candidate otherwise
+                // that will cause problems
                 count1++;
             }
             else if(i==candidate2){
@@ -606,7 +630,6 @@ public class Array {
                 count2++;
             }
         }
-
         if(count1>nums.length/3){
 
             ans.add(candidate1);
@@ -735,9 +758,22 @@ public class Array {
     //brute O(N2) time, O(1) space - iterate over the array and for each element check on its right if its sum with an element equals target and
     // in case it does, then return indices of both the elements
 
-    //better O(N+NlogN+N) time, O(N) space - make a copy of the original array, then sort the array and apply two pointer.
-    // If ans found, retrieve the indices of the two elements from the temp array and return them. We didn't use hashmap
-    // here because there might be a case where two equal elements form the target sum and in that case the hashmap would store only one value for both of those elements
+    //better O(N2 wc - in case the other matching element is the last one we have to iterate over the whole array) - start
+    // inserting elements in the map and if there exists an element in the map such that target-nums[i]=that element, then
+    // return the indices of these two elements
+
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i]))
+                return new int[]{map.get(target - nums[i]), nums[i]};
+            map.put(nums[i], i);
+        }
+        return new int[]{-1, -1};
+    }
+
+    //optimal O(N+NlogN+N) time, O(N) space - make a copy of the original array, then sort the array and apply two pointer.
+    // If ans found, retrieve the indices of the two elements from the temp array and return them.
 
     public int[] twoSum1(int[] nums, int target) {
         int[] temp = new int[nums.length];
@@ -770,21 +806,6 @@ public class Array {
         }
         return ans;
     }
-
-    //optimal O(N - in case the other matching element is the last one we have to iterate over the whole array) - start
-    // inserting elements in the map and if there exists an element in the map such that target-nums[i]=that element, then
-    // return the indices of these two elements
-
-    public int[] twoSum(int[] nums, int target) {
-        HashMap<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            if (map.containsKey(target - nums[i]))
-                return new int[]{map.get(target - nums[i]), nums[i]};
-            map.put(nums[i], i);
-        }
-        return new int[]{-1, -1};
-    }
-
     //4 Sum
     //https://leetcode.com/problems/4sum/
 
@@ -841,6 +862,8 @@ public class Array {
     //optimal - O(NlogN+N3) - sort the array, take two pointers at i at start and j at i+1 and two pointers left and right
     // at j+1 and n-1. We basically try to apply two sum in the right of i and j to find the other two elements such that
     // their sum=target-(arr[i]+arr[j])
+
+    //once we sort the list, duplicate quadruples will be removed
 
     public List<List<Integer>> fourSum1(int[] nums, int target) {
         List<List<Integer>> ans = new ArrayList<>();
@@ -917,26 +940,24 @@ public class Array {
     // while loop till the current num + 1 exists in the set, increasing the count and current num accordingly. Then,
     // out of all counts, we return the max count
 
-    public int longestConsecutive1(int[] nums) {
-        HashSet<Integer> set = new HashSet<>();
-        int count = 1;
-        int maxCount = 1;
-        for (int i : nums) {
+    public int longestConsecutive2(int[] nums) {
+        HashSet<Integer> set=new HashSet<>();
+        int max=0;
+        for(int i:nums){
             set.add(i);
         }
-        for (int i = 0; i < nums.length - 1; i++) {
-            if (nums[i] == nums[i + 1]) { //skipping duplicates
-                continue;
-            }
-            if (!set.contains(i - 1)) {
-                while (set.contains(i + 1)) {
+        for(int i:nums){
+            if(!set.contains(i-1)){ //since we're using a set, we don't have to check for duplicates
+                int currentNum=i;
+                int count=1;
+                while(set.contains(currentNum+1)){
+                    currentNum++;
                     count++;
-                    i++;
                 }
+                max=Math.max(count,max);
             }
-            count = Math.max(count, maxCount);
         }
-        return maxCount;
+        return max;
     }
 
     //largest sub array with 0 sum
@@ -1015,14 +1036,10 @@ public class Array {
             if (xor == B) {
                 count++;
             }
-            if (map.containsKey(y)) {
-                count += map.get(y);
+            if(map.containsKey(y)){ //this means that through the prefix xor, we found a value for y which already exists in the hashmap. this means that the subarray with xor y has appeared before. Therefore that xor y when xor'ed with B, gave us this prefix xor
+                count+=map.get(y);
             }
-            if (map.containsKey(xor)) {
-                map.put(xor, map.get(xor) + 1);
-            } else {
-                map.put(xor, 1);
-            }
+            map.put(xor,map.getOrDefault(xor,0)+1);
         }
         return count;
     }
@@ -1055,6 +1072,9 @@ public class Array {
     }
 
     //optimal1 - when u revise this 2mrw watch striver video
+
+    //we basically take two pointers left and right within which we try to take our substrings
+
     //(O(2N)tc as we initially loop right pointer from left till we reach a duplicate, then we loop the left pointer till
     // the duplicate has been removed, O(1)space because the set will at most store 26 characters)
 
@@ -1088,8 +1108,10 @@ public class Array {
         int right = 0;
         while (right < s.length()) {
             if (map.containsKey(s.charAt(right))) {
-                left = Math.max(left, map.get(s.charAt(right)) + 1); //there might be a case when left is already ahead of the
-                // last occurence of the repeating element, thus we always take max
+                left = Math.max(left, map.get(s.charAt(right)) + 1); //there might be a case when we find an existent char
+                // in the map but left is already ahead of that.this can happen because we aren't removing any el from the
+                // map like we were doing previously in the set. thus we always take max of left and s.charAt(i)+1. ie there
+                // can be a case when the duplicate el isn't part of the current substring between left and right
             }
             map.put(s.charAt(right), right); //storing the most recent occurrence of current element in the map
             ans = Math.max(ans, right - left + 1);

@@ -626,11 +626,32 @@ class Strings {
     //https://leetcode.com/problems/valid-anagram
 
     //brute - sort both the strings and then check if they're equal
-    //O(NlogN) time, O(1) space
+    //O((N+M)log(N+M)+(N+M)) time, O(N+M) space
+    public boolean isAnagram34(String s, String t) {
+        char[] str=s.toCharArray();
+        char[] ttr=t.toCharArray();
+        Arrays.sort(str);
+        Arrays.sort(ttr);
+        int n=str.length;
+        int m=ttr.length;
+        if(str.length!=ttr.length){
+            return false;
+        }
+        int i=0;
+        int j=0;
+        while(i<n&&j<m){
+            if(str[i]!=ttr[j]){
+                return false;
+            }
+            i++;
+            j++;
+        }
+        return true;
+    }
 
     //better - store the frequency of characters of string 1 in a hashmap. Then iterate over the 2nd string and while iterating,
     // reduce the frequency of characters of string 2 in the map. At the end if map is empty, return true
-    //O(N) time, O(N) space
+    //O(NlogN + M) time, O(N) space
     public boolean isAnagram(String s, String t) {
         HashMap<Character, Integer> map = new HashMap<>();
         for (char ch : s.toCharArray()) {
@@ -650,7 +671,8 @@ class Strings {
         return map.isEmpty();
     }
 
-    //optimal - total number of possible 8 bit characters are 256. Thus create an array of this size and increment frequency
+    //optimal - there are 256 different characters in the ascii character set because in cpp a char variable is a 1 byte
+    // memory location thus it can store any values s nm from 0 to 255 Thus create an array of this size and increment frequency
     // of characters of str1. Then iterate over this array and decrease the freq count for characters of 0. If at the end
     // all elements have 0 frequency then we return true
     //O(N) time, O(1) space

@@ -9,6 +9,13 @@ public class Heaps{
     // store the root somewhere and then we swap the root with the last element and perform heapify on reduced size of the
     // heap after removing the last element
 
+    //IMP!!!!!
+    //now the thing is, to heapify from bottom up, we use the parent approach instead of the child one. this is because
+    // if we wanted to use the child approach, we'd have to heapify every node from  last node in the second last level
+    // till the 1st node. this would've taken nlogn but we require the insertion and deletion operations to be logn. moreover,
+    // in the buildheap function used in heapify and heapsort, it is necessary for us to convert every node to heap when
+    // taken as a root. thus we have to use this nlogn approach in that problem as we can not implement buildheap from top down. it is necessary to implement it from bottom up
+
     //O(NlogN)time - since we use heapify in both insertion and deletion operations of N node and O(N)space - to store
     // the nodes in a list
     static int[] minHeap(int n, int[][] q) {
@@ -67,9 +74,23 @@ public class Heaps{
     //https://practice.geeksforgeeks.org/problems/heap-sort/1
 
     //O(NlogN) tc, O(1) sc
-    void buildHeap(int arr[], int n)
+    //Function to build a Heap from array.
+    void buildHeap(int arr[], int n) //the reason why we go bottom to up and not top to bottom in this function is because
+    // that would've led to incorrect results. for eg: if at 0th level we have 30 and at second level we have 10 and 20,
+    // at the third we have a node with val 60, then if we iterated from top to bottom ie from 0th level to last, we would've
+    // compared 30 with its children and since no one is violating, we move to the second level. here we would've seen that
+    // 20 is violating with 60 so we swap them. now the problem that arises here is that once we have moved this 60 to the
+    // second level ie upwards, we won't be encountering it again. so even though 60 has to be at the top, it would be stuck
+    // at the second level. thus to rectify this, we have to go from bottom to up so that whatever node we sent upwards, we
+    // encounter it again and put it in its right place. this approach is only necessary when we have to heapify every node
+    // in the given tree. we only use the basic insertion and deletion operations (which take logN time) when we know that
+    // the entire tree is already a heap. in that case we don't have to check every node (to be a heap when taken as root).
+    // in those cases, we can just compare the particular node that is inserted with its parent and recursively place it in
+    // its place in case of insertion and do the same for the last node that has been inserted at the first position in case
+    // of deletion.
+
     {
-        for(int i=(n/2)-1;i>=0;i--){
+        for(int i=n/2-1;i>=0;i--){
             heapify(arr,n,i);
         }
     }
@@ -78,34 +99,42 @@ public class Heaps{
     void heapify(int arr[], int n, int i)
     {
         int largest=i;
-        int l=2*i+1;
-        int r=2*i+2;
+        int l=(2*i)+1;
+        int r=(2*i)+2;
         if(l<n&&arr[l]>arr[largest]){
             largest=l;
         }
         if(r<n&&arr[r]>arr[largest]){
             largest=r;
         }
-        if(largest!=i){ //ie largest was changed above, thus swapping current node with largest child
-            int temp=arr[largest];
-            arr[largest]=arr[i];
-            arr[i]=temp;
-            heapify(arr,n,largest); //recursively heapifying the nodes below
+        if(largest!=i){
+            swap(i,largest,arr);
+            heapify(arr,n,largest);
         }
     }
 
     //Function to sort an array using Heap Sort.
     public void heapSort(int arr[], int n)
     {
+        int[] nums={30,10,20,60};
+        heapify(nums,nums.length,0);
+        System.out.println(Arrays.toString(nums));
         buildHeap(arr,n);
         int size=n;
-        while(size>1){
-            int temp=arr[0]; //swapping root and last element
-            arr[0]=arr[size-1];
-            arr[size-1]=temp;
-            size--; //reducing heap size
-            heapify(arr,size,0); //performing heapify on the resultant tree
+        while(size>1){ //we iterate only till size>1 because we're certain when
+            //there's only one el left in the heap, it will be at its correct position
+            swap(0,size-1,arr);
+            size--; //this is done so that the nodes at the last index are no
+            //longer accessbile by heapify function. if we didn't do this, then on
+            //calling the heapify function, we would've ended up altering the elements at the end
+            heapify(arr,size,0); //heapifying the reduced heap
         }
+    }
+
+    public void swap(int i, int j, int[] arr){
+        int temp=arr[i];
+        arr[i]=arr[j];
+        arr[j]=temp;
     }
 
     //kth largest element in a stream
@@ -182,7 +211,7 @@ public class Heaps{
     //brute (gives TLE) - find all possible combinations and insert them in a min heap such that it could carry only C elements.
     // This way, after going through all possible combinations, min heap would store the last C combinations (if the
     // combinations were written in a sorted manner) and this way we can return the top C combinations
-    // O((N*M)logC) time, O(C) space - if we consider the ans list
+    // O((N*M)logC) time, O(C) space where c is the number of combination sums ie (2^n1)*(2^n2) - if we consider the ans list
 
     public ArrayList<Integer> solve1(ArrayList<Integer> A, ArrayList<Integer> B, int C) {
         ArrayList<Integer> ans=new ArrayList<>();
@@ -208,7 +237,7 @@ public class Heaps{
     // max sum when taken as a pair. Thus we know with certainty that this sum would be the largest one among the C maximum
     // valid sum combinations. so we add it to a max heap. Why max heap? So that we can get the top C elements in O(1) time.
     // Along with the sum, we also keep track of the indices of both the elements involved in the combinations so that we
-    // can avoid duplicates. Now since we have to deal with triads, I haven't used the Collections.reverseOrder() method in
+    // can avoid duplicate pairs. Now since we have to deal with triads, I haven't used the Collections.reverseOrder() method in
     // the pq to make a max heap. Instead, I've modified the compareTo function of the triad class to sort the objects in
     // descending order of sums. We could've implemented the normal compareTo functionality (ie ascending order) and then
     // Collections.reverseOrder() would've done its job, but I've decided to do it this way by sorting the elements in descending
@@ -222,11 +251,11 @@ public class Heaps{
     // of the recently used elements ie the element before last of arr1 and the element before last of arr2. for eg: consider arr1
     // as 1236 and arr2 as 2789. now a=9+3=12 and b=6+8=14 would surely be greater than c=8+3=11. this is because if we
     // take 6 here instead of 3 or 9 instead of 8 then the sum would surely increase as the arrays are sorted. Thus, these
-    // are the next possible set of candidates and, therefore we insert both of these diagonals in the max heap. this makes sure the pair with the max sum always remains at the top we do this
+    // are the next possible set of candidates and, therefore we insert both of these diagonals in the max heap. this makes sure the pair with the max sum always remains at the top. we do this
     // till c>0, retrieving the top of the max heap in each iteration and storing it in the ans, and then we check the
     // possible pair of diagonals that can be obtained from this top. Now as we can see in the prev eq, b=6+8=14 was the
     // next possible candidate and thus in the next iteration it will be retrieved as the top. Now when we try to find
-    // diagonals from the pair 6 and 8, we see that the possible candidates are  6 and the element before 8 ie 7 and 8
+    // diagonals from the pair 6 and 8, we see that the possible candidates are 6 and the element before 8 ie 7 and 8
     // and the element before 6 ie 3. We insert these pairs into the max heap after making sure that they have not been
     // taken before and the same process is repeated for further iterations till we reach C=0. We can see that the pair
     // 3 & 8 ie c as discussed before was automatically included in the max heap by being the possible diagonal from 6 and
@@ -234,13 +263,13 @@ public class Heaps{
 
     //some important things wrt implementation of this problem in java:
 
-    //to use a priority queue which stores a pair or a triad, the pair class used implement the comparable interface and
+    //to use a priority queue which stores a pair or a triad, the pair class should implement the comparable interface and
     // the compareTo method should be overriden so that the pq knows according to which parameter it should sort the array
     // and in which order (ascending or descending). If we override this functions to sort the pairs in descending order,
     // while declaring the pq, we don't explicitly have to mention Collections.reverseOrder() as it will be implemented
     // as a max heap be default as we modified the compare to function to sort the elements in descending manner.
 
-    //also for the set to store a pair, we have to override the equals function in the pair as so that it returns true
+    //also for the set to store a pair, we have to override the equals function in the pair class so that it returns true
     // only when both of the elements of the pair match with the other pair. Also we modify the hashcode function which
     // basically calculates the index value of the pair
 
@@ -294,7 +323,8 @@ public class Heaps{
         //b. It combines the hash codes of all the parameters using a bitwise exclusive OR (XOR) operation.
         @Override public int hashCode()
         {
-            return Objects.hash(first,second);
+            return Objects.hash(first,second); //this function calls the hashCode() functions on each parameter and combines
+            // the hashcodes of all parameters using bitwise OR or XOR operation
         }
     }
     class Triad implements Comparable<Triad>{
@@ -314,6 +344,7 @@ public class Heaps{
         }
     }
 
+
     //find median from data stream
     //https://leetcode.com/problems/find-median-from-data-stream/
 
@@ -322,7 +353,7 @@ public class Heaps{
     // to store the elements, adding an element at i+1 th position would automatically move all the elements to the right.
     // This way the DS would be sorted at all times and at any time, the median can be obtained through conventional formulas.
 
-    //takes O(N2) time (for 1st insertion, loop runs for 0 times as the size of list is 0 initially, for 2nd insertion,
+    //takes O(N2) time (for 1st insertion, loop runs for 0 times as the size of list has 0 elements initially, for 2nd insertion,
     // it runs for 1 time, as the size of the DS is now 1, then for 3rd insertion, it runs for 2 times and so on. So for
     // N insertions, we can accumulate the total time as - 0 + 1 + 2 + 3 + upto N times)=N*(N+1)/2=O(N2). Also, we're shifting
     // elements to the right to accommodate the new element at a specific index would also take O(N) time in the worst case
@@ -370,10 +401,13 @@ public class Heaps{
             }else{ //num belongs to right half
                 minHeap.offer(num);
             }
-
+            //we make sure that minHeap never takes more elements than maxheap and maxheap is only allowed to store one
+            // element extra. this ensures that when there are even elements, both store equal number of elements and
+            // when there are odd, max heap stores one extra.
             if(maxHeap.size()>minHeap.size()+1){ //we try to store at max 1 element extra in maxHeap than minHeap (to accommodate median
                 // in case of odd number of elements). ie we're explictly allowing it to store 1 element extra in case of odd length
                 // If the size exceeds that, we poll
+
                 minHeap.offer(maxHeap.poll());
             }
             if(minHeap.size()>maxHeap.size()){ //ie right half has more elements than left half, meaning we're not at the center
