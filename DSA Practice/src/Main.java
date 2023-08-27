@@ -2,8 +2,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        int[] arr={2};
-        System.out.println(test(arr));
+
+        System.out.println((char)(4+'a'));
     }
     static int test(int[] arr){
         for(int i=0;i<arr.length;i++){

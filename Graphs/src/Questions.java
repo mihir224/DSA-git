@@ -668,52 +668,49 @@ public class Questions {
 
     //alien dictionary
     //https://practice.geeksforgeeks.org/problems/alien-dictionary/1
-    public String findOrder(String[] dict, int N, int K) {
-        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        for (int i = 0; i < K; i++) {
+    public String findOrder(String [] dict, int N, int K)
+    {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        int[] indegree=new int[K];
+        StringBuilder sb=new StringBuilder();
+        Queue<Integer> q=new LinkedList<>();
+        //O(k)
+        for(int i=0;i<K;i++){
             adj.add(new ArrayList<>());
         }
-        for (int i = 0; i < N - 1; i++) { //traversing the dictionary till N-1 as we have to work in pairs and thus we have to access (i+1) element
-            String s1 = dict[i];
-            String s2 = dict[i + 1];
-            int len = Math.min(s1.length(), s2.length()); //checking the pair of strings till the length of the smaller string
-            for (int ptr = 0; ptr < len; ptr++) {
-                if (s1.charAt(ptr) != s2.charAt(ptr)) { //an alphabet comes before the other, thus there is an edge between the two,
-                    // implying that the first alphabet is directed to the second, therefore adding it to the adjacency
-                    adj.get(s1.charAt(ptr) - 'a').add(s2.charAt(ptr) - 'a'); //adding the numeric value of the alphabets
-                    break;
+        //O(N*M) where M is the avg length of a string
+        for(int i=0;i<dict.length-1;i++){
+            String s1=dict[i];
+            String s2=dict[i+1];
+            int j=0;
+            int min=Math.min(s1.length(),s2.length());
+            while(j<min&&s1.charAt(j)==s2.charAt(j)){
+                j++;
+            }
+            if(j==min){
+                continue;
+            }
+            adj.get(s1.charAt(j)-'a').add(s2.charAt(j)-'a');
+            indegree[s2.charAt(j)-'a']++;
+        }
+        //O(K)
+        for(int i=0;i<indegree.length;i++){
+            if(indegree[i]==0){
+                q.offer(i);
+            }
+        }
+        //O(V+E)
+        while(!q.isEmpty()){
+            int node=q.poll();
+            sb.append((char)(node+'a'));
+            for(int i:adj.get(node)){
+                indegree[i]--;
+                if(indegree[i]==0){ //dealt with every node which has an edge directed to this node
+                    q.offer(i);
                 }
             }
         }
-        List<Integer> list = new ArrayList<>();
-        Queue<Integer> q = new LinkedList<>();
-        int[] inDegree = new int[K];
-
-        String ans = "";
-        for (int i = 0; i < adj.size(); i++) {
-            for (int j = 0; j < adj.get(i).size(); j++) {
-                inDegree[adj.get(i).get(j)]++;
-            }
-        }
-        for (int i = 0; i < inDegree.length; i++) {
-            if (inDegree[i] == 0) {
-                q.add(i);
-            }
-        }
-        while (!q.isEmpty()) {
-            int node = q.poll();
-            list.add(node);
-            for (int i : adj.get(node)) {
-                inDegree[i]--;
-                if (inDegree[i] == 0) {
-                    q.add(i);
-                }
-            }
-        }
-        for (int i : list) {
-            ans += (char) (i + (int) ('a'));
-        }
-        return ans;
+        return sb.toString();
     }
 
     //shortest path in an acyclic graph

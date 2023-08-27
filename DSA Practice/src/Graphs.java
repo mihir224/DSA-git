@@ -248,7 +248,7 @@ class Graphs{
             topo.add(n);
             for(int i:adj.get(n)){
                 inDegree[i]--;
-                if(inDegree[i]==0){
+                if(inDegree[i]==0){ //dealt with every node which has an edge directed to this node
                     q.offer(i);
                 }
             }
@@ -291,6 +291,53 @@ class Graphs{
     }
 
     //bfs (already done above)
+
+    //alien dictionary (good problem based on topo sort)
+    //https://practice.geeksforgeeks.org/problems/alien-dictionary/1
+    public String findOrder(String [] dict, int N, int K)
+    {
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        int[] indegree=new int[K];
+        StringBuilder sb=new StringBuilder();
+        Queue<Integer> q=new LinkedList<>();
+        //O(k)
+        for(int i=0;i<K;i++){
+            adj.add(new ArrayList<>());
+        }
+        //O(N*M) where M is the avg length of a string
+        for(int i=0;i<dict.length-1;i++){
+            String s1=dict[i];
+            String s2=dict[i+1];
+            int j=0;
+            int min=Math.min(s1.length(),s2.length());
+            while(j<min&&s1.charAt(j)==s2.charAt(j)){
+                j++;
+            }
+            if(j==min){
+                continue;
+            }
+            adj.get(s1.charAt(j)-'a').add(s2.charAt(j)-'a');
+            indegree[s2.charAt(j)-'a']++;
+        }
+        //O(K)
+        for(int i=0;i<indegree.length;i++){
+            if(indegree[i]==0){
+                q.offer(i);
+            }
+        }
+        //O(V+E)
+        while(!q.isEmpty()){
+            int node=q.poll();
+            sb.append((char)(node+'a'));
+            for(int i:adj.get(node)){
+                indegree[i]--;
+                if(indegree[i]==0){ //dealt with every node which has an edge directed to this node
+                    q.offer(i);
+                }
+            }
+        }
+        return sb.toString();
+    }
 
     //number of islands
     //https://leetcode.com/problems/number-of-islands/
@@ -443,8 +490,14 @@ class Graphs{
 
     //time: O((N*M): case when all nodes are connected ie have same value * 4 (each node has 4 neighbours)) == O(N*M)
     //space: O(2(N*M)) - copy array, recursive stack space
+
+    //dfs
     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
-        if(image[sr][sc]==color){
+        if(image[sr][sc]==color){ //in case sn is already colored with the given color. here, since it is necessary for
+            // the neighbours to have the same color as the sn to be flood filled with the given color, so if the sn is
+            // colored with the given color, we'd want to flood fill those neighbours of this sn with the given color
+            // which have the same color as the sn. now since sn color is same as given color, we'd end up coloring the
+            // neighbours with the color they already have and thus we return image as it is.
             return image;
         }
         int[][] copy=image;
@@ -460,6 +513,43 @@ class Graphs{
             int ncol=sc+delcol[i];
             if(nrow>=0&&nrow<copy.length&&ncol>=0&&ncol<copy[0].length&&copy[nrow][ncol]==initialClr){
                 dfs(nrow,ncol,delrow,delcol,copy,color,initialClr);
+            }
+        }
+    }
+
+    //bfs
+    class Solution {
+        public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+            int[] delrow={-1,0,1,0};
+            int[] delcol={0,1,0,-1};
+            int initialColor=image[sr][sc];
+            if(initialColor==color){
+                return image;
+            }
+            Queue<Pair> q=new LinkedList<>();
+            image[sr][sc]=color;
+            q.offer(new Pair(sr,sc));
+            while(!q.isEmpty()){
+                Pair p=q.poll();
+                int row=p.row;
+                int col=p.col;
+                for(int i=0;i<4;i++){
+                    int nrow=row+delrow[i];
+                    int ncol=col+delcol[i];
+                    if(nrow>=0&&nrow<image.length&&ncol>=0&&ncol<image[0].length&&image[nrow][ncol]==initialColor){
+                        image[nrow][ncol]=color;
+                        q.offer(new Pair(nrow,ncol));
+                    }
+                }
+            }
+            return image;
+        }
+        class Pair{
+            int row;
+            int col;
+            public Pair(int row, int col){
+                this.row=row;
+                this.col=col;
             }
         }
     }

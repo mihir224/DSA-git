@@ -261,7 +261,7 @@ class LL{
     //delete node when head is not given
     //https://leetcode.com/problems/delete-node-in-a-linked-list/
 
-    //it is given that node is node the last node and we don't have to dlt its address, we just have to dlt it in such a
+    //it is given that node is not the last node and we don't have to dlt its address, we just have to dlt it in such a
     // way that its value should not exist in the linked list and the number of nodes should decrease by one. moreover
     // order of nodes before and after should be same
     public void deleteNode(ListNode node) {

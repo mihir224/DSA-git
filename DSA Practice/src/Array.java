@@ -1120,5 +1120,126 @@ public class Array {
         return ans;
     }
 
+    //common elements in 3 sorted arrays
+    //https://practice.geeksforgeeks.org/problems/common-elements1132/1
+
+    //brute - find all possible combinations of triplets formed from elements of the three arrays. once we find a triplet
+    // in which every el is same, we add that el to the ans list. to ensure there are no duplicates, we make sure that we
+    // never take the same element twice from the first array
+
+    //O(N3) time, O(M) space, if there are M common elements
+    ArrayList<Integer> commonElements(int A[], int B[], int C[], int n1, int n2, int n3) {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n1; i++) {
+            if (i > 0 && A[i] == A[i - 1]) {
+                continue;
+            }
+            for (int j = 0; j < n2; j++) {
+                if (j > 0 && B[j] == B[j - 1]) {
+                    continue;
+                }
+                for (int k = 0; k < n3; k++) {
+                    if (k > 0 && C[k] == C[k - 1]) {
+                        continue;
+                    }
+                    if (A[i] == B[j] && B[j] == C[k]) {
+                        list.add(A[i]);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    //better (using intersection of two arrays)- find intersection of arr1 and 2, and then the intersection of that with
+    // the third arr
+    //O(n1+n2+n3)time, O(m) space where m is the number of common elements
+
+    ArrayList<Integer> commonEleme1nts(int A[], int B[], int C[], int n1, int n2, int n3)
+    {
+        ArrayList<Integer> temp=new ArrayList<>();
+        ArrayList<Integer> ans=new ArrayList<>();
+        int i=0;
+        int j=0;
+        while(i<n1&&j<n2){
+            if(i>0&&A[i]==A[i-1]){
+                i++;
+                continue;
+            }
+            if(A[i]==B[j]){
+                temp.add(A[i]);
+                i++;
+                j++;
+            }
+            else if(A[i]>B[j]){
+                j++;
+            }
+            else{
+                i++;
+            }
+        }
+        i=0;
+        j=0;
+        while(i<temp.size()&&j<n3){
+            if(i>0&&temp.get(i)==temp.get(i-1)){
+                i++;
+                continue;
+            }
+            if(temp.get(i)==C[j]){
+                ans.add(temp.get(i));
+                i++;
+                j++;
+            }
+            else if(temp.get(i)>C[j]){
+                j++;
+            }
+            else{
+                i++;
+            }
+        }
+        return ans;
+    }
+
+    //optimal - O(n1+n2+n3) time, O(1) space
+
+    //basically we take three pointers such that if arr[i]<arr[j], then obv el in arr1 that i is pointing to cannot be the
+    // common one thus we increase i. otherwise if arr[i]>arr[j] we check if el j is pointing to is > whatever k is pointing
+    // to. in that case we know that eventually we'd have to increase j to match whatever i is pointing to but we also need
+    // to increase k so that it also matches i. so basically the idea is to move the ptr which is pointing to the smallest
+    // el in each iteration. this makes sure that this el matches the other two els. as soon as all point to same el, we
+    // add it to a list and move all the pointers by 1.
+
+    ArrayList<Integer> commonEleme2nts(int A[], int B[], int C[], int n1, int n2, int n3)
+    {
+        int i=0;
+        int j=0;
+        int k=0;
+        ArrayList<Integer> list=new ArrayList<>();
+        while(i<n1&&j<n2&&k<n3){
+            if(i>0&&A[i]==A[i-1]){
+                i++;
+                continue;
+            }
+            if(A[i]==B[j]&&B[j]==C[k]){
+                list.add(A[i]);
+                i++;
+                j++;
+                k++;
+            }
+            else if(A[i]<B[j]){
+                i++;
+            }
+            else if(B[j]<C[k]){
+                j++;
+            }
+            else{
+                k++;
+            }
+        }
+        return list;
+    }
+
+
+
 
 }

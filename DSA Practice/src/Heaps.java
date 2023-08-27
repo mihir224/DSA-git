@@ -338,8 +338,7 @@ public class Heaps{
         }
 
         @Override
-        public int compareTo(Triad o) { // here o.first<this.first will give a positive value and thus first would be
-            // placed before o.first, resulting in descending order
+        public int compareTo(Triad o) {
             return Integer.compare(o.first,this.first);
         }
     }
@@ -500,7 +499,7 @@ public class Heaps{
     // equal, then we compare their element values and accordingly sort them in descending order
 
     //if D is the number of distinct elements in the array, then inserting D elements into the hashmap takes O(D) time and
-    // sorting the list of D distinct pairs takes O(DlogD) time thus overall time complexity is O(logD for hashmap+D+DlogD) and space is O(D)
+    // sorting the list of D distinct pairs takes O(DlogD) time thus overall time complexity is O(N for inserting in hashmap+D+DlogD + K) and space is O(2D)
 
     public int[] topKFrequent(int[] nums, int k) {
         HashMap<Integer,Integer> map=new HashMap<>();

@@ -7,14 +7,31 @@
     <list default="true" id="4e07f98a-bdf8-4667-b316-e4d57c4540bf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BST.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Algorithms.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Graphs/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Questions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Graphs/src/Traversals.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Graphs/src/Traversals.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Heaps/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Heaps/src/Questions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/out/production/Sorting/com/company/MergeSort.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Core Java/Challenges/src" beforeDir="false" afterPath="$PROJECT_DIR$/../Core Java/Challenges/src" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Array.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Array.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/BinaryTree$Triad.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/BinaryTree$Triad.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/BinaryTree.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/BinaryTree.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$KthLargest.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$KthLargest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$ListNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$ListNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair2.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair3.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Pair3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Triad.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$Triad.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$medianFinder.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps$medianFinder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Heaps.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache$DoublyLinkedList.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache$DoublyLinkedList.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache$ListNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache$ListNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LFUCache.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LRUCache.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL$LRUCache.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/LL.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Main$Triad.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Main$Triad.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/out/production/DSA Practice/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/src/Array.java" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/src/Array.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/src/BinarySearchTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/src/BinarySearchTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/src/BinaryTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/src/BinaryTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/src/Heaps.java" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/src/Heaps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DSA Practice/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../DSA Practice/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Sorting/src/com/company/MergeSort.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Stacks/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Stacks/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Stacks/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Stacks/src/Questions.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

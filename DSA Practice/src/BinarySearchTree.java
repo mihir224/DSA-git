@@ -71,10 +71,55 @@ class BinarySearchTree{
     //construct bst from preorder
     //https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/
 
-    //brute - first element is root, thus we can attach remaining elements to the root accordingly
-    //O(N2)
+    //brute - first element is root, thus we can attach remaining elements to the root accordingly. basically for each
+    // node, we find the index of the first el greater than the current node. this way, all of the el before this el would
+    // be smaller than the current node and will thus belong to the left sub tree. moreover every el on its right including
+    // this el would be larger than the current node and will thus belong to the right sub tree. thus we can recursively
+    // do this for every node to construct our tree. now in the worst case (skew tree) for eg: {3,3,3,3} here for N nodes
+    // there will be N levels, thus the tc would be O(N) recursive * O(N) for finding the greater el of each node
+    // thus O(N2) wc time
+
+    public TreeNode bstFromPreord1er(int[] preorder) {
+        return help2er(0,preorder.length-1,preorder);
+    }
+    public TreeNode help2er(int start, int end, int[] preorder){
+        if(start>end){
+            return null;
+        }
+        TreeNode root=new TreeNode(preorder[start]);
+        int i=0;
+        for(i=start;i<preorder.length;i++){
+            if(preorder[i]>preorder[start]){
+                break;
+            }
+        }
+        root.left=helper(start+1,i-1,preorder);
+        root.right=helper(i,end,preorder);
+        return root;
+    }
 
     //better - find inorder, use the technique used in bt to find bst (O(NlogN+N))
+    public TreeNode bstFromPreorde2r(int[] preorder) {
+        int n=preorder.length;
+        int[] inorder=Arrays.copyOfRange(preorder,0,n);
+        Arrays.sort(inorder);
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<n;i++){
+            map.put(inorder[i],i);
+        }
+        return helper(preorder,0,n-1,inorder,0,n-1,map);
+    }
+    public TreeNode helper(int[] preorder,int preStart,int preEnd, int[] inorder, int inStart, int inEnd,HashMap<Integer,Integer> map){
+        if(preStart>preEnd){
+            return null;
+        }
+        TreeNode root=new TreeNode(preorder[preStart]);
+        int inRootIndex=map.get(root.val);
+        int x=inRootIndex-inStart;
+        root.left=helper(preorder,preStart+1,preStart+x,inorder,inStart,inRootIndex-1,map);
+        root.right=helper(preorder,preStart+x+1,preEnd,inorder,inRootIndex+1,inEnd,map);
+        return root;
+    }
 
     //optimal - using upperbound technique O(N)
     public TreeNode bstFromPreorder(int[] preorder) {
@@ -93,6 +138,10 @@ class BinarySearchTree{
 
     //validate bst
     //https://leetcode.com/problems/validate-binary-search-tree
+
+    //better to ask the interviewer if every node is distinct or there can be duplicates. if there are duplicates, the
+    // condition of bst is modified to l<=n<r. in this question, there are only distinct elements, thus we use the
+    // conventional formula for bst which is non inclusive: l<n<r
     public boolean isValidBST(TreeNode root) {
         return isValid(root,Long.MIN_VALUE,Long.MAX_VALUE);
     }
@@ -263,7 +312,7 @@ class BinarySearchTree{
 
     //brute - find inorder, apply two pointer O(2N) time, O(N) space
 
-    //optimal - using modified bst iterator O(H) time and space wc O(N) both
+    //optimal - using modified bst iterator(inorder + reverse inorder) O(N) time, O(2H) space, wc O(N) both
 
     class BSTIterator2{
         Stack<TreeNode> st;
@@ -320,6 +369,54 @@ class BinarySearchTree{
 
     //find the max sum bst in a bt
     //https://leetcode.com/problems/maximum-sum-bst-in-binary-tree
+
+    //brute - check validity of each node, and if valid, find sum of all nodes
+    public int maxSumB1ST(TreeNode root) {
+        int[] max={0};
+        helper(root,max);
+        return max[0];
+    }
+    public void helper(TreeNode root, int[] max){
+        if(root==null){
+            return;
+        }
+        if(isValid(root,Integer.MIN_VALUE,Integer.MAX_VALUE)){
+            int[] sum=new int[1];
+            findSum(root,sum);
+            max[0]=Math.max(max[0],sum[0]);
+        }
+        helper(root.left,max);
+        helper(root.right,max);
+    }
+    public boolean isValid(TreeNode root, int lb, int ub){
+        if(root==null){
+            return true;
+        }
+        if(root.val>=ub||root.val<=lb){
+            return false;
+        }
+        return isValid(root.left,lb,root.val)&&isValid(root.right,root.val,ub);
+    }
+    public void findSum(TreeNode root, int[] sum){
+        if(root==null){
+            return;
+        }
+        sum[0]+=root.val;
+        findSum(root.left,sum);
+        findSum(root.right,sum);
+    }
+
+    //optimal
+
+    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
+    //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
+    // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
+    // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
+    // satisfies the above condition,we save that node's largest value on the left as the min of (smallest val on left, node's val)
+    // and its smallest value on right as max of (largest val on right, node's val). If it isn't a bst, we keep track of the max sum
+    // val up till now and set that node's greatest on left as int max and that node's smallest on right as int min so that there's
+    // no comparison further. If a root's left and right are null, we set its greatest and smallest to node.val
+    // DRY RUN FOR BETTER UNDERSTANDING.- really imp
     int max=0;
     class Node{
         int size;
@@ -348,11 +445,12 @@ class BinarySearchTree{
             // taken as root for a bst thus comparing the current node's val with the largest on right and we return the
             // smallest as the smallest val when this node's taken as root for a bst and thus comparing current node's val
             // with the smallest on left (smallest might lie on the left because we know that this is a valid bst and there
-            // might be a smaller val on left)
+            // might be a smaller val on left). This is basically done so that for leaf nodes we don't end up taking INT_MIN
+            // as the largest and INT_MAX as the smallest as this will end up validating all nodes as bst
         }
         return new Node(0,Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst, thus returning such extreme values for
-        // largest and smallest so that the parent is also deemed not a bst. //not a bst. since it is not a bst, we mark it's
-        // size as zero because its parent will also never be a bst and we don't have to use its size doesn't concern us
+        // largest and smallest so that the parent is also deemed not a bst. since it is not a bst, we mark it's
+        // size as zero because its parent will also never be a bst and we don't have to use its size as it doesn't concern us
     }
 
     //binary tree misc

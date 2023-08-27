@@ -6,11 +6,15 @@ public class MergeSort {
         int[] arr1={1,7,3,2,5,6};
         System.out.println(Arrays.toString(MergeSort(arr1)));
     }
+
+    //using external arrays to store the divided left and right arrays
     static int[] MergeSort(int[] arr){ //to sort parts of the array we use copy of the two parts of array
         if(arr.length==1){
             return arr;
         }
         int mid=arr.length/2;
+        //here we divide the array from start to mid-1 and mid to end. But in the inplace solution we do it from start till
+        // mid and from mid+1 till end.
         int[] left=MergeSort(Arrays.copyOfRange(arr, 0, mid)); //Arrays.copyOfRange() copies the contents of an existing array into a
         //new array within the specified range
         int[] right=MergeSort(Arrays.copyOfRange(arr, mid, arr.length));

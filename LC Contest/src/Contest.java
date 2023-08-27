@@ -811,4 +811,25 @@ public class Contest {
         }
         return count;
     }
+
+    //MMT array ques
+    //thief try to escape
+    //https://practice.geeksforgeeks.org/problems/thief-try-to-excape0710/1
+
+    static int totalJumps(int X, int Y, int N, int arr[])
+    {
+        //edge case - if we're able to jump the wall in first go, we don't take slippryness into account
+        int count=0;
+        for(int i=0;i<arr.length;i++){
+            int ht=arr[i];
+            while(ht>0){
+                count++;
+                if(X>=ht){
+                    break;
+                }
+                ht=ht-(X-Y);
+            }
+        }
+        return count;
+    }
 }

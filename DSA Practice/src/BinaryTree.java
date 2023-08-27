@@ -326,6 +326,41 @@ class BinaryTree{
         helperLV(root.right,list,level+1);
     }
 
+    //bfs
+    //storing each node with its level
+    ArrayList<Integer> leftVieqww(TreeNode root)
+    {
+        ArrayList<Integer> ans=new ArrayList<>();
+        Queue<PairLV> q=new LinkedList<>();
+        if(root==null){
+            return new ArrayList<>();
+        }
+        q.add(new PairLV(root,0));
+        while(!q.isEmpty()){
+            PairLV p=q.poll();
+            if(p.level==ans.size()){
+                ans.add(p.node.val);
+            }
+            if(p.node.left!=null){
+                q.add(new PairLV(p.node.left,p.level+1));
+            }
+            if(p.node.right!=null){
+                q.add(new PairLV(p.node.right,p.level+1));
+            }
+        }
+
+        return ans;
+    }
+    class PairLV{
+        TreeNode node;
+        int level;
+        public PairLV(TreeNode node, int level){
+            this.node=node;
+            this.level=level;
+        }
+
+    }
+
     //bottom view of binary tree
     //https://practice.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1
     public ArrayList <Integer> bottomView(TreeNode root)
@@ -388,7 +423,10 @@ class BinaryTree{
     //O(N*logN*logN*logN) tc, O(N) sc
     public List<List<Integer>> verticalTraversal(TreeNode root) {
         List<List<Integer>> ans=new ArrayList<>();
-        TreeMap<Integer,TreeMap<Integer,PriorityQueue>> map=new TreeMap<>(); //vertical,level,map. pq makes sure that overlapping nodes are added in a sorted manner for each level
+        TreeMap<Integer,TreeMap<Integer,PriorityQueue>> map=new TreeMap<>(); //vertical,level,map. pq makes sure that
+        // overlapping nodes (ie nodes at the same level) are added in a sorted manner for each level. we could've used a
+        // tree set here but that would've discarded duplicate elements
+
         Queue<Triad> q=new LinkedList<>();
         q.offer(new Triad(root,0,0));
         while(!q.isEmpty()){
@@ -755,12 +793,14 @@ class BinaryTree{
         return treeBuilder(preorder,0,preorder.length-1,inorder,0,inorder.length-1,map);
     }
     public TreeNode treeBuilder(int[] preorder, int preStart,int preEnd,int[] inorder,int inStart,int inEnd,HashMap<Integer,Integer> inorderMap){
+        //we can omit the inEnd from this function as it is not needed. when preStart goes out of bounds, inStart will
+        // also be out of bounds
         if(preStart>preEnd||inStart>inEnd){ //reached null
             return null;
         }
         TreeNode root=new TreeNode(preorder[preStart]);
         int rootIndex=inorderMap.get(preorder[preStart]);
-        int x=rootIndex-inStart; //number of elements in left subtree
+        int x=rootIndex-inStart; ////number of elements belonging to left subtree, these help us to partition preorder array
         root.left=treeBuilder(preorder,preStart+1,preStart+x,inorder,inStart,rootIndex-1,inorderMap);
         root.right=treeBuilder(preorder,preStart+x+1,preEnd,inorder,rootIndex+1,inEnd,inorderMap);
         return root;
@@ -793,6 +833,7 @@ class BinaryTree{
     //can use preorder in left subtree and reverse left order in right subtree to compare nodes and return true if
     // there's no mismatch
     public boolean isSymmetric(TreeNode root) {
+
         if(root==null){
             return false;
         }
@@ -923,28 +964,12 @@ class BinaryTree{
     //serialize-deserialize binary
     //https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
 
-    //Brute force - We use the valid bst function() to check whether a node is a valid bst or not. If it is, we first
-    // move left, and again check and if the current node is a valid bst, we traverse all the nodes of the tree with
-    // current node taken as its root and find their sum. Then we move right of the previous current node and do the same
-    // thing. We store the maximum sum and then return it at the end.
-    //O(N*N)tc - validate bst takes O(N) time and finding the sum of all nodes of the tree where the nth node is taken as root
-
-    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
-    //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
-    // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
-    // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
-    // satisfies the above condition,we save that node's largest value on the left as the min of (smallest val on left, node's val)
-    // and its smallest value on right as max of (largest val on right, node's val). If it isn't a bst, we keep track of the max sum
-    // val up till now and set that node's greatest on left as int max and that node's smallest on right as int min so that there's
-    // no comparison further. If a root's left and right are null, we set its greatest and smallest to node.val
-    // DRY RUN FOR BETTER UNDERSTANDING.- really imp
-
     //using level order traversal as the string
     public String serialize(TreeNode root) {
         if(root==null){
             return "";
         }
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb=new StringBuilder(); //using sb coz it is much faster than normal string
         Queue<TreeNode> q=new LinkedList<>();
         q.offer(root);
         while(!q.isEmpty()){
@@ -966,15 +991,6 @@ class BinaryTree{
         }
         Queue<TreeNode> q=new LinkedList<>();
         String[] st=data.split(" ");
-        Set<Integer> set=new HashSet<>();
-        set.add(1);
-        set.add(4);
-
-        set.remove(1);
-        for(int i:set){
-            System.out.println(i);
-        }
-
         TreeNode root=new TreeNode(Integer.parseInt(st[0]));
         q.offer(root);
         for(int i=1;i< st.length;i++){

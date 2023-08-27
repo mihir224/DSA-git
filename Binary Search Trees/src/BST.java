@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.Stack;
+import java.util.*;
 
 public class BST {
     public static class TreeNode {
@@ -364,13 +361,16 @@ public class BST {
                 first=prev;
                 mid=root;
             }
-            else{  //second violation
+            else{  //second violation. the reason why we take into account second violation is because if there are two violations,
+                // then it is certain that the second violation is the one denoting the swapped nodes and thus we consider that.
+                //to understand better, try dry run on eg: [1,3,null,null,2]
                 last=root;
             }
         }
         prev=root; //mark this root as prev and then go right
         helper4(root.right);
     }
+
 
     //size of largest bst in a bt
     //https://practice.geeksforgeeks.org/problems/largest-bst/1

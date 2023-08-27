@@ -1263,4 +1263,196 @@ class DP{
         }
         return dp[i]=ans;
     }
+    
+    //longest increasing path (dp on grid)
+    //https://leetcode.com/problems/longest-increasing-path-in-a-matrix
+
+    //dfs - TLE
+    public int longestIncreasingPath(int[][] matrix) {
+        int n=matrix.length;
+        int m=matrix[0].length;
+        int max=1;
+        int[] delrow={-1,0,1,0};
+        int[] delcol={0,1,0,-1};
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                max=Math.max(max,help1er(i,j,matrix,n,m,delrow,delcol));
+            }
+        }
+        return max;
+    }
+    public int help1er(int row, int col, int[][] matrix, int n, int m, int[] delrow,int[] delcol){
+        int maxLen=1;
+        int len=1;
+        for(int i=0;i<4;i++){
+            int nrow=row+delrow[i];
+            int ncol=col+delcol[i];
+            if(nrow<n&&nrow>=0&&ncol<m&&ncol>=0&&matrix[nrow][ncol]>matrix[row][col]){
+                len=1+help1er(nrow,ncol,matrix,n,m,delrow,delcol);
+                maxLen=Math.max(len,maxLen);
+            }
+        }
+        return maxLen;
+    }
+
+    //memoized
+    public int longestIncreasin2gPath(int[][] matrix) {
+        int n=matrix.length;
+        int m=matrix[0].length;
+        int max=1;
+        int[] delrow={-1,0,1,0};
+        int[] delcol={0,1,0,-1};
+        int[][] dp=new int[n][m];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                max=Math.max(max,helper(i,j,matrix,n,m,delrow,delcol,dp));
+            }
+        }
+        return max;
+    }
+    public int helper(int row, int col, int[][] matrix, int n, int m, int[] delrow,int[] delcol, int[][] dp){
+        if(dp[row][col]!=-1){
+            return dp[row][col];
+        }
+        int maxLen=1;
+        int len=1;
+        for(int i=0;i<4;i++){
+            int nrow=row+delrow[i];
+            int ncol=col+delcol[i];
+            if(nrow<n&&nrow>=0&&ncol<m&&ncol>=0&&matrix[nrow][ncol]>matrix[row][col]){
+                len=1+helper(nrow,ncol,matrix,n,m,delrow,delcol,dp);
+                maxLen=Math.max(len,maxLen);
+            }
+        }
+        return dp[row][col]=maxLen; //stores max len from a particular cell
+    }
+
+    //frog jump (leetcode)
+
+    //recursive - we start from the second stone (assuming the distance it took for us to come to this stone was 1) and then
+    // we try to recursively jump to the rest of the stones by taking prevJump cost as 1 and the next jump cost as
+    // k=stones[i]-stones[currentIndex]
+
+    public boolean canCross(int[] stones) {
+        return helper(1,1,stones);
+    }
+    public boolean helper(int currentIndex,int prevJump,int[] stones){
+        if(currentIndex==1&&stones[currentIndex]!=1){ //if the second stone isn't at 1 unit, we wouldn't be able to make
+            // the first jump with a cost of 1 unit (this is required as per ques) and thus we return false
+            return false;
+        }
+        if(currentIndex==stones.length-1){
+            return true;
+        }
+        for(int i=currentIndex+1;i<stones.length;i++){
+            int k=stones[i]-stones[currentIndex];
+            if(k==prevJump+1||k==prevJump-1||k==prevJump){
+                if(helper(i,k,stones)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //memoized
+
+    public boolean canCros1s(int[] stones) {
+        int n=stones.length;
+        int[][] dp=new int[n][1001];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(1,1,stones,dp)==1?true:false;
+    }
+    public int helper(int currentIndex,int prevJump,int[] stones,int[][] dp){
+        if(currentIndex==1&&stones[currentIndex]!=1){
+            return 0;
+        }
+        if(currentIndex==stones.length-1){
+            return 1;
+        }
+        if(dp[currentIndex][prevJump]!=-1){
+            return dp[currentIndex][prevJump];
+        }
+        for(int i=currentIndex+1;i<stones.length;i++){
+            int k=stones[i]-stones[currentIndex];
+            if(k==prevJump+1||k==prevJump-1||k==prevJump){
+                if(helper(i,k,stones,dp)==1){
+                    return dp[currentIndex][prevJump]=1;
+                }
+            }
+        }
+        return dp[currentIndex][prevJump]=0;
+    }
+
+    //reducing dishes
+    //https://leetcode.com/problems/reducing-dishes
+
+    //recursive - O(NlogN+2^N)
+    public int maxSatisfactio1n(int[] satisfaction) {
+        Arrays.sort(satisfaction); //sorting the given array to maximize profits
+        return helper1(0,1,satisfaction);
+    }
+    public int helper1(int i, int time, int[] satisfaction){
+        if(i==satisfaction.length){
+            return 0;
+        }
+        int ltc=satisfaction[i]*time;
+        int left=ltc+helper1(i+1,time+1,satisfaction);
+        int right=helper1(i+1,time,satisfaction);
+        return Math.max(left,right);
+    }
+
+    //memoization
+    public int maxSatisfaction(int[] satisfaction) {
+        Arrays.sort(satisfaction); //sorting the given array to maximize profits
+        int n=satisfaction.length;
+        int[][] dp=new int[n+1][n+2];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return help1er(0,1,satisfaction,dp);
+    }
+
+    public int help1er(int i, int time, int[] satisfaction,int[][] dp){
+        if(i==satisfaction.length){
+            return 0;
+        }
+        if(dp[i][time]!=-1){
+            return dp[i][time];
+        }
+        int ltc=satisfaction[i]*time;
+        int left=ltc+helper(i+1,time+1,satisfaction,dp);
+        int right=helper(i+1,time,satisfaction,dp);
+        return dp[i][time]=Math.max(left,right);
+    }
+
+    //tabulation
+    public int maxSatisf1action(int[] satisfaction) {
+        Arrays.sort(satisfaction); //sorting the given array to maximize profits
+        int n=satisfaction.length;
+        int ans=0;
+        int[][] dp=new int[n+1][n+2]; //time at max can be n+1, when i becomes n and thus to accomodate that case we take
+        // size of time as n+2
+        for(int i=n;i>=0;i--){
+            for(int j=n;j>=1;j--){
+                if(i==n){
+                    dp[i][j]=0;
+                }
+                else{
+                    int ltc=satisfaction[i]*j;
+                    int left=ltc+dp[i+1][j+1];
+                    int right=dp[i+1][j];
+                    dp[i][j]=Math.max(left,right);
+                }
+            }
+        }
+        return dp[0][1];
+    }
+
+
 }
