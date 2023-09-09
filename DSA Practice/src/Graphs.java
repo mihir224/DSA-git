@@ -810,5 +810,62 @@ class Graphs{
     }
 
 
+    //cheapest flight with k stops
+    //https://leetcode.com/problems/cheapest-flights-within-k-stops
+    class Solut1ion {
+        public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+            int[] dist=new int[n];
+            Arrays.fill(dist,(int)1e9);
+            ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
+            for(int i=0;i<n;i++){
+                adj.add(new ArrayList<>());
+            }
+            for(int[] flight:flights){
+                adj.get(flight[0]).add(new Pair(flight[1],flight[2]));
+            }
+            Queue<Triad> q=new LinkedList<>(); //not using dijsktra coz doing so might take the shortest path but with larger stops
+            q.offer(new Triad(0,src,0));
+            while(!q.isEmpty()){
+                Triad t=q.poll();
+                int dis=t.dist;
+                int node=t.node;
+                int stops=t.stops;
+                if(stops>k){ //can't go further, exhausted all stops and thus won't be updating cost of adj nodes.
+                    // if this is the dst, it's dist would've already been updated in the dist array
+                    continue;
+                }
+                for(Pair p:adj.get(node)){
+                    int adjNode=p.node;
+                    int adjWt=p.wt;
+                    if(dis+adjWt<dist[adjNode]){
+                        dist[adjNode]=dis+adjWt;
+                        q.offer(new Triad(dist[adjNode],adjNode,stops+1));
+                    }
+                }
+            }
+            return dist[dst]==(int)1e9?-1:dist[dst];
+
+        }
+        class Triad{
+            int dist;
+            int node;
+            int stops;
+            public Triad(int dist, int node, int stops){
+                this.dist=dist;
+                this.node=node;
+                this.stops=stops;
+            }
+        }
+        class Pair{
+            int node;
+            int wt;
+            public Pair(int node, int wt){
+                this.node=node;
+                this.wt=wt;
+            }
+        }
+    }
+
+
 
 }

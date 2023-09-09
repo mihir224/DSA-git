@@ -286,7 +286,9 @@ class LL{
 
     //optimal - 2
     //O(2M) - if M is the larger LL, in the wc when there's no intersection, dh1 would traverse the whole list1 and then
-    // again the whole list 2
+    // again the whole list
+
+    //if list 2 is larger, head2 starts b4 head 1. by the time head2 reaches end, head 1 would've covered the distance between them
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         if(headA==null||headB==null){
             return null;
@@ -294,6 +296,9 @@ class LL{
         ListNode dh1=headA;
         ListNode dh2=headB;
         while(dh1!=dh2){ //in case no intersection, both will eventually point to null together
+            //IMP
+            //it is necessary to perform the operations explicitly ie when a node reaches null, we put it at the other list's
+            // head in the next iteration and not in the same iteration. otherwise it can cause error in sync when there's no intersection
             dh1=dh1==null?headB:dh1.next;
             dh2=dh2==null?headA:dh2.next;
         }
@@ -926,6 +931,48 @@ class LL{
             newList.insert(node);
             freqMap.put(node.freq,newList);
         }
+    }
 
+    //segregate odd even valued elements
+    //https://practice.geeksforgeeks.org/problems/segregate-even-and-odd-nodes-in-a-linked-list5035/1
+    ListNode divide(int N, ListNode head){
+        ListNode current=head;
+        ListNode evenHead=null;
+        ListNode oddHead=null;
+        ListNode evenEnd=null;
+        ListNode oddEnd=null;
+        while(current!=null){
+            if(isEven(current.val)){
+                if(evenHead==null){ //first even node
+                    evenHead=current;
+                    evenEnd=evenHead;
+                }
+                else{
+                    evenEnd.next=current;
+                    evenEnd=current;
+                }
+            }
+            else {
+                if(oddHead==null){ //first odd
+                    oddHead=current;
+                    oddEnd=oddHead;
+                }
+                else{
+                    oddEnd.next=current;
+                    oddEnd=current;
+                }
+            }
+            current=current.next;
+        }
+        if(evenHead==null||oddHead==null){ //ie there were no even or odd elements
+            return head;
+        }
+        oddEnd.next=null;
+        evenEnd.next=oddHead;
+        head=evenHead;
+        return head;
+    }
+    public boolean isEven(int val){
+        return val%2==0;
     }
 }

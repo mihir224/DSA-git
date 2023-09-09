@@ -2,16 +2,79 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+//        HashMap<Pair, Integer> map=new HashMap<>();
+//        map.put(new Pair(3,5),99);
+//        System.out.println(map.containsKey(new Pair(3,5)));
+        int[] arr={1,2,4,5,2};
+            List<Integer> list=new ArrayList<>();
+            list.add(2);
+            list.add(3);
+            list.remove(3);
+            for(int i:list){
+                System.out.println(i);
+            }
+            Pair p=new Pair(2,"1234");
+            StringBuilder sb=new StringBuilder();
 
-        System.out.println((char)(4+'a'));
+//        ListNode node=new ListNode(1);
+//        ListNode a=new ListNode(2);
+//
+//        ListNode b=new ListNode(3);
+//        ListNode c=new ListNode(4);
+//
+//        ListNode d=new ListNode(5);
+//        ListNode head=node;
+//
+//        node.next=a;
+//        a.next=b;
+//        b.next=c;
+//        ListNode temp=node;
+//        c.next=d;
+//
+//        ListNode rev=reverseList(b);
+//        reverseList(rev);
+//
+//        while(temp!=null){
+//            System.out.println(temp.val);
+//            temp=temp.next;
+//        }
     }
-    static int test(int[] arr){
-        for(int i=0;i<arr.length;i++){
-            if(arr[i]!=i+1){
-                return i+1;
+    static class Pair{
+        int first;
+        String second;
+        public Pair(int first, String second){
+            this.first=first;
+            this.second=second;
+        }
+    }
+    public static ListNode reverseList(ListNode head) {
+        if(head==null){
+            return null;
+        }
+        ListNode prev=null;
+        ListNode present=head;
+        ListNode next=present.next;
+        while(present!=null){
+            present.next=prev;
+            prev=present;
+            present=next;
+            if(next!=null){
+                next=next.next;
             }
         }
-        return -1;
+        head=prev;
+        return head;
+    }
+    static class ListNode{
+        int val;
+        ListNode next;
+        public ListNode(){
+
+        }
+        public ListNode(int val){
+            this.val=val;
+        }
+
     }
     static class Triad implements Comparable<Triad>{
         int first;

@@ -2,6 +2,18 @@ import javax.lang.model.type.ArrayType;
 import java.util.*;
 
 class DP{
+    public class TreeNode {
+     int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+      TreeNode(int val, TreeNode left, TreeNode right) {
+          this.val = val;
+          this.left = left;
+          this.right = right;
+      }
+  }
     //max product sub-array
 
     //https://leetcode.com/problems/maximum-product-subarray/
@@ -562,8 +574,8 @@ class DP{
 
     //recursive
 
-    //we have to also consider the case when sum is 0 and the 0 is present in the array because in that case along with
-    // an empty subset, the subset containing 0's also count. for eg if sum and 0 and there's a 0 in the array then the
+    //we have to also consider the case when sum is 0 and 0 is present in the array because in that case along with
+    // an empty subset, the subset containing 0's also count. for eg if sum is 0 and there's a 0 in the array then the
     // number of valid subsets are 2 - {} and {0}. This count increases by a factor of 2. Like if there were 2 zeroes instead
     // of one in the array then the count would've been 4 - {},{0},{0},{0,0}. Thus while picking an element, we skip it if
     // it is zero and after the recursive function has returned its answer, we multiply it by 2^(no. of zeroes) to get the
@@ -944,11 +956,12 @@ class DP{
     // into two parts - ie [1,3] and [5]. Now since we sorted the array, these are independent because making a partition
     // from either of them would not affect the cost of the other sub problem (like if we make a partition at 5, it will
     // only take into account cost of the stick to which it belongs. If however in the cuts array we included 2 after 5,
-    // then the sub problem would've given us the wrong ans because recursively when we would've made a partition at 2,
-    // it would've returned us the cost of the stick to which 2 belongs which in this case is greater than the cost of
-    // the stick to which 5 belongs and thus it would've given us the wrong cost). Since we're using the partitioning ie
+    // then the sub problem would've given us the wrong ans because even though 2 belongs to the left partition, we would
+    // unnecessarily be adding its cost in the right partition. Moreover if we had made a cut in sequene 4, 2, 5 without
+    // sorting the cuts array then 5's recursive call would've been i=5 and j=5 where j+1 would point us to 2 and i-1 would
+    // point us to 4 giving us the cost 2-4 which is wrong. Since we're using the partitioning ie
     // MCM approach, there'll be three pointers, i at the start, j at the end and k from i till j. Now to find the length
-    // of the stick (ie cost) while making partition at a particular position, we use this analogy. We try to append a 0
+    // of the stick (ie cost) while making partition at a particular position, we use this analogy: We try to append a 0
     // at the start of the partitions array and the length 7 at the end. Now if we try to make a partition, say at position
     // 4 then we can basically obtain the length of the stick at that point as cuts[j+1]-cuts[i-1]. in this case that would
     // be 7-0 ie 7 since i is at 1 and j is at 5.
@@ -1330,6 +1343,10 @@ class DP{
         return dp[row][col]=maxLen; //stores max len from a particular cell
     }
 
+    //we don't use greedy in these (dp) problems because there is non uniformity. a path might seem better at first but
+    // in some cases following that path would make us miss out on other paths which were far better. thus it is imp for
+    // us to explore all paths
+
     //frog jump (leetcode)
 
     //recursive - we start from the second stone (assuming the distance it took for us to come to this stone was 1) and then
@@ -1454,5 +1471,1311 @@ class DP{
         return dp[0][1];
     }
 
+    //frog jump (coding ninja)
+    //https://www.codingninjas.com/studio/problems/frog-jump_3621012?utm_source=striver&utm_medium=website&utm_campaign=a_zcoursetuf&leftPanelTab=1
 
+    //greedy approach doesn't work here (we might ignore the best path)
+
+    //brute approach with dp (2d dp) gives tle
+    //basically we start with the 0th step and in each recursive call we store the height of the prev step. then we
+    // recursively try to go to the next step and next of next step and whatever is the min from that, we add it to our
+    // ans which stores the difference between the height of the current step and the prev step. moreover initially since
+    // we're at the 0th step, so for that step we store the prev step's ht as -1
+
+    public static int frogJump(int n, int heights[]) {
+        int[][] dp=new int[n][1002];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(0,-1,heights,n,dp);
+    }
+    public static int helper(int i, int prevVal, int[] heights, int n,int[][] dp){
+        if(i>=n){
+            return Integer.MAX_VALUE;
+        }
+        if(dp[i][prevVal+1]!=-1){
+            return dp[i][prevVal+1];
+        }
+        if(i==n-1){
+            return dp[i][prevVal+1]=Math.abs(heights[i]-prevVal);
+        }
+        int ans=0;
+        if(prevVal!=-1){
+            ans+=Math.abs(heights[i]-prevVal);
+        }
+        return dp[i][prevVal+1]=ans+Math.min(helper(i+1,heights[i],heights,n,dp),helper(i+2,heights[i],heights,n,dp));
+    }
+
+    //optimal (1d dp) O(N)
+    //basically b4 jumping, we check beforehand if its possible to jump and then only we jump. thus no need to store prev
+    // val in this
+    
+    //IMP!!!!!!
+    //this is the ideal way of solving such problems. we beforehand check if we can go further or not and find values accordingly
+    public static int frogJ2ump(int n, int heights[]) {
+        int[] dp=new int[n];
+        Arrays.fill(dp,-1);
+        return helper(0,n,heights,dp);
+    }
+    public static int helper(int i, int n, int[] heights, int[] dp){
+        if(i==n-1){
+            return 0;
+        }
+        if(dp[i]!=-1){
+            return dp[i];
+        }
+        int left=Integer.MAX_VALUE;
+        int right=Integer.MAX_VALUE;
+        if(i+1<n){ //can jump 1 step ahead
+            left=Math.abs(heights[i]-heights[i+1])+helper(i+1,n,heights,dp);
+        }
+        if(i+2<n){ //can jump 2 steps ahead
+            right=Math.abs(heights[i]-heights[i+2])+helper(i+2,n,heights,dp);
+        }
+        return dp[i]=Math.min(left,right);
+    }
+
+    //frog jump k distance
+    //https://www.codingninjas.com/studio/problems/minimal-cost_8180930?utm_source=striver&utm_medium=website&utm_campaign=a_zcoursetuf
+    
+    public static int minimizeCost(int n, int k, int []height){
+        int[] dp=new int[n+1];
+        Arrays.fill(dp,-1);
+        return helper(0,height,k,n,dp);
+    }
+    public static int helper(int index, int[] height, int k, int n, int[] dp){
+        if(index==n-1){
+            return 0;
+        }
+        if(dp[index]!=-1){
+            return dp[index];
+        }
+        int ans=Integer.MAX_VALUE;
+        for(int i=1;i<=k;i++){
+            if(index+i<n){
+                ans=Math.min(ans,Math.abs(height[index]-height[index+i])+helper(index+i,height,k,n,dp));
+            }
+        }
+        return dp[index]=ans;
+    }
+    
+    //house robber
+    //https://leetcode.com/problems/house-robber
+
+    //basically for each index, if we decide to pick an el, we cannot take it's adjacent el. thus whenever we pick an el,
+    // we make the recursive call at i+2 otherwise at i+1
+    public int rob(int[] nums) {
+        int[] dp=new int[nums.length];
+        Arrays.fill(dp,-1);
+        return help2er(0,nums,dp);
+    }
+    public int help2er(int i, int[] nums, int[] dp){
+        if(i==nums.length-1){
+            return nums[i];
+        }
+        if(dp[i]!=-1){
+            return dp[i];
+        }
+        int pick=nums[i];
+        if(i+2<nums.length){
+            pick+=help2er(i+2,nums,dp);
+        }
+        int notPick=help2er(i+1,nums,dp);
+        return dp[i]=Math.max(pick,notPick);
+    }
+
+    //house robber 2
+    //https://leetcode.com/problems/house-robber-ii/
+
+    //if we're even considering picking the 1st el, we can never pick the last el. thus we call the helper for two separate cases,
+    // one where 1st el is excluded from the arr and one where the last el is excluded and return the max from both of these cases.
+    // this way, max from all possibilities would be returned
+
+    public int r1b(int[] nums) {
+        int n=nums.length;
+        if(n==1){
+            return nums[0];
+        }
+        int[] dp1=new int[nums.length-1];
+        Arrays.fill(dp1,-1);
+        int[] dp2=new int[nums.length];
+        Arrays.fill(dp2,-1);
+        return Math.max(helperStart(0,nums,n-1,dp1),helperEnd(1,nums,n,dp2));
+    }
+    public int helperStart(int i, int[] nums, int n, int[] dp1){
+        if(i==n-1){
+            return nums[i];
+        }
+        if(dp1[i]!=-1){
+            return dp1[i];
+        }
+        int pick=nums[i];
+        if(i+2<n){
+            pick+=helperStart(i+2,nums,n,dp1);
+        }
+        int notPick=helperStart(i+1,nums,n,dp1);
+        return dp1[i]=Math.max(pick,notPick);
+    }
+    public int helperEnd(int i, int[] nums, int n, int[] dp2){
+        if(i==n-1){
+            return nums[i];
+        }
+        if(dp2[i]!=-1){
+            return dp2[i];
+        }
+        int pick=nums[i];
+        if(i+2<n){
+            pick+=helperEnd(i+2,nums,n,dp2);
+        }
+        int notPick=helperEnd(i+1,nums,n,dp2);
+        return dp2[i]=Math.max(pick,notPick);
+    }
+
+    //ninja's training
+    //https://www.codingninjas.com/studio/problems/ninja%E2%80%99s-training_3621003?leftPanelTab=0
+
+    //memoization (gives stack overflow error for large test cases)
+    public static int ninjaTra2ining(int n, int points[][]) {
+        int[][] dp=new int[n+1][4];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+
+        return helper(0,-1,points,n,dp);
+    }
+    public static int helper(int i, int prev, int points[][],int n,int[][] dp){
+        if(dp[i][prev+1]!=-1){
+            return dp[i][prev+1];
+        }if(i==n){
+            return 0;
+        }
+        int ans=Integer.MIN_VALUE;
+        for(int k=0;k<3;k++){
+            if(k!=prev){
+                ans=Math.max(ans, points[i][k]+helper(i+1,k,points,n,dp));
+            }
+        }
+        return dp[i][prev+1]=ans;
+    }
+
+    //tabulation (works fine)
+    public static int ninjaTraining(int n, int points[][]) {
+        int[][] dp=new int[n+1][4];
+        for(int i=n;i>=0;i--){
+            for(int prev=2;prev>=-1;prev--){
+                if(i==n){
+                    dp[i][prev+1]=0;
+                }
+                else{
+                    int ans=0;
+                    for(int k=0;k<3;k++){
+                        if(k!=prev)
+                            ans=Math.max(ans,points[i][k]+dp[i+1][k+1]);
+                    }
+                    dp[i][prev+1]=ans;
+                }
+            }
+        }
+        return dp[0][-1+1];
+    }
+    
+    //triangle min path sum
+    //https://leetcode.com/problems/triangle
+
+    //using DFS + dp
+
+    //memoization
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int n=triangle.size();
+        int[][] dp=new int[n][n];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(0,0,triangle,n,dp);
+    }
+    public int helper(int i, int j, List<List<Integer>> triangle, int n, int[][] dp){
+        if(i==n-1){
+            return triangle.get(i).get(j);
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int left=helper(i+1,j,triangle,n,dp);
+        int right=helper(i+1,j+1,triangle,n,dp);
+        return dp[i][j]=triangle.get(i).get(j)+Math.min(left,right);
+    }
+
+    //tabulation
+    public int minimumTot1al(List<List<Integer>> triangle) {
+        int n=triangle.size();
+        int[][] dp=new int[n][n];
+        for(int i=n-1;i>=0;i--){
+            for(int j=i;j>=0;j--){
+                if(i==n-1){
+                    dp[i][j]=triangle.get(i).get(j);
+                }
+                else{
+                    int left=dp[i+1][j];
+                    int right=dp[i+1][j+1];
+                    dp[i][j]=triangle.get(i).get(j)+Math.min(left,right);
+                }
+            }
+        }
+        return dp[0][0];
+    }
+
+    //minimum falling path sum
+    //https://leetcode.com/problems/minimum-falling-path-sum
+
+    //memoization
+    public int minFall1ingPathSum(int[][] matrix) {
+        int n=matrix.length;
+        int ans=Integer.MAX_VALUE;
+        int[][] dp=new int[n][n];
+        for(int[] arr:dp){
+            Arrays.fill(arr,Integer.MIN_VALUE);
+        }
+        for(int i=0;i<n;i++){
+            ans=Math.min(ans,helper(n-1,i,matrix,dp));
+        }
+        return ans;
+    }
+    public int helper(int i, int j, int[][] matrix,int[][] dp){
+        if(i<0||j<0||j>=matrix.length){
+            return Integer.MAX_VALUE;
+        }
+        if(i==0){
+            return dp[i][j]=matrix[i][j];
+        }
+        if(dp[i][j]!=Integer.MIN_VALUE){
+            return dp[i][j];
+        }
+        int top=helper(i-1,j,matrix,dp);
+        int topLeft=helper(i-1,j-1,matrix,dp);
+        int topRight=helper(i-1,j+1,matrix,dp);
+        return dp[i][j]=matrix[i][j]+Math.min(top,Math.min(topLeft,topRight));
+    }
+
+    //tabulation
+    public int minFallingPathSum(int[][] matrix) {
+        int n=matrix.length;
+        int ans=Integer.MAX_VALUE;
+        int[][] dp=new int[n][n];
+        for(int j=0;j<n;j++){
+            dp[0][j]=matrix[0][j];
+        }
+        for(int i=1;i<n;i++){
+            for(int j=0;j<n;j++){
+                int up=matrix[i][j]+dp[i-1][j];
+                int topLeft=matrix[i][j];
+                if(j>0){
+                    topLeft+=dp[i-1][j-1];
+                }
+                else{
+                    topLeft=Integer.MAX_VALUE;
+                }
+                int topRight=matrix[i][j];
+                if(j<n-1){
+                    topRight+=dp[i-1][j+1];
+                }
+                else{
+                    topRight=Integer.MAX_VALUE;
+                }
+                dp[i][j]=Math.min(up,Math.min(topLeft,topRight));
+            }
+        }
+        for(int j=0;j<n;j++){
+            ans=Math.min(ans,dp[n-1][j]);
+        }
+        return ans;
+    }
+
+    //cherry pickup (really nice ques)
+    //https://leetcode.com/problems/cherry-pickup-ii/
+
+    //O(M*N*N)*9, since there are M*N*N states and for each state we have 9 possible recursive calls
+
+    //gotta make sure that if alice and bob are at the same cell then we pick the chocolates at that cell only once
+
+    // we could've recursively found the mps for both alice and bob but for that we'd have to trace the path in both cases
+    // and take the common cell only once which could get cumbersome and thus we try to write the recurrence together
+
+    //we move both alice and bob in one step. for any movement of alice, bob has 3 movements (in total 9 combinations)
+
+    //recursive
+    public int cherryPickup(int[][] grid) {
+        int m=grid.length;
+        int n=grid[0].length;
+        return helper(0,0,n-1,grid,m,n);
+    }
+    public int helper(int i, int j1, int j2, int[][] grid, int m, int n){
+        if(j1<0||j1>=n||j2<0||j2>=n){ //in case robo1 or 2 go out of bounds
+            return 0;
+        }
+        if(i==m-1){
+            if(j1==j2){
+                return grid[i][j1];
+            }
+            return grid[i][j1]+grid[i][j2];
+        }
+        int ans=0;
+        for(int del1=-1;del1<=1;del1++){
+            for(int del2=-1;del2<=1;del2++){
+                if(j1==j2){
+                    ans=Math.max(ans,grid[i][j1]+helper(i+1,j1+del1,j2+del2,grid,m,n));
+                }
+                else{
+                    ans=Math.max(ans,grid[i][j1]+grid[i][j2]+helper(i+1,j1+del1,j2+del2,grid,m,n));
+                }
+            }
+        }
+        return ans;
+    }
+
+    //memoized
+    public int cherryP1ickup(int[][] grid) {
+        int m=grid.length;
+        int n=grid[0].length;
+        int[][][] dp=new int[m][n][n];
+        //O(M*N*N)
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        return helper(0,0,n-1,grid,m,n,dp);
+    }
+    public int helper(int i, int j1, int j2, int[][] grid, int m, int n,int[][][] dp){
+        if(j1<0||j1>=n||j2<0||j2>=n){ //in case robo1 or 2 go out of bounds
+            return 0;
+        }
+        if(i==m-1){
+            if(j1==j2){
+                return grid[i][j1];
+            }
+            return grid[i][j1]+grid[i][j2];
+        }
+        if(dp[i][j1][j2]!=-1){
+            return dp[i][j1][j2];
+        }
+        int ans=0;
+        for(int del1=-1;del1<=1;del1++){
+            for(int del2=-1;del2<=1;del2++){
+                if(j1==j2){
+                    ans=Math.max(ans,grid[i][j1]+helper(i+1,j1+del1,j2+del2,grid,m,n,dp));
+                }
+                else{
+                    ans=Math.max(ans,grid[i][j1]+grid[i][j2]+helper(i+1,j1+del1,j2+del2,grid,m,n,dp));
+                }
+            }
+        }
+        return dp[i][j1][j2]=ans;
+    }
+
+    //house robber 3
+    //very good ques based on dp on trees
+    //https://leetcode.com/problems/house-robber-iii
+
+    public int rob(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        HashMap<Pair,Integer> map=new HashMap<>();
+        return Math.max(helper(root,true,map),helper(root,false,map));
+    }
+    public int helper(TreeNode root, boolean flag,HashMap<Pair,Integer> map){
+        if(root==null){
+            return 0;
+        }
+        Pair key=new Pair(root,flag);
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        int ans=0;
+        int left=0;
+        int right=0;
+        if(flag){
+            int left0=helper(root.left,!flag,map);
+            int right0=helper(root.right,!flag,map);
+            int left1=helper(root.left,true,map);
+            int right1=helper(root.right,true,map);
+            ans=Math.max(root.val+left0+right0,left1+right1);
+        }
+        else{
+            left+=helper(root.left,!flag,map);
+            right+=helper(root.right,!flag,map);
+            ans=left+right;
+        }
+        map.put(key,ans);
+        return ans;
+    }
+    class Pair {
+        TreeNode root;
+        boolean flag;
+        public Pair(TreeNode root, boolean flag){
+            this.root=root;
+            this.flag=flag;
+        }
+        @Override
+        public boolean equals(Object o){
+            Pair obj=(Pair)o;
+            return this.root.val==obj.root.val&&this.flag==obj.flag;
+        }
+        @Override
+        public int hashCode(){
+            return Objects.hash(this.root,this.flag);
+        }
+    }
+
+    //burst balloons
+    //https://leetcode.com/problems/burst-balloons/
+
+    //recursive
+    public int maxCoins1(int[] nums) {
+        int n=nums.length;
+        List<Integer> list=new ArrayList<>();
+        for(int i:nums){
+            list.add(i);
+        }
+        list.add(0,1);
+        list.add(1);
+        return helper(1,n,list);
+    }
+    public int helper(int i, int j, List<Integer> list){
+        if(i>j){
+            return 0;
+        }
+        int ans=Integer.MIN_VALUE;
+        for(int k=i;k<=j;k++){
+            int tempAns=(list.get(i-1)*list.get(k)*list.get(j+1))+helper(i,k-1,list)+helper(k+1,j,list);
+            ans=Math.max(tempAns,ans);
+        }
+        return ans;
+    }
+
+    //memoized
+    public int maxCoins(int[] nums) {
+        int n=nums.length;
+        List<Integer> list=new ArrayList<>();
+        for(int i:nums){
+            list.add(i);
+        }
+        list.add(0,1);
+        list.add(1);
+        int[][] dp=new int[n+1][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(1,n,list,dp);
+    }
+    public int helper(int i, int j, List<Integer> list,int[][] dp){
+        if(i>j){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int ans=Integer.MIN_VALUE;
+        for(int k=i;k<=j;k++){
+            int tempAns=(list.get(i-1)*list.get(k)*list.get(j+1))+helper(i,k-1,list,dp)+helper(k+1,j,list,dp);
+            ans=Math.max(tempAns,ans);
+        }
+        return dp[i][j]=ans;
+    }
+
+    //tabulation
+    public int maxCoi1ns(int[] nums) {
+        int n=nums.length;
+        List<Integer> list=new ArrayList<>();
+        for(int i:nums){
+            list.add(i);
+        }
+        list.add(0,1);
+        list.add(1);
+        int[][] dp=new int[n+2][n+2];
+        for(int i=n;i>=1;i--){
+            for(int j=1;j<=n;j++){
+                if(i>j){
+                    dp[i][j]=0;
+                }
+                else{
+                    int ans=Integer.MIN_VALUE;
+                    for(int k=i;k<=j;k++){
+                        int tempAns=(list.get(i-1)*list.get(k)*list.get(j+1))+dp[i][k-1]+dp[k+1][j];
+                        ans=Math.max(tempAns,ans);
+                    }
+                    dp[i][j]=ans;
+                }
+            }
+        }
+        return dp[1][n];
+    }
+
+    //wildcard matching
+    //https://leetcode.com/problems/wildcard-matching
+
+    //recursive
+    public boolean i1sMatch(String s, String p) {
+        int n=s.length();
+        int m=p.length();
+        return helper(n,m,s,p)==1?true:false;
+    }
+    public int helper(int n, int m, String s, String p){
+        if(n==0&&m==0){
+            return 1;
+        }
+        if(n==0){
+            for(int i=0;i<m;i++){
+                if(p.charAt(i)!='*'){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+        if(m==0){
+            return 0;
+        }
+        if(s.charAt(n-1)==p.charAt(m-1)||(p.charAt(m-1)=='?')){
+            return helper(n-1,m-1,s,p);
+        }
+        else{
+            if(p.charAt(m-1)=='*'){
+                return Math.max(helper(n-1,m,s,p),helper(n,m-1,s,p));
+            }
+        }
+        return 0;
+    }
+
+    //memoized
+    public boolean isMatch(String s, String p) {
+        int n=s.length();
+        int m=p.length();
+        int[][] dp=new int[n+1][m+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(n,m,s,p,dp)==1?true:false;
+    }
+    public int helper(int n, int m, String s, String p,int[][] dp){
+        if(n==0&&m==0){
+            return 1;
+        }
+        if(n==0){
+            for(int i=0;i<m;i++){
+                if(p.charAt(i)!='*'){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+        if(m==0){
+            return 0;
+        }
+        if(dp[n][m]!=-1){
+            return dp[n][m];
+        }
+        if(s.charAt(n-1)==p.charAt(m-1)||(p.charAt(m-1)=='?')){
+            return dp[n][m]=helper(n-1,m-1,s,p,dp);
+        }
+        else{
+            if(p.charAt(m-1)=='*'){
+                return dp[n][m]=Math.max(helper(n-1,m,s,p,dp),helper(n,m-1,s,p,dp));
+            }
+        }
+        return dp[n][m]=0;
+    }
+
+    //tabulation
+    public boolean isMatc1h(String s, String p) {
+        int n=s.length();
+        int m=p.length();
+        int[][] dp=new int[n+1][m+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<=m;j++){
+                if(i==0&&j==0){
+                    dp[i][j]=1;
+                }
+                else{
+                    int k=0;
+                    if(i==0){
+                        for(k=0;k<j;k++){
+                            if(p.charAt(k)!='*'){
+                                break;
+                            }
+                        }
+                        if(k!=j){
+                            dp[i][j]=0;
+                        }
+                        else{
+                            dp[i][j]=1;
+                        }
+                    }
+                    else if(j==0){
+                        dp[i][j]=0;
+                    }
+                }
+            }
+        }
+        for(int i=1;i<n+1;i++){
+            for(int j=1;j<m+1;j++){
+                if(s.charAt(i-1)==p.charAt(j-1)||p.charAt(j-1)=='?'){
+                    dp[i][j]=dp[i-1][j-1];
+                }
+                else{
+                    if(p.charAt(j-1)=='*'){
+                        dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+                    }
+                    else{
+                        dp[i][j]=0;
+                    }
+                }
+            }
+        }
+        return dp[n][m]==1?true:false;
+    }
+
+    //distinct subsequences
+    //https://leetcode.com/problems/distinct-subsequences/
+
+    //naive approach (using pick/not pick approach)
+    public int numD1s1nct(String s, String t) {
+        return helper(0,"",s,t);
+    }
+    public int helper(int i, String str, String s, String t){
+        if(str.equals(t)){
+            return 1;
+        }
+        if(i==s.length()){
+            return 0;
+        }
+        int left=helper(i+1,str+s.charAt(i),s,t);
+        int right=helper(i+1,str,s,t);
+        return left+right;
+    }
+
+    //memoized
+    public static final int MOD=(int)1e9+7;
+    public int numDistinct(String s, String t) {
+        int n=s.length();
+        int m=t.length();
+        int[][] dp=new int[n+1][m+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper12(n,m,s,t,dp)%MOD;
+    }
+    public int helper12(int n, int m, String s, String t,int[][] dp){
+        if(m==0){
+            return 1;
+        }
+        if(n==0){
+            return 0;
+        }
+        if(dp[n][m]!=-1){
+            return dp[n][m];
+        }
+        if(s.charAt(n-1)==t.charAt(m-1)){
+            return dp[n][m]=helper12(n-1,m-1,s,t,dp)%MOD+helper12(n-1,m,s,t,dp)%MOD;
+        }
+        return dp[n][m]=helper(n-1,m,s,t,dp)%MOD;
+    }
+
+    //tabulation
+    public int numD1stinct(String s, String t) {
+        int n=s.length();
+        int m=t.length();
+        int[][] dp=new int[n+1][m+1];
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<=m;j++){
+                if(j==0){
+                    dp[i][j]=1;
+                }
+                else if(i==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(s.charAt(i-1)==t.charAt(j-1)){
+                    dp[i][j]=dp[i-1][j-1]%MOD+dp[i-1][j]%MOD;
+                }
+                else{
+                    dp[i][j]=dp[i-1][j]%MOD;
+                }
+            }
+        }
+        return dp[n][m]%MOD;
+    }
+
+    //best time to buy/sell stock 2
+    //https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+
+    //recursive
+    //logic - when we're allowed to buy, we won't be allowed to sell and when we're allowed to sell we won't be allowed
+    // to buy. the same logic has been implemented below
+    //2^n
+    public int maxProfit(int[] prices) {
+        return helpe1r(0,1,prices);
+    }
+    public int helpe1r(int i,int flag, int[] prices){
+        if(i==prices.length){
+            return 0;
+        }
+        if(flag==1){ //can buy
+            return Math.max(-prices[i]+helpe1r(i+1,1-flag,prices),0+helpe1r(i+1,flag,prices));
+        }
+        return Math.max(prices[i]+helpe1r(i+1,1-flag,prices),0+helpe1r(i+1,flag,prices));
+    }
+
+    //memoized
+    public int maxProfi1t(int[] prices) {
+        int n=prices.length;
+        int[][] dp=new int[n+1][2];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return he1lper(0,1,prices,dp);
+    }
+    public int he1lper(int i,int flag, int[] prices, int[][] dp){
+        if(i==prices.length){
+            return 0;
+        }
+        if(dp[i][flag]!=-1){
+            return dp[i][flag];
+        }
+        if(flag==1){ //can buy
+            return dp[i][flag]=Math.max(-prices[i]+he1lper(i+1,1-flag,prices,dp),0+he1lper(i+1,flag,prices,dp));
+        }
+        return dp[i][flag]=Math.max(prices[i]+he1lper(i+1,1-flag,prices,dp),0+helper(i+1,flag,prices,dp));
+    }
+
+    //tabulation
+    public int max1Profit(int[] prices) {
+        int n=prices.length;
+        int[][] dp=new int[n+1][2];
+        for(int i=n;i>=0;i--){
+            for(int j=0;j<=1;j++){
+                if(i==n){
+                    dp[i][j]=0;
+                }
+                else{
+                    if(j==1){
+                        dp[i][j]=Math.max(-prices[i]+dp[i+1][1-j],0+dp[i+1][j]);
+                    }
+                    else{
+                        dp[i][j]=Math.max(prices[i]+dp[i+1][1-j],0+dp[i+1][j]);
+                    }
+                }
+            }
+        }
+        return dp[0][1];
+    }
+
+
+    //best time to buy and sell stock 3
+    //https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+
+    //a transaction means both buy and sell operation combined
+
+    //recursive
+    public int maxPro2fit(int[] prices) {
+        return help2er(0,1,0,prices);
+    }
+    public int help2er(int i, int flag, int count, int[] prices){
+        if(i==prices.length||count==2){
+            return 0;
+        }
+        if(flag==1){
+            return Math.max(-prices[i]+help2er(i+1,1-flag,count,prices),0+help2er(i+1,flag,count,prices));
+        }
+        return Math.max(prices[i]+help2er(i+1,1-flag,count+1,prices),0+help2er(i+1,flag,count,prices));
+    }
+
+    //memoized
+    public int maxProfit3(int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][3]; //count can be 0,1,2 ie it can have 3 values
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        return helpe3r(0,1,0,prices,dp);
+    }
+    public int helpe3r(int i, int flag, int count, int[] prices, int[][][] dp){
+        if(i==prices.length||count==2){
+            return 0;
+        }
+        if(dp[i][flag][count]!=-1){
+            return dp[i][flag][count];
+        }
+        if(flag==1){
+            return dp[i][flag][count]=Math.max(-prices[i]+helpe3r(i+1,1-flag,count,prices,dp),0+helpe3r(i+1,flag,count,prices,dp));
+        }
+        return dp[i][flag][count]=Math.max(prices[i]+helpe3r(i+1,1-flag,count+1,prices,dp),0+helpe3r(i+1,flag,count,prices,dp));
+    }
+
+
+    //tabulation
+    public int max3Profit(int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][3]; //count can be 0,1,2 ie it can have 3 values
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        for(int i=n;i>=0;i--){
+            for(int flag=0;flag<=1;flag++){
+                for(int count=2;count>=0;count--){
+                    if(i==n||count==2){
+                        dp[i][flag][count]=0;
+                    }
+                    else{
+                        if(flag==1){
+                            dp[i][flag][count]=Math.max(-prices[i]+dp[i+1][1-flag][count],0+dp[i+1][flag][count]);
+                        }
+                        else{
+                            dp[i][flag][count]=Math.max(prices[i]+dp[i+1][1-flag][count+1],0+dp[i+1][flag][count]);
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][1][0];
+    }
+
+    //btbss 4
+    //https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv
+    //a transaction means each buy/sell operation
+
+    //recursive
+    public int maxProfit(int k, int[] prices) {
+        return helper(0,1,0,k,prices);
+    }
+    public int helper(int i, int flag, int count, int k, int[] prices){
+        if(i==prices.length||count==2*k){
+            return 0;
+        }
+        if(flag==1){
+            return Math.max(-prices[i]+helper(i+1,1-flag,count+1,k,prices),0+helper(i+1,flag,count,k,prices));
+        }
+        return Math.max(prices[i]+helper(i+1,1-flag,count+1,k,prices),0+helper(i+1,flag,count,k,prices));
+    }
+
+    //memoized
+    public int maxPr4ofit(int k, int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][(2*k)+1];
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        return helper(0,1,0,k,prices,dp);
+    }
+    public int helper(int i, int flag, int count, int k, int[] prices,int[][][] dp){
+        if(i==prices.length||count==2*k){
+            return 0;
+        }
+        if(dp[i][flag][count]!=-1){
+            return dp[i][flag][count];
+        }
+        if(flag==1){
+            return dp[i][flag][count]=Math.max(-prices[i]+helper(i+1,1-flag,count+1,k,prices,dp),0+helper(i+1,flag,count,k,prices,dp));
+        }
+        return dp[i][flag][count]=Math.max(prices[i]+helper(i+1,1-flag,count+1,k,prices,dp),0+helper(i+1,flag,count,k,prices,dp));
+    }
+
+    //tabulation
+    public int max4Profit(int k, int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][(2*k)+1];
+        for(int i=n;i>=0;i--){
+            for(int flag=0;flag<=1;flag++){
+                for(int count=0;count<=2*k;count++){
+                    if(i==n||count==2*k){
+                        dp[i][flag][count]=0;
+                    }
+                    else{
+                        if(flag==1){
+                            dp[i][flag][count]=Math.max(-prices[i]+dp[i+1][1-flag][count+1],0+dp[i+1][flag][count]);
+                        }
+                        else{
+                            dp[i][flag][count]=Math.max(prices[i]+dp[i+1][1-flag][count+1],0+dp[i+1][flag][count]);
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][1][0];
+    }
+
+    //best time to buy and sell stock with cooldown
+    //https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown
+
+    //recursive
+    public int maxProfi5t(int[] prices) {
+        return help5er(0,1,0,prices);
+    }
+    public int help5er(int i, int flag, int coolDown, int[] prices){
+        if(i==prices.length){
+            return 0;
+        }
+        if(coolDown==1){
+            return help5er(i+1,1,0,prices);
+        }
+        if(flag==1){
+            return Math.max(-prices[i]+help5er(i+1,1-flag,coolDown,prices),0+help5er(i+1,flag,coolDown,prices));
+        }
+        return Math.max(prices[i]+help5er(i+1,1-flag,1,prices),0+help5er(i+1,flag,coolDown,prices));
+    }
+
+    //memoization
+    public int maxPro5fit(int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][2];
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        return helper5(0,1,0,prices,dp);
+    }
+    public int helper5(int i, int flag, int coolDown, int[] prices,int[][][] dp){
+        if(i==prices.length){
+            return 0;
+        }
+        if(coolDown==1){
+            return helper5(i+1,1,0,prices,dp);
+        }
+        if(dp[i][flag][coolDown]!=-1){
+            return dp[i][flag][coolDown];
+        }
+        if(flag==1){
+            return dp[i][flag][coolDown]=Math.max(-prices[i]+helper5(i+1,1-flag,coolDown,prices,dp),0+helper5(i+1,flag,coolDown,prices,dp));
+        }
+        return dp[i][flag][coolDown]=Math.max(prices[i]+helper5(i+1,1-flag,1,prices,dp),0+helper5(i+1,flag,coolDown,prices,dp));
+    }
+
+    //tabulation
+    public int maxPr5ofit(int[] prices) {
+        int n=prices.length;
+        int[][][] dp=new int[n+1][2][2];
+        for(int i=n;i>=0;i--){
+            for(int flag=0;flag<=1;flag++){
+                for(int coolDown=0;coolDown<=1;coolDown++){
+                    if(i==n){
+                        dp[i][flag][coolDown]=0;
+                    }
+                    else if(coolDown==1){
+                        dp[i][flag][coolDown]=dp[i+1][1][0];
+                    }
+                    else{
+                        if(flag==1){
+                            dp[i][flag][coolDown]=Math.max(-prices[i]+dp[i+1][1-flag][coolDown],0+dp[i+1][flag][coolDown]);
+                        }
+                        else{
+                            dp[i][flag][coolDown]=Math.max(prices[i]+dp[i+1][1-flag][1],0+dp[i+1][flag][coolDown]);
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][1][0];
+    }
+    public int helper(int i, int flag, int coolDown, int[] prices,int[][][] dp){
+        if(i==prices.length){
+            return 0;
+        }
+        if(coolDown==1){
+            return helper(i+1,1,0,prices,dp);
+        }
+        if(dp[i][flag][coolDown]!=-1){
+            return dp[i][flag][coolDown];
+        }
+        if(flag==1){
+            return dp[i][flag][coolDown]=Math.max(-prices[i]+helper(i+1,1-flag,coolDown,prices,dp),0+helper(i+1,flag,coolDown,prices,dp));
+        }
+        return dp[i][flag][coolDown]=Math.max(prices[i]+helper(i+1,1-flag,1,prices,dp),0+helper(i+1,flag,coolDown,prices,dp));
+    }
+
+    //checking palindrome using recursion (used in pp2 problem to tabulate every value of i and j to check whether substring(i,j)
+    // is palindromic)
+    class Solution {
+        int isPalindrome(String S) {
+            int n=S.length();
+            return helper(0,n-1,S);
+        }
+        public int helper(int i, int j, String s){
+            if(i>=j){
+                return 1; //only one char, thus palindrome
+            }
+            if(s.charAt(i)==s.charAt(j)&&((j-i+1==2)||helper(i+1,j-1,s)==1)){
+                return 1;
+            }
+            return 0;
+        }
+    };
+
+    //above palindrome dp logic is used in pp2 leetcode (this will not give TLE)
+
+    public int minCut(String s) {
+        int n=s.length();
+        int[][] dp=new int[n][n];
+        int[][] palinDp=generatePalindrome(s);
+        for(int i=n-1;i>=0;i--){
+            for(int j=0;j<=n-1;j++){
+                if(i>=j||palinDp[i][j]==1){
+                    dp[i][j]=0;
+                }
+                else{
+                    int ans=Integer.MAX_VALUE;
+                    for(int k=i;k<j;k++){
+                        int tempAns=1+dp[i][k]+dp[k+1][j];
+                        ans=Math.min(ans,tempAns);
+                    }
+                    dp[i][j]=ans;
+                }
+            }
+        }
+        return dp[0][n-1];
+    }
+    //for each val of i and j, this function will prepare a table stating whether substring(i,j) is a palindrome or not
+    int[][] generatePalindrome(String s) {
+        int n=s.length();
+        int[][] dp=new int[n][n];
+        for(int i=n-1;i>=0;i--){
+            for(int j=0;j<=n-1;j++){
+                if(i>=j){
+                    dp[i][j]=1;
+                }
+                else{
+                    if(s.charAt(i)==s.charAt(j)&&(j-i+1==2||dp[i+1][j-1]==1)){
+                        dp[i][j]=1;
+                    }
+                    else{
+                        dp[i][j]=0;
+                    }
+                }
+            }
+        }
+        return dp;
+    }
+
+    //partition array for max sum
+    //https://leetcode.com/problems/partition-array-for-maximum-sum
+
+    //recursive
+    public int maxSumAfterPartitioning(int[] arr, int k) {
+        return helper(0,arr,k);
+    }
+    public int helper(int i, int[] arr, int k){
+        if(i==arr.length){
+            return 0;
+        }
+        int len=0;
+        int max=Integer.MIN_VALUE;
+        int ans=0;
+        for(int j=i;j<Math.min(arr.length,i+k);j++){
+            len++;
+            max=Math.max(max,arr[j]); //max till current el of the sub array
+            int tempAns=(len*max)+helper(j+1,arr,k);
+            ans=Math.max(ans,tempAns);
+        }
+        return ans;
+    }
+
+    //memoization
+    public int maxSumAfterParti1tioning(int[] arr, int k) {
+        int n=arr.length;
+        int[] dp=new int[n+1];
+        Arrays.fill(dp,-1);
+        return helper(0,arr,k,dp);
+    }
+    public int helper(int i, int[] arr, int k, int[] dp){
+        if(i==arr.length){
+            return 0;
+        }
+        if(dp[i]!=-1){
+            return dp[i];
+        }
+        int len=0;
+        int max=Integer.MIN_VALUE;
+        int ans=0;
+        for(int j=i;j<Math.min(arr.length,i+k);j++){
+            len++;
+            max=Math.max(max,arr[j]); //max till current el of the sub array
+            int tempAns=(len*max)+helper(j+1,arr,k,dp);
+            ans=Math.max(ans,tempAns);
+        }
+        return dp[i]=ans;
+    }
+
+    //tabulation
+    public int maxSumAfterPartiti1oning(int[] arr, int k) {
+        int n=arr.length;
+        int[] dp=new int[n+1];
+        Arrays.fill(dp,-1);
+        for(int i=n;i>=0;i--){
+            if(i==n){
+                dp[i]=0;
+            }
+            else{
+                int len=0;
+                int max=Integer.MIN_VALUE;
+                int ans=0;
+                for(int j=i;j<Math.min(n,i+k);j++){
+                    len++;
+                    max=Math.max(max,arr[j]);
+                    int tempAns=len*max+dp[j+1];
+                    ans=Math.max(ans,tempAns);
+                }
+                dp[i]=ans;
+            }
+        }
+        return dp[0];
+    }
+
+    //questions related to LIS
+
+    //largest divisible subset
+    //https://leetcode.com/problems/largest-divisible-subset/
+
+    public List<Integer> largestDivisibleSubset(int[] nums) {
+        Arrays.sort(nums);
+        List<Integer> list=new ArrayList<>();
+        int n=nums.length;
+        int[] dp=new int[n];
+        Arrays.fill(dp,1);
+        int[] hash=new int[n];
+        for(int i=0;i<nums.length;i++){
+            hash[i]=i;
+        }
+        int max=0;
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<i;prev++){
+                if((nums[i]%nums[prev]==0)&&((1+dp[prev])>dp[i])){
+                    dp[i]=1+dp[prev];
+                    hash[i]=prev;
+                }
+            }
+            if(dp[i]>dp[max]){
+                max=i;
+            }
+        }
+        while(max!=hash[max]){
+            list.add(0,nums[max]);
+            max=hash[max];
+        }
+        list.add(0,nums[max]);
+        return list;
+    }
+
+    //longest string chain
+    //https://leetcode.com/problems/longest-string-chain/
+    public int longestStrChain(String[] words) {
+        int n=words.length;
+        int[] dp=new int[n];
+        int max=0;
+        Arrays.sort(words,(x,y)->x.length()-y.length());
+        Arrays.fill(dp,1);
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<i;prev++){
+                if(isPredecessor(words[prev],words[i])){
+                    dp[i]=Math.max(dp[i],1+dp[prev]);
+                }
+            }
+            max=Math.max(max,dp[i]);
+        }
+        return max;
+    }
+    public boolean isPredecessor(String a, String b){
+        int m=a.length();
+        int n=b.length();
+        if(n!=1+m){
+            return false;
+        }
+        int i=0;
+        int j=0;
+        while(i<m&&j<n){
+            if(a.charAt(i)==b.charAt(j)){
+                i++;
+                j++;
+            }
+            else{
+                j++;
+            }
+        }
+        if(i==m){ //we don't explicitly check if j has reached n or j+1==n because in every case it will always have only either of these 2 values
+            return true;
+        }
+        return false;
+    }
+
+    //longest bitonic sequence
+    //https://practice.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/1
+    public int LongestBitonicSequence(int[] nums)
+    {
+        int n=nums.length;
+        int[] LIS=new int[n];
+        int[] LDS=new int[n];
+        int max=0;
+        Arrays.fill(LIS,1);
+        Arrays.fill(LDS,1);
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<i;prev++){
+                if(nums[i]>nums[prev]){
+                    LIS[i]=Math.max(LIS[i],1+LIS[prev]);
+                }
+            }
+        }
+        for(int i=n-1;i>=0;i--){
+            for(int prev=n-1;prev>i;prev--){
+                if(nums[i]>nums[prev]){
+                    LDS[i]=Math.max(LDS[i],1+LDS[prev]);
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            max=Math.max(max,LIS[i]+LDS[i]-1);
+        }
+        return max;
+    }
+
+    //number of LIS
+    //https://leetcode.com/problems/number-of-longest-increasing-subsequence/
+    public int findNumberOfLIS(int[] nums) {
+        int n=nums.length;
+        int[] dp=new int[n];
+        int[] count=new int[n];
+        int cnt=0;
+        int max=Integer.MIN_VALUE;
+        Arrays.fill(dp,1);
+        Arrays.fill(count,1);
+        for(int i=0;i<n;i++){
+            for(int prev=0;prev<i;prev++){
+                if(nums[i]>nums[prev]){
+                    if(1+dp[prev]>dp[i]){
+                        dp[i]=1+dp[prev];
+                        count[i]=count[prev]; //the number of variations of the prev el that gave us a better length for current el
+                    }
+                    else if(dp[i]==1+dp[prev]){
+                        count[i]+=count[prev]; //adding different number of variations of prev el adding 1 to which will give us the same len for the current el that we already have
+                    }
+                }
+            }
+            max=Math.max(dp[i],max);
+        }
+        for(int i=0;i<n;i++){
+            if(dp[i]==max){
+                cnt+=count[i];
+            }
+        }
+        return cnt;
+    }
 }

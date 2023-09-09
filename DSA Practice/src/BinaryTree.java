@@ -1009,4 +1009,23 @@ class BinaryTree{
         return root;
     }
 
+    int[] count={0};
+    public int equalNodes(TreeNode root){
+        helper(root);
+        return count[0];
+    }
+    public int helper(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        int leftSum=helper(root.left);
+        int rightSum=helper(root.right);
+        if(leftSum!=rightSum&&leftSum==(-1)*rightSum){
+            count[0]++;
+        }
+        return leftSum+rightSum+root.val;
+    }
+
+
+
 }

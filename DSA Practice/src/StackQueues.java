@@ -805,4 +805,58 @@ class StackQueues{
         return potentialCeleb;
     }
 
+    int formPolygon(int n, int[] sides){
+        int[] nge=nextGreater(sides);
+        int[] pge=prevGreater(sides);
+        int sum=0;
+        HashSet<Integer> set=new HashSet<>();
+        for(int i=0;i<sides.length;i++){
+            if(pge[i]==-1||nge[i]==n){
+                set.add(sides[i]);
+            }
+        }
+        for(int i:sides){
+            if(!set.contains(i)){
+                sum+=i;
+            }
+        }
+        return sum;
+    }
+    public int[] prevGreater(int[] nums) {
+        int n=nums.length;
+        int[] pge=new int[n];
+        Stack<Integer> st=new Stack<>();
+        for(int i=0;i<n;i++){
+            while(!st.isEmpty()&&nums[st.peek()]<=nums[i]){
+                st.pop();
+            }
+            if(st.isEmpty()){
+                pge[i]=-1;
+            }
+            else{
+                pge[i]=st.peek();
+            }
+            st.push(i);
+        }
+        return pge;
+    }
+    public int[] nextGreater(int[] heights)
+    {
+        int n=heights.length;
+        int[] nge=new int[n];
+        Stack<Integer> st=new Stack<>();
+        for(int i=n-1;i>=0;i--){
+            while(!st.isEmpty()&&heights[st.peek()]<=heights[i]){
+                st.pop();
+            }
+            if(st.isEmpty()){
+                nge[i]=n;
+            }
+            else{
+                nge[i]=st.peek();
+            }
+            st.push(i);
+        }
+        return nge;
+    }
 }
