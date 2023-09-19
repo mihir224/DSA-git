@@ -195,7 +195,7 @@ public class Heaps{
     //O(NlogK) - for inserting N elements in the min heap of size k, O(1) space
 
     public int findKthLargest(int[] nums, int k) {
-        PriorityQueue<Integer> minHeap=new PriorityQueue<>();
+        PriorityQueue<Integer> minHeap=new PriorityQueue<>(Collections.reverseOrder());
         for(int i:nums){
             minHeap.offer(i);
             if(minHeap.size()>k){

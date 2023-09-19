@@ -1110,8 +1110,12 @@ public class Array {
             if (map.containsKey(s.charAt(right))) {
                 left = Math.max(left, map.get(s.charAt(right)) + 1); //there might be a case when we find an existent char
                 // in the map but left is already ahead of that.this can happen because we aren't removing any el from the
-                // map like we were doing previously in the set. thus we always take max of left and s.charAt(i)+1. ie there
-                // can be a case when the duplicate el isn't part of the current substring between left and right
+                // map like we were doing previously in the set. consider the eg: abcaabc, now when we skip left over the
+                // second 'a', when right eventually moves, it points to the second occurrence of b. now since the map still
+                // contains the prev b, there might be a possibility that we might end up moving left backwards(after the
+                // first occurrence) even though the first 'b' was never in our range. thus we always take max of left and
+                // s.charAt(i)+1. ie there can be a case when the duplicate el isn't part of the current substring between
+                // left and right
             }
             map.put(s.charAt(right), right); //storing the most recent occurrence of current element in the map
             ans = Math.max(ans, right - left + 1);

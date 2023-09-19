@@ -5,17 +5,15 @@ public class Main {
 //        HashMap<Pair, Integer> map=new HashMap<>();
 //        map.put(new Pair(3,5),99);
 //        System.out.println(map.containsKey(new Pair(3,5)));
-        int[] arr={1,2,4,5,2};
-            List<Integer> list=new ArrayList<>();
-            list.add(2);
-            list.add(3);
-            list.remove(3);
-            for(int i:list){
-                System.out.println(i);
-            }
-            Pair p=new Pair(2,"1234");
-            StringBuilder sb=new StringBuilder();
-
+//            int[] arr={1,2,4,5,2};
+//            List<String> s=new ArrayList<>();
+//            s.add("MIHIR");
+//            HashMap<Integer,List<Integer>> map=new HashMap<>();
+//            List<Integer> list=map.getOrDefault(5,new ArrayList<>());
+//
+//        System.out.println(s.contains("MIHIR"));
+        StringBuilder sb=new StringBuilder("balle");
+        System.out.println(sb.toString());
 //        ListNode node=new ListNode(1);
 //        ListNode a=new ListNode(2);
 //

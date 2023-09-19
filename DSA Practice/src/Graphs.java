@@ -866,6 +866,126 @@ class Graphs{
         }
     }
 
+    //minimum path effort
+    //https://leetcode.com/problems/path-with-minimum-effort/
 
+    //brute - recursively find all possible paths to dst tracking the maxEffort in each and returning min out of all paths
 
+    public int minimumEf1fortPath(int[][] heights) {
+        int m=heights.length;
+        int n=heights[0].length;
+        int[] delrow={-1,0,1,0};
+        int[] delcol={0,1,0,-1};
+        boolean[][] vis=new boolean[m][n];
+        vis[0][0]=true;
+        int ans=helper(0,0,heights,heights[0][0],m,n,delrow,delcol,vis,Integer.MIN_VALUE);
+        return ans==Integer.MIN_VALUE?0:ans;
+    }
+    public int helper(int i, int j, int[][] heights,int prev,int m,int n,int[] delrow,int[] delcol,boolean[][] vis,int max){
+        if(i==m-1&&j==n-1){
+            if(prev==-1){
+                return 0;
+            }
+            return Math.max(max,Math.abs(heights[i][j]-prev));
+        }
+        int ans=Integer.MAX_VALUE;
+        for(int idx=0;idx<4;idx++){
+            int nrow=i+delrow[idx];
+            int ncol=j+delcol[idx];
+            if(nrow>=0&&ncol>=0&&nrow<m&&ncol<n&&!vis[nrow][ncol]){
+                vis[nrow][ncol]=true;
+                ans=Math.min(ans,helper(nrow,ncol,heights,heights[i][j],m,n,delrow,delcol,vis,Math.max(max,Math.abs(heights[i][j]-prev))));
+                vis[nrow][ncol]=false;
+            }
+        }
+        return ans;
+    }
+
+    //optimal - using dijkstra's algo
+
+    class Triad{
+        int maxEffort;
+        int row;
+        int col;
+        public Triad(int maxEffort, int row, int col){
+            this.maxEffort=maxEffort;
+            this.row=row;
+            this.col=col;
+        }
+    }
+    public int minimumEffortPath(int[][] heights) {
+        PriorityQueue<Triad> pq=new PriorityQueue<>((a,b)->a.maxEffort-b.maxEffort);
+        pq.offer(new Triad(0,0,0));
+        TreeMap<Integer,List<Integer>> map=new TreeMap<>();
+        int n=heights.length;
+        int m=heights[0].length;
+        int[] delrow={-1,0,1,0};
+        int[] delcol={0,1,0,-1};
+        int[][] dist=new int[n][m];
+        for(int [] arr:dist){
+            Arrays.fill(arr,(int)1e9);
+        }
+        dist[0][0]=0;
+        while(!pq.isEmpty()){
+            Triad t=pq.poll();
+            int maxEffort=t.maxEffort;
+            int row=t.row;
+            int col=t.col;
+            if(row==n-1&&col==m-1){
+                return maxEffort;
+            }
+            for(int i=0;i<4;i++){
+                int nrow=row+delrow[i];
+                int ncol=col+delcol[i];
+                if(nrow>=0&&nrow<n&&ncol>=0&&ncol<m){
+                    int newEffort=Math.max(maxEffort,Math.abs(heights[row][col]-heights[nrow][ncol]));
+                    if(newEffort<dist[nrow][ncol]){
+
+                        dist[nrow][ncol]=newEffort;
+                        pq.offer(new Triad(newEffort,nrow,ncol));
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    //shortest path visiting all nodes
+    //https://leetcode.com/problems/shortest-path-visiting-all-nodes/
+
+    public int shortestPathLength(int[][] graph) {
+        int v=graph.length;
+        if(v==0||v==1){
+            return 0;
+        }
+        int count=0;
+        int lastBit=(1<<graph.length)-1;
+        boolean[][] vis=new boolean[v+1][lastBit+1];
+        Queue<Pair> q=new LinkedList<>();
+        for(int i=0;i<v;i++){
+            int bit=(1<<i)|0;
+            q.offer(new Pair(i, bit));
+            vis[i][bit]=true;
+        }
+        while(!q.isEmpty()){
+            count++;
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                Pair p=q.poll();
+                int node=p.first;
+                int nodeBit=p.second;
+                for(int adjNode:graph[node]){
+                    int newNeighborBit=(1<<adjNode)|nodeBit;
+                    if(newNeighborBit==lastBit){ //visited all nodes
+                        return count;
+                    }
+                    if(!vis[adjNode][newNeighborBit]){
+                        vis[adjNode][newNeighborBit]=true;
+                        q.offer(new Pair(adjNode,newNeighborBit));
+                    }
+                }
+            }
+        }
+        return count;
+    }
 }

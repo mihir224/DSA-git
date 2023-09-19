@@ -2797,4 +2797,78 @@ class DP {
         }
         return cnt;
     }
+
+    //paths in matrix whose sum is divisible by k
+    //https://leetcode.com/problems/paths-in-matrix-whose-sum-is-divisible-by-k/
+    //int MOD=(int)1e9+7;
+
+    //brute (using sum as the third parameter, gives MLE on memoization)
+    public int numberOfPatlhs(int[][] grid, int k) {
+        int m=grid.length;
+        int n=grid[0].length;
+        return helper(m-1,n-1,0,k,grid,m,n);
+
+    }
+    public int helper(int i, int j, int sum, int k, int[][] grid,int m, int n){
+        if(i==0&&j==0){
+            if((grid[i][j]+sum)%k==0){
+                return 1;
+            }
+            return 0;
+        }
+        if(i<0||j<0){
+            return 0;
+        }
+        return helper(i-1,j,sum+grid[i][j],k,grid,m,n)+helper(i,j-1,sum+grid[i][j],k,grid,m,n);
+    }
+
+    //optimal using remainder as the third parameter - (rem+current_cell)/k gives rem of sum till current cell when div
+    // by k
+
+    ///recursive
+    public int numb1rOfPaths(int[][] grid, int k) {
+        int m=grid.length;
+        int n=grid[0].length;
+        return helper(0,0,0,grid,k,m,n);
+    }
+    public int helper(int i, int j, int rem, int[][] grid, int k,int m, int n){
+        if(i==m-1&&j==n-1){
+            if((rem+grid[i][j])%k==0){
+                return 1;
+            }
+            return 0;
+        }
+        if(i>=m||j>=n){
+            return 0;
+        }
+        return helper(i+1,j,(rem+grid[i][j])%k,grid,k,m,n)+helper(i,j+1,(rem+grid[i][j])%k,grid,k,m,n);
+    }
+
+    //memoized
+    public int numberOfPat1hs(int[][] grid, int k) {
+        int m=grid.length;
+        int n=grid[0].length;
+        int[][][] dp=new int[m][n][k];
+        for(int[][] arr:dp){
+            for(int[] nums:arr){
+                Arrays.fill(nums,-1);
+            }
+        }
+        return helper(0,0,0,grid,k,m,n,dp)%MOD;
+    }
+    public int helper(int i, int j, int rem, int[][] grid, int k,int m, int n,int[][][] dp){
+        if(i==m-1&&j==n-1){
+            if((rem+grid[i][j])%k==0){
+                return 1;
+            }
+            return 0;
+        }
+        if(i>=m||j>=n){
+            return 0;
+        }
+        if(dp[i][j][rem]!=-1){
+            return dp[i][j][rem];
+        }
+        return dp[i][j][rem]=(helper(i+1,j,(rem+grid[i][j])%k,grid,k,m,n,dp)%MOD)+(helper(i,j+1,(rem+grid[i][j])%k,grid,k,m,n,dp)%MOD);
+    }
 }
