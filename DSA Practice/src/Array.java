@@ -245,35 +245,58 @@ public class Array {
     //merge overlapping intervals
     //https://leetcode.com/problems/merge-intervals/
 
-    //brute O(NlogN+N2) tc, O(N) sc
-    //sort the intervals array, then iterate over all the intervals and for each interval check if there are any valid
-    // intervals on its right that can be merged to it and if there are, then merge them with the current interval.
-    // After merging all valid intervals, add the resultant to a DS and then move to the next interval
+    //brute O(NlogN+N2) tc, O(2N) sc
+    //basically we start from the first interval, merge it with the second if possible and then try to merge the result with the remaining array. uses a separate list to temporarily store the merged interval that is to be compared with the rest of the array intervals
 
     public int[][] merge1(int[][] intervals) {
         int n=intervals.length;
         Arrays.sort(intervals,(a,b)->a[0]-b[0]);
-        List<int[]> list=new ArrayList<>();
-        int lb=intervals[0][0];
-        int ub=intervals[0][1];
+        boolean[] vis=new boolean[n];
+        List<Pair> list=new ArrayList<>();
+        List<Pair> ans=new ArrayList<>();
         for(int i=0;i<n;i++){
+            if(vis[i]){
+                continue;
+            }
+            list=new ArrayList<>();
+            list.add(new Pair(intervals[i][0],intervals[i][1]));
             for(int j=i+1;j<n;j++){
-                if(ub>=intervals[j][0]){
-                    ub=Math.max(ub,intervals[j][1]);
+                Pair pj=new Pair(intervals[j][0],intervals[j][1]);
+                if(canMerge(list.get(0),pj)){
+                    vis[j]=true;
+                    list.set(0,new Pair(list.get(0).first,Math.max(list.get(0).second,pj.second)));
                 }
                 else{
-                    list.add(new int[]{lb,ub});
-                    lb=intervals[j][0];
-                    ub=intervals[j][1];
+                    ans.add(list.get(0));
+                    break;
                 }
             }
         }
-        list.add(new int[]{lb,ub});
-
-        return list.toArray(new int[list.size()][2]);
+        ans.add(list.get(0));
+        int[][] ansArr=new int[ans.size()][2];
+        for(int i=0;i<ansArr.length;i++){
+            ansArr[i][0]=ans.get(i).first;
+            ansArr[i][1]=ans.get(i).second;
+        }
+        return ansArr;
+    }
+    public boolean canMerge(Pair i, Pair j){
+        if(i.second>=j.first){
+            return true;
+        }
+        return false;
+    }
+    class Pair{
+        int first;
+        int second;
+        public Pair(int first, int second){
+            this.first=first;
+            this.second=second;
+        }
     }
 
     //optimal O(NlogN+N) tc, O(N) sc
+    //optimization of brute
 
     public int[][] merge(int[][] intervals) {
         List<int[]> list = new ArrayList<>();

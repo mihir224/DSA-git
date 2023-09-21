@@ -255,4 +255,49 @@ public class SlidingWindow {
         }
         return s.substring(start,ans+start);
     }
+
+    //min operations to reduce x to zero
+    //https://leetcode.com/problems/minimum-operations-to-reduce-x-to-zero
+
+    public int minOperations(int[] nums, int x) {
+        int n=nums.length;
+        int sum=0;
+        int count=Integer.MAX_VALUE;
+        for(int i:nums){
+            sum+=i;
+        }
+        int targetVal=sum-x;
+        if(targetVal<0){
+            return -1;
+        }
+        if(targetVal==0){
+            return n;
+        }
+        int i=0;
+        int j=0;
+        int prefSum=0;
+        while(j<n){
+            prefSum+=nums[j];
+            if(prefSum<targetVal){
+                j++;
+            }
+            else if(prefSum==targetVal){
+                int len=j-i+1;
+                count=Math.min(count,n-len);
+                j++;
+            }
+            else if(prefSum>targetVal) {
+                while(prefSum>targetVal){
+                    prefSum-=nums[i];
+                    i++;
+                    if(prefSum==targetVal){
+                        int len=j-i+1;
+                        count=Math.min(count,n-len);
+                    }
+                }
+                j++;
+            }
+        }
+        return count==Integer.MAX_VALUE?-1:count;
+    }
 }

@@ -12,8 +12,16 @@ public class Main {
 //            List<Integer> list=map.getOrDefault(5,new ArrayList<>());
 //
 //        System.out.println(s.contains("MIHIR"));
-        StringBuilder sb=new StringBuilder("balle");
-        System.out.println(sb.toString());
+//        StringBuilder sb=new StringBuilder("balle");
+//        System.out.println(sb.toString());
+        Set<List<Integer>> set=new HashSet<>();
+        List<Integer> lis=new ArrayList<>();
+        lis.add(2);
+        lis.set(0,5);
+        for(int i:lis){
+            System.out.println(i);
+        }
+
 //        ListNode node=new ListNode(1);
 //        ListNode a=new ListNode(2);
 //

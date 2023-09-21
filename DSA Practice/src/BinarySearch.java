@@ -345,7 +345,9 @@ class BinarySearch{
             // in arr1 are more than el in arr2, & if we take zero el from arr1, we'd have to take all el from arr2
             // in the left half, this can lead to an error because in this case leftLen would be greater than size of arr2.
             //for eg, if there are 6 elements in arr1 and 4 elements in arr2, then leftLen would be 5. Now if we consider not taking
-            // any el from arr1, then we'd have to take 5 from arr2 and thus cuts2 would be 5-0=5. this way arr2[cuts2-1]=arr2[4] would give out of bounds error
+            // any el from arr1, then we'd have to take 5 from arr2 and thus cuts2 would be 5-0=5. this way arr2[cuts2-1]=arr2[4]
+            // would give out of bounds error. moreover, the same thing would happen if we try to take all elements from arr1
+            // in the left half because in this case leftlen-cuts1 would give a negative val.
             return findMedianSortedArrays1(nums2,nums1);
         }
         int leftLen=(n+m+1)/2;
