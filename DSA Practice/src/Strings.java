@@ -610,7 +610,12 @@ class Strings {
                     // next possible suffix that might exist as prefix ie ac. how will we do this? by going to the 2nd element of
                     // the prefix aaa in this case. in most cases doing index-- here would work but this doesn't work for "adcadde"
                     // and we might get a wrong val. so basically doing index=lps[index-1] will make sure that we go to 0th
-                    // index in case the suffix is entirely different from prefix. like in the previous case, when b and c
+                    // index in case the suffix is entirely different from prefix. see what happens here is that this takes
+                    // care of the case discussed above as well it takes care of the cases like suppose index is at c in abc
+                    // and i is at a in abd so here we'd see that c is not equal to d implying that there's no prefix as abd.
+                    // so this will make sure that we also check if there's a prefix like bd or not. now in this particular
+                    // case lps[index-1] would take us straight to 0 because we know for a fact that there's no possibility
+                    // of prefix bd because no prefix in the given string starts with b.  like in the previous case, when b and c
                     // were in comparison, we knew that although aab and aac were not same, but then we also checked aa of
                     // the prefix with ac of the suffix because both of them started with a so there was a possibility that
                     // they could've been same. now since we knew both of them started with a, we directly compared the second
@@ -637,7 +642,7 @@ class Strings {
     //https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic
 
     //this is different from the dp problem coz in that problem we had the flexibility to place elements anywhere in the
-    // given string to form it a palindrome. We can't do the same here.
+    // given string to make it a palindrome. We can't do the same here.
     //O(N)time and space
 
     //Here we use the concept of pattern matching (KMP algo). We are only allowed to make insertions in the front of the
