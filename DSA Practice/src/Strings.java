@@ -11,10 +11,37 @@ class Strings {
     //can use the s.trim() function to clamp all the leading and trailing spaces but that won't remove the spaces in
     // between different words. thus this is not feasible and we try the soln below
 
-    //brutel for leetcode problem where the trailing spaces before and after each word are taken into account
+    //brute for leetcode problem where the trailing spaces before and after each word are taken into account
     // and removed accordingly - just extract the words from s and put them in a stack, then retrieve them and attach in ans
 
     //O(N) time and space
+    public String rev1erseWords(String s) {
+        Stack<String> st=new Stack<>();
+        int n=s.length();
+        String ans="";
+        int i=0;
+        while(i<n){
+            while(i<n&&s.charAt(i)==' '){
+                i++;
+            }
+            if(i==n){
+                break;
+            }
+            int j=i+1;
+            while(j<n&&s.charAt(j)!=' '){
+                j++;
+            }
+            st.push(s.substring(i,j));
+            i=j+1;
+        }
+        if(!st.isEmpty()){
+            ans=st.pop();
+        }
+        while(!st.isEmpty()){
+            ans=ans+" "+st.pop();
+        }
+        return ans;
+    }
 
     //optimal - instead of using a stack, just reverse while iterating over the string
 
@@ -53,49 +80,72 @@ class Strings {
     //brute - O(N) time and space - using a stack to store all the words so that when we remove them from the stack,
     // they are in reverse order
 
-    public String reverseWords1(String s) {
-        Stack<String> st = new Stack<>();
-        s += " ";
-        String word = "";
-        String ans = "";
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == ' ') {
-                st.push(word);
-                word = "";
-            } else {
-                word = word + s.charAt(i);
+    public String reverseWo2rds(String s) {
+        String ans="";
+        int n=s.length();
+        Stack<String> st=new Stack<>();
+        int i=0;
+        while(i<n){
+            while(i<n&&s.charAt(i)==' '){
+                st.push("");
+                i++;
             }
+            if(i>=n){
+                break;
+            }
+            int j=i+1;
+            while(j<n&&s.charAt(j)!=' '){
+                j++;
+            }
+            st.push(s.substring(i,j));
+            i=j;
         }
-        while (st.size() != 1) {
-            ans += st.pop() + " ";
+        ans=st.pop();
+        while(!st.isEmpty()){
+            ans=ans+" "+st.pop();
         }
-        ans += st.pop();
         return ans;
     }
 
     //optimal - O(N) time, O(1) space - reversing the order as we move through the string
 
-    //doesn't take leading spaces before a string into account
-    public String reverseWords3(String s) {
-        String word = "";
-        String ans = "";
-        s += " ";
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == ' ') {
-                if (ans == "") {
-                    if(word==""){ //if there are leading spaces in the given string
-                        ans=" ";
-                    }
-                    else{
-                        ans = word;
-                    }
-                } else {
-                    ans = word + " " + ans;
-                }
-                word = "";
-            } else {
-                word = word + s.charAt(i);
+    public String reverse1Words(String s) {
+        String ans="";
+        int n=s.length();
+        int i=0;
+        while(i<n){
+            int count=0;
+            while(i<n&&s.charAt(i)==' '){
+                count++;
+                i++;
             }
+            if(i>=n){
+                if(count>0){
+                    while(count!=0){
+                        ans=" "+ans;
+                        count--;
+                    }
+                }
+                break;
+            }
+            int j=i+1;
+            while(j<n&&s.charAt(j)!=' '){
+                j++;
+            }
+            if(count==0){
+                ans=ans+s.substring(i,j);
+            }
+            else if(count>1){
+                while(count!=0){
+                    ans=" "+ans;
+                    count--;
+                }
+                ans=s.substring(i,j)+ans;
+            }
+            else{ //only a single space
+                ans=s.substring(i,j)+" "+ans;
+            }
+            i=j;
         }
         return ans;
     }
@@ -271,13 +321,15 @@ class Strings {
     //O (1)time and space
 
     //we know there are six instances when subtraction takes place - CM,CD,XC,XL,IX,IV. Now we have the roman symbols:
-    // I,V,X,L,C,D,M. If didn't had the six conditions of subtraction, what we could've done to solve this problem would
+    // I,V,X,L,C,D,M. If we didn't have  if(flag){
+    //            num=(-1)*num;
+    //         the six conditions of subtraction, what we could've done to solve this problem would
     // that we would've taken the largest number M ie 1000 and dividing the given number by it would've given us the number
     // of times M appears in the roman version of this number. Then to get the balance, we would've updated num by doing mod
     // as num%M's value ie 1000 which would've given us the updated value of num that we would try dividing with the rest of
     // the numbers and doing the same thing with them. Now since we have these six extra instances, we can update the mapping
     // table of roman numerals and their integers, adding these six instances ie - 900,400,90,40,9,4 in their respective
-    // positions and following the same approach to obtain the ans without them
+    // positions and following the same approach we did to obtain the ans without them
 
     public String intToRoman(int num) {
         int[] arr = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
@@ -620,8 +672,6 @@ class Strings {
         return n - lps[lps.length - 1];
     }
 
-    //one more approach that we can think of for this problem would be to find the longest palindromic substring in given array
-
     //valid anagram
     //https://leetcode.com/problems/valid-anagram
 
@@ -672,7 +722,7 @@ class Strings {
     }
 
     //optimal - there are 256 different characters in the ascii character set because in cpp a char variable is a 1 byte
-    // memory location thus it can store any values s nm from 0 to 255 Thus create an array of this size and increment frequency
+    // memory location thus it can store any values from 0 to 255 Thus create an array of this size and increment frequency
     // of characters of str1. Then iterate over this array and decrease the freq count for characters of 0. If at the end
     // all elements have 0 frequency then we return true
     //O(N) time, O(1) space
@@ -767,5 +817,14 @@ class Strings {
     public void reverseString5(char[] s) {
         String sp=new String(s);
     }
+
+    //group anagrams
+    //
+    //brute: find all possible pair of strings and check if they are anagrams of each other and do the necessary
+
+    //optimal: for each word, store its sorted version as a key and add the word to its corresponding sorted word key entry
+    // in a map of char,list<String>
+
 }
+
 
