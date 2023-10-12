@@ -67,7 +67,7 @@ class DP {
     //we can recursively try to find all subsequences which are increasing and return the ones that give us the max length.
     // If the current element<prev one, then it means that current sequence is decreasing and thus we only have one option
     // that is to not pick this element and  if the current element is greater than its prev one, then it means that the
-    // current sequence is increasing and thus we have two choices - either we can pick the element or we cannot pick the
+    // current sequence is increasing and thus we have two choices - either we pick the element or we do not pick the
     // element. So we can recursively find out the ans for both of these cases and return the max one. Initially index of
     // the prev element is set to -1 so that we can pick the first element w/0 any hassle
 
@@ -127,7 +127,7 @@ class DP {
 
     public int lengthOfLIS2(int[] nums) {
         int n = nums.length;
-        int[][] dp = new int[n + 1][n + 1]; // i is also n+1 here we the base case is for index==n thus we have to take index==n into account
+        int[][] dp = new int[n + 1][n + 1]; // i is also n+1 here as the base case is for index==n thus we have to take index==n into account
         //base case in recursion and memoization was that if index==n, we return 0. Here, initially every row and col is 0
         // and thus we don't have to explicitly initialise the dp with the base case
         for (int index = n - 1; index >= 0; index--) {
@@ -459,7 +459,7 @@ class DP {
         return dp[m][n];
     }
 
-    //maximum increasing subsequence
+    //maximum sum increasing subsequence
     //brute would be to find all possible increasing subsequences through recursion (we track prev index to check for increasing
     // subsequence), tracking their sum and returning the max one
 
@@ -573,6 +573,27 @@ class DP {
         return dp[i][j] = ans;
     }
 
+    //tabulation
+    static int matrixMult1plication(int N, int arr[])
+    {
+        int[][] dp=new int[N][N];
+        for(int i=N-1;i>=1;i--){
+            for(int j=1;j<N;j++){
+                if(i>=j){
+                    dp[i][j]=0;
+                }
+                else{
+                    int ans=Integer.MAX_VALUE;
+                    for(int k=i;k<j;k++){
+                        int tempAns=arr[i-1]*arr[k]*arr[j]+dp[i][k]+dp[k+1][j];
+                        ans=Math.min(ans,tempAns);
+                    }
+                    dp[i][j]=ans;
+                }
+            }
+        }
+        return dp[1][N-1];
+    }
 
     //count of subsets with given sum
     //https://practice.geeksforgeeks.org/problems/perfect-sum-problem5633/1
@@ -961,7 +982,7 @@ class DP {
     // from either of them would not affect the cost of the other sub problem (like if we make a partition at 5, it will
     // only take into account cost of the stick to which it belongs. If however in the cuts array we included 2 after 5,
     // then the sub problem would've given us the wrong ans because even though 2 belongs to the left partition, we would
-    // unnecessarily be adding its cost in the right partition. Moreover if we had made a cut in sequene 4, 2, 5 without
+    // unnecessarily be adding its cost in the right partition. Moreover if we had made a cut in sequence 4, 2, 5 without
     // sorting the cuts array then 5's recursive call would've been i=5 and j=5 where j+1 would point us to 2 and i-1 would
     // point us to 4 giving us the cost 2-4 which is wrong. Since we're using the partitioning ie
     // MCM approach, there'll be three pointers, i at the start, j at the end and k from i till j. Now to find the length
@@ -1149,6 +1170,7 @@ class DP {
     }
 
     //word break (leetcode version) - quite similar to wb that we did in recursion. also, this soln is memoized
+    //this is a front partition problem
     //https://leetcode.com/problems/word-break
     public boolean wordBreak(String s, List<String> wordDict) {
         return helper(0, s, wordDict, new HashMap<>());
@@ -1230,7 +1252,7 @@ class DP {
 
     public static int helperPP1(int i, int j, String str, int[][] dp) {
         if (i >= j) { //traversed the whole string. if i and j point to the same character then that would also mean a palindrome
-            // and we'd require no more partitions thus we return 0
+            // and we'd require no more partitions thus  we return 0
             return 0;
         }
         if (dp[i][j] != -1) {
@@ -2526,6 +2548,10 @@ class DP {
     //checking palindrome using recursion (used in pp2 problem to tabulate every value of i and j to check whether substring(i,j)
     // is palindromic)
     class Solution {
+        //!!IMP!!
+        //this function will only check whether a given string between indices i and j is palindromic or not. it will not
+        // check every possible substring of the given string to be palindromic. for that, we have to find all possible
+        // substrings and check whether they're palindromic or not and thus we use the generatePalindrome function for that
         int isPalindrome(String S) {
             int n = S.length();
             return helper(0, n - 1, S);
@@ -2542,9 +2568,6 @@ class DP {
         }
     }
 
-    ;
-
-    //above palindrome dp logic is used in pp2 leetcode (this will not give TLE)
 
     public int minCut(String s) {
         int n = s.length();
@@ -2567,6 +2590,33 @@ class DP {
         return dp[0][n - 1];
     }
 
+    //recursive version of generatePalindrome function. for every possible values of i and j, it will check whether substring(i.j)
+    // is palindrome or not. dp table is still needed to store every possible val of i and j
+    public int[][] generatePal1ndrome(String s) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+        generatePalindromeHelper(s, 0, n - 1, dp);
+        return dp;
+    }
+
+    private void generatePalindromeHelper(String s, int start, int end, int[][] dp) {
+        if (start > end) {
+            return;
+        }
+
+        if (start == end) {
+            dp[start][end] = 1;
+            return;
+        }
+
+        if (s.charAt(start) == s.charAt(end)) {
+            generatePalindromeHelper(s, start + 1, end - 1, dp);
+            dp[start][end] = 1;
+        }
+
+        generatePalindromeHelper(s, start, end - 1, dp);
+        generatePalindromeHelper(s, start + 1, end, dp);
+    }
     //for each val of i and j, this function will prepare a table stating whether substring(i,j) is a palindrome or not
     int[][] generatePalindrome(String s) {
         int n = s.length();
@@ -2699,6 +2749,98 @@ class DP {
 
     //longest string chain
     //https://leetcode.com/problems/longest-string-chain/
+
+    //recursive
+    public int longestSt1rChain(String[] words) {
+        Arrays.sort(words,(a,b)->a.length()-b.length());
+        int n=words.length;
+        return helper(0,-1,words,n);
+    }
+    public int helper(int i, int pred, String[] words,int n){
+        if(i==n){
+            return 0;
+        }
+        int ans=Integer.MIN_VALUE;
+        if(pred==-1||isPredecessor(words[pred],words[i])){
+            ans=1+helper(i+1,i,words,n);
+        }
+        ans=Math.max(ans,0+helper(i+1,pred,words,n));
+        return ans;
+    }
+
+    //memoized
+    public int longestStrChai1n(String[] words) {
+        Arrays.sort(words,(a,b)->a.length()-b.length());
+        int n=words.length;
+        int[][] dp=new int[n+1][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return hel1per(0,-1,words,n,dp);
+    }
+    public int hel1per(int i, int pred, String[] words,int n,int[][] dp){
+        if(i==n){
+            return 0;
+        }
+        if(dp[i][pred+1]!=-1){
+            return dp[i][pred+1];
+        }
+        int ans=Integer.MIN_VALUE;
+        if(pred==-1||isPredecessor(words[pred],words[i])){
+            ans=1+hel1per(i+1,i,words,n,dp);
+        }
+        ans=Math.max(ans,0+hel1per(i+1,pred,words,n,dp)); //finding the best from all possibilities of picking current predecessor and not picking it
+        return dp[i][pred+1]=ans;
+    }
+
+    public int lon1gestStrChain(String[] words) {
+        Arrays.sort(words,(a,b)->a.length()-b.length());
+        int n=words.length;
+        int[][] dp=new int[n+1][n+1];
+        for(int[] arr:dp){
+            Arrays.fill(arr,-1);
+        }
+        return helper(0,-1,words,n,dp);
+    }
+    public int helper(int i, int pred, String[] words,int n,int[][] dp){
+        if(i==n){
+            return 0;
+        }
+        if(dp[i][pred+1]!=-1){
+            return dp[i][pred+1];
+        }
+        int ans=Integer.MIN_VALUE;
+        if(pred==-1||isPredecessor(words[pred],words[i])){
+            ans=1+helper(i+1,i,words,n,dp);
+        }
+        ans=Math.max(ans,0+helper(i+1,pred,words,n,dp)); //finding the best from all possibilities of picking current predecessor and not picking it
+        return dp[i][pred+1]=ans;
+    }
+
+    //tabulation
+    public int longestStrCha1in(String[] words) {
+        Arrays.sort(words,(a,b)->a.length()-b.length());
+        int n=words.length;
+        int[][] dp=new int[n+1][n+1];
+        for(int i=n;i>=0;i--){
+            for(int pred=i-1;pred>=-1;pred--){
+                if(i==n){
+                    dp[i][pred+1]=0;
+                }
+                else{
+                    int ans=Integer.MIN_VALUE;
+                    if(pred==-1||isPredecessor(words[pred],words[i])){
+                        ans=1+dp[i+1][i+1];
+                    }
+                    ans=Math.max(ans,dp[i+1][pred+1]);
+                    dp[i][pred+1]=ans;
+                }
+            }
+        }
+        return dp[0][-1+1];
+    }
+
+    //optimal (1d dp)
     public int longestStrChain(String[] words) {
         int n = words.length;
         int[] dp = new int[n];
@@ -2871,4 +3013,23 @@ class DP {
         }
         return dp[i][j][rem]=(helper(i+1,j,(rem+grid[i][j])%k,grid,k,m,n,dp)%MOD)+(helper(i,j+1,(rem+grid[i][j])%k,grid,k,m,n,dp)%MOD);
     }
+
+    //champagne tower
+    //https://leetcode.com/problems/champagne-tower
+
+    public double champagneTower(int poured, int query_row, int query_glass) {
+        double[][] quantity=new double[query_row+1][query_row+1];
+        quantity[0][0]=poured;
+        for(int i=0;i<query_row;i++){
+            for(int j=0;j<=i;j++){
+                double remainingQuant=Math.max(quantity[i][j]-1.00,0); //in case quant-1 becomes<0 then that means that the particular glass is supposed to be empty
+                quantity[i+1][j]+=remainingQuant/2.0;
+                quantity[i+1][j+1]+=remainingQuant/2.0;
+            }
+        }
+        return Math.min(quantity[query_row][query_glass],1.00);
+    }
+
+    //front partition dp (some problems)
+
 }

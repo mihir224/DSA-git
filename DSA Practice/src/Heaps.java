@@ -116,15 +116,12 @@ public class Heaps{
     //Function to sort an array using Heap Sort.
     public void heapSort(int arr[], int n)
     {
-        int[] nums={30,10,20,60};
-        heapify(nums,nums.length,0);
-        System.out.println(Arrays.toString(nums));
         buildHeap(arr,n);
         int size=n;
         while(size>1){ //we iterate only till size>1 because we're certain when
             //there's only one el left in the heap, it will be at its correct position
             swap(0,size-1,arr);
-            size--; //this is done so that the nodes at the last index are no
+            size--; //this is done so that the nodes at the last indices are no
             //longer accessbile by heapify function. if we didn't do this, then on
             //calling the heapify function, we would've ended up altering the elements at the end
             heapify(arr,size,0); //heapifying the reduced heap
@@ -211,7 +208,7 @@ public class Heaps{
     //brute (gives TLE) - find all possible combinations and insert them in a min heap such that it could carry only C elements.
     // This way, after going through all possible combinations, min heap would store the last C combinations (if the
     // combinations were written in a sorted manner) and this way we can return the top C combinations
-    // O((N*M)logC) time, O(C) space where c is the number of combination sums ie (2^n1)*(2^n2) - if we consider the ans list
+    // O((N*M)logC) time, O(C) space where c is the number of combination sums ie N*M
 
     public ArrayList<Integer> solve1(ArrayList<Integer> A, ArrayList<Integer> B, int C) {
         ArrayList<Integer> ans=new ArrayList<>();
@@ -342,7 +339,6 @@ public class Heaps{
             return Integer.compare(o.first,this.first);
         }
     }
-
 
     //find median from data stream
     //https://leetcode.com/problems/find-median-from-data-stream/

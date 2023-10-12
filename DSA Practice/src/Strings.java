@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
 class Strings {
 
@@ -16,29 +13,29 @@ class Strings {
 
     //O(N) time and space
     public String rev1erseWords(String s) {
-        Stack<String> st=new Stack<>();
-        int n=s.length();
-        String ans="";
-        int i=0;
-        while(i<n){
-            while(i<n&&s.charAt(i)==' '){
+        Stack<String> st = new Stack<>();
+        int n = s.length();
+        String ans = "";
+        int i = 0;
+        while (i < n) {
+            while (i < n && s.charAt(i) == ' ') {
                 i++;
             }
-            if(i==n){
+            if (i == n) {
                 break;
             }
-            int j=i+1;
-            while(j<n&&s.charAt(j)!=' '){
+            int j = i + 1;
+            while (j < n && s.charAt(j) != ' ') {
                 j++;
             }
-            st.push(s.substring(i,j));
-            i=j+1;
+            st.push(s.substring(i, j));
+            i = j + 1;
         }
-        if(!st.isEmpty()){
-            ans=st.pop();
+        if (!st.isEmpty()) {
+            ans = st.pop();
         }
-        while(!st.isEmpty()){
-            ans=ans+" "+st.pop();
+        while (!st.isEmpty()) {
+            ans = ans + " " + st.pop();
         }
         return ans;
     }
@@ -81,28 +78,28 @@ class Strings {
     // they are in reverse order
 
     public String reverseWo2rds(String s) {
-        String ans="";
-        int n=s.length();
-        Stack<String> st=new Stack<>();
-        int i=0;
-        while(i<n){
-            while(i<n&&s.charAt(i)==' '){
+        String ans = "";
+        int n = s.length();
+        Stack<String> st = new Stack<>();
+        int i = 0;
+        while (i < n) {
+            while (i < n && s.charAt(i) == ' ') {
                 st.push("");
                 i++;
             }
-            if(i>=n){
+            if (i >= n) {
                 break;
             }
-            int j=i+1;
-            while(j<n&&s.charAt(j)!=' '){
+            int j = i + 1;
+            while (j < n && s.charAt(j) != ' ') {
                 j++;
             }
-            st.push(s.substring(i,j));
-            i=j;
+            st.push(s.substring(i, j));
+            i = j;
         }
-        ans=st.pop();
-        while(!st.isEmpty()){
-            ans=ans+" "+st.pop();
+        ans = st.pop();
+        while (!st.isEmpty()) {
+            ans = ans + " " + st.pop();
         }
         return ans;
     }
@@ -110,42 +107,40 @@ class Strings {
     //optimal - O(N) time, O(1) space - reversing the order as we move through the string
 
     public String reverse1Words(String s) {
-        String ans="";
-        int n=s.length();
-        int i=0;
-        while(i<n){
-            int count=0;
-            while(i<n&&s.charAt(i)==' '){
+        String ans = "";
+        int n = s.length();
+        int i = 0;
+        while (i < n) {
+            int count = 0;
+            while (i < n && s.charAt(i) == ' ') {
                 count++;
                 i++;
             }
-            if(i>=n){
-                if(count>0){
-                    while(count!=0){
-                        ans=" "+ans;
+            if (i >= n) {
+                if (count > 0) {
+                    while (count != 0) {
+                        ans = " " + ans;
                         count--;
                     }
                 }
                 break;
             }
-            int j=i+1;
-            while(j<n&&s.charAt(j)!=' '){
+            int j = i + 1;
+            while (j < n && s.charAt(j) != ' ') {
                 j++;
             }
-            if(count==0){
-                ans=ans+s.substring(i,j);
-            }
-            else if(count>1){
-                while(count!=0){
-                    ans=" "+ans;
+            if (count == 0) {
+                ans = ans + s.substring(i, j);
+            } else if (count > 1) {
+                while (count != 0) {
+                    ans = " " + ans;
                     count--;
                 }
-                ans=s.substring(i,j)+ans;
+                ans = s.substring(i, j) + ans;
+            } else { //only a single space
+                ans = s.substring(i, j) + " " + ans;
             }
-            else{ //only a single space
-                ans=s.substring(i,j)+" "+ans;
-            }
-            i=j;
+            i = j;
         }
         return ans;
     }
@@ -159,23 +154,24 @@ class Strings {
     //with the max len. the problem with this approach is that we might have to tackle some extra edge cases
 
     public String longestPalindrome(String s) {
-        String ans="";
-        int len=Integer.MIN_VALUE;
-        for(int i=0;i<s.length();i++){
-            for(int j=i;j<s.length();j++){
-                if(isPalindrome(s,i,j)){
-                    if((j-i+1)>len){
-                        len=j-i+1;
-                        ans=s.substring(i,j+1);
+        String ans = "";
+        int len = Integer.MIN_VALUE;
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i; j < s.length(); j++) {
+                if (isPalindrome(s, i, j)) {
+                    if ((j - i + 1) > len) {
+                        len = j - i + 1;
+                        ans = s.substring(i, j + 1);
                     }
                 }
             }
         }
         return ans;
     }
-    public boolean isPalindrome(String s, int i, int j){
-        while(i<j){
-            if(s.charAt(i)!=s.charAt(j)){
+
+    public boolean isPalindrome(String s, int i, int j) {
+        while (i < j) {
+            if (s.charAt(i) != s.charAt(j)) {
                 return false;
             }
             i++;
@@ -431,18 +427,18 @@ class Strings {
     //lexicographically sort the array, then the longest common prefix in first and last string would be the lcp among all
 
     public String longestCommonPrefix(String[] strs) {
-        int minLen=Integer.MAX_VALUE;
-        int n=strs.length;
-        String ans="";
-        for(String str: strs){
-            if(str.length()<minLen){
-                minLen=str.length();
+        int minLen = Integer.MAX_VALUE;
+        int n = strs.length;
+        String ans = "";
+        for (String str : strs) {
+            if (str.length() < minLen) {
+                minLen = str.length();
             }
         }
         Arrays.sort(strs);
-        int i=0;
-        while(i<minLen&&strs[0].charAt(i)==strs[n-1].charAt(i)){
-            ans+=strs[0].charAt(i);
+        int i = 0;
+        while (i < minLen && strs[0].charAt(i) == strs[n - 1].charAt(i)) {
+            ans += strs[0].charAt(i);
             i++;
         }
         return ans;
@@ -509,18 +505,18 @@ class Strings {
     // O(1) sc
 
     public int strStr(String haystack, String needle) {
-        int n=haystack.length();
-        int m=needle.length();
-        int j=0;
-        for(int i=0;i<=n-m;i++){
-            if(haystack.charAt(i)==needle.charAt(0)){ //only comparing if the first char of the needle matches the current
+        int n = haystack.length();
+        int m = needle.length();
+        int j = 0;
+        for (int i = 0; i <= n - m; i++) {
+            if (haystack.charAt(i) == needle.charAt(0)) { //only comparing if the first char of the needle matches the current
                 // substring's first char
-                for(j=0;j<m;j++){
-                    if(needle.charAt(j)!=haystack.charAt(i+j)){
+                for (j = 0; j < m; j++) {
+                    if (needle.charAt(j) != haystack.charAt(i + j)) {
                         break;
                     }
                 }
-                if(j==m){ //found needle in haystack;
+                if (j == m) { //found needle in haystack;
                     return i;
                 }
             }
@@ -611,11 +607,7 @@ class Strings {
                     // the prefix aaa in this case. in most cases doing index-- here would work but this doesn't work for "adcadde"
                     // and we might get a wrong val. so basically doing index=lps[index-1] will make sure that we go to 0th
                     // index in case the suffix is entirely different from prefix. see what happens here is that this takes
-                    // care of the case discussed above as well it takes care of the cases like suppose index is at c in abc
-                    // and i is at a in abd so here we'd see that c is not equal to d implying that there's no prefix as abd.
-                    // so this will make sure that we also check if there's a prefix like bd or not. now in this particular
-                    // case lps[index-1] would take us straight to 0 because we know for a fact that there's no possibility
-                    // of prefix bd because no prefix in the given string starts with b.  like in the previous case, when b and c
+                    // care of the case discussed above as well while making sure index reaches start when needed. like in the previous case, when b and c
                     // were in comparison, we knew that although aab and aac were not same, but then we also checked aa of
                     // the prefix with ac of the suffix because both of them started with a so there was a possibility that
                     // they could've been same. now since we knew both of them started with a, we directly compared the second
@@ -627,9 +619,8 @@ class Strings {
                     // start with a. thus in this case, lps[index-1] would directly take us to 0th index & we'll directly
                     // start comparing from the first position.
 
-                     index = lps[index - 1];
-                }
-                else { //ie the current suffix doesn't start with the first char of prefix
+                    index = lps[index - 1];
+                } else { //ie the current suffix doesn't start with the first char of prefix
                     lps[i] = 0;
                     i++;
                 }
@@ -683,19 +674,19 @@ class Strings {
     //brute - sort both the strings and then check if they're equal
     //O((N+M)log(N+M)+(N+M)) time, O(N+M) space
     public boolean isAnagram34(String s, String t) {
-        char[] str=s.toCharArray();
-        char[] ttr=t.toCharArray();
+        char[] str = s.toCharArray();
+        char[] ttr = t.toCharArray();
         Arrays.sort(str);
         Arrays.sort(ttr);
-        int n=str.length;
-        int m=ttr.length;
-        if(str.length!=ttr.length){
+        int n = str.length;
+        int m = ttr.length;
+        if (str.length != ttr.length) {
             return false;
         }
-        int i=0;
-        int j=0;
-        while(i<n&&j<m){
-            if(str[i]!=ttr[j]){
+        int i = 0;
+        int j = 0;
+        while (i < n && j < m) {
+            if (str[i] != ttr[j]) {
                 return false;
             }
             i++;
@@ -706,7 +697,7 @@ class Strings {
 
     //better - store the frequency of characters of string 1 in a hashmap. Then iterate over the 2nd string and while iterating,
     // reduce the frequency of characters of string 2 in the map. At the end if map is empty, return true
-    //O(NlogN + M) time, O(N) space
+    //O(NlogN or N2 in wc) time, O(N) space
     public boolean isAnagram(String s, String t) {
         HashMap<Character, Integer> map = new HashMap<>();
         for (char ch : s.toCharArray()) {
@@ -819,16 +810,141 @@ class Strings {
         }
         return 0;
     }
+
     public void reverseString5(char[] s) {
-        String sp=new String(s);
+        String sp = new String(s);
     }
 
     //group anagrams
     //
     //brute: find all possible pair of strings and check if they are anagrams of each other and do the necessary
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> ans = new ArrayList<>();
+        int n = strs.length;
+        boolean[] vis = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            if (!vis[i]) {
+                List<String> list = new ArrayList<>();
+                list.add(strs[i]);
+                vis[i] = true;
+                for (int j = i + 1; j < n; j++) {
+                    if (!vis[j] && isAnagram(strs[i], strs[j])) {
+                        vis[j] = true;
+                        list.add(strs[j]);
+                    }
+                }
+                ans.add(list);
+            }
+        }
+        return ans;
+    }
+
 
     //optimal: for each word, store its sorted version as a key and add the word to its corresponding sorted word key entry
     // in a map of char,list<String>
+    public List<List<String>> groupAn1agrams(String[] strs) {
+        HashMap<String, List<String>> map = new HashMap<>();
+        List<List<String>> ans = new ArrayList<>();
+        for (String str : strs) {
+            char[] ch = str.toCharArray();
+            Arrays.sort(ch);
+            String word = new String(ch);
+            if (!map.containsKey(word)) {
+                map.put(word, new ArrayList<>());
+            }
+            List<String> list = map.get(word);
+            list.add(str);
+            map.put(word, list);
+        }
+        for (List<String> list : map.values()) {
+            ans.add(list);
+        }
+        return ans;
+    }
+
+    //remove duplicate letters (imp)
+    //https://leetcode.com/problems/remove-duplicate-letters
+    //O(2N)+O(M) time, O(M) space
+    public String removeDuplicateLetters(String s) {
+        String ans = "";
+        int n = s.length();
+
+        boolean[] vis = new boolean[256];
+        HashMap<Character, Integer> map = new HashMap<>();
+        Stack<Character> st = new Stack<>();
+        for (char ch : s.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+        st.push(s.charAt(0));
+        vis[s.charAt(0)] = true;
+        map.put(s.charAt(0), map.get(s.charAt(0)) - 1);
+        for (int i = 1; i < n; i++) {
+            char ch = s.charAt(i);
+            if (vis[ch]) {
+                map.put(ch, map.get(ch) - 1);
+                continue;
+            }
+            vis[ch] = true;
+            map.put(ch, map.get(ch) - 1);
+            while (!st.isEmpty() && map.get(st.peek()) >= 1 && st.peek() > ch) {
+                char cp = st.pop();
+                vis[cp] = false;
+            }
+            st.push(ch);
+        }
+        while (!st.isEmpty()) {
+            ans = st.pop() + ans;
+        }
+        return ans;
+    }
+
+    //decoded string at index
+    //https://leetcode.com/problems/decoded-string-at-index/
+
+    //brute - actually decode the string, and then return the (k-1)th index element of the decoded string
+    //the problem with this is that the decoded string can be of a huge size and for that reason the program will give
+    // us MLE.
+
+    //optimal - here instead of storing the decoded string, we try to handle it in an imaginary fashion where we deal with
+    // the size of the decoded string. see consider the string leet2code3. it's decoded version is "leetleetcodeleetleetcodeleetleetcode"
+    // which is of length 36. now when we start traversing from the back of the original string, we see that the digit is
+    // 3 which means that whatever is the current state of the decoded string, it is repeated three times or basically
+    // the same string "leetleetcode" is written 3 times so to get its first occurrence or its length, we divided
+    // size/encountered digit. now it might be possible that k might belong to the repeated string and thus after this
+    // step it would go out of bounds. thus in each step, we do k=k%size. now as we continue traversing the encoded string,
+    // we find characters e,d,o,c before getting to the digit 2. this means that till "code" the string is as it is but
+    // before it, the string was repeated twice. so as we traverse "code", we reduce the size in each iteration in by the
+    // time we get to 2, the size is 8 denoting the string "leetleet" now again in this iteration size would become 8/2=4
+    // and accordingly in further iterations as we traverse the "t", the size is reduced to 3 when we reach "lee" at which
+    // point we would be certain that we're at the kth element as size would become = k ie 3 meaning that there are only
+    // three elements in the string and we needed the third one (1 based indexing) so whatever i is pointing to is our ans
+
+    public String decodeAtIndex(String s, int k) {
+        long size=0;
+        int n=s.length();
+        for(char ch:s.toCharArray()){
+            if(Character.isLetter(ch)){
+                size++;
+            }
+            else if(Character.isDigit(ch)){
+                size=size*(ch-'0');
+            }
+        }
+        for(int i=n-1;i>=0;i--){
+            char ch=s.charAt(i);
+            k%=size;
+            if(k==0&&Character.isLetter(ch)){
+                return Character.toString(ch);
+            }
+            if(Character.isDigit(ch)){
+                size=size/(ch-'0');
+            }
+            else{
+                size--;
+            }
+        }
+        return null;
+    }
 
 }
 

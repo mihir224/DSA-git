@@ -87,6 +87,32 @@ class RecursionBacktracking{
         cs(i+1,target,candidates,n,list,ans);
     }
 
+    //alt approach (without checking if the current el can pick the target)
+    public List<List<Integer>> combinat1onSum(int[] candidates, int target) {
+        List<List<Integer>> ans=new ArrayList<>();
+        helper(0,new ArrayList<>(),ans,candidates,target);
+        return ans;
+    }
+    //basically in this problem to avoid duplicate subsets, as we move forward, we know that once an el has been picked
+    // at a particular position, it won't be picked at the same position again even in the further recursive calls like
+    // if in the first set of calls we picked the elements as: 2,2,2,3 and attained our sum that was 9, then in the next
+    // calls when eventually, second last 2 is removed and we take 3 in place of that, we know for sure that in the next
+    // call we won't be taking 2. we will only be able to pick elements from 3 and this avoid the duplcate combination
+    // 2,2,3,2 correponding to the prev one that we calculated
+    public void helper(int i, List<Integer> list, List<List<Integer>> ans, int[] candidates,int target){
+        if(target==0){
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        if(i==candidates.length||target<0){
+            return;
+        }
+        list.add(candidates[i]);
+        helper(i,list,ans,candidates,target-candidates[i]);
+        list.remove(list.size()-1);
+        helper(i+1,list,ans,candidates,target); //this basically makes sure that in a particular call if we've, processed an element, in the next calls either we take that element or we don't take it. if we decide not to take it, we won't be able to take it in further calls also as we've moved forward. this makes sure that in all possibile combinations, we don't end up forming duplicate combinations
+    }
+
     //combination sum 2
     //https://leetcode.com/problems/combination-sum-ii/
 

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 class BinarySearch{
@@ -7,7 +8,7 @@ class BinarySearch{
 
     //nth root of a number
     //https://www.codingninjas.com/codestudio/problems/1062679?topList=striver-sde-sheet-problems&utm_source=striver&utm_medium=website&leftPanelTab=0
-    // although bs is used to search an element in an array, we can also use it in functions which are monotonic (ie they
+    // although bs is used to search an element in an array, we mostly use it in functions which are monotonic (ie they
     // return increasing or decreasing values). Now we know for sure that the nth root of an integer will never be greater than it.
     // Thus, we apply binary search from 1 till the given integer such that if the current mid when multiplied n times gives a value>M
     // ie the given integer, we reduce the search space from 1 till mid. Otherwise, if the multiplied value is less than M, we reduce
@@ -91,7 +92,10 @@ class BinarySearch{
     // elements ie n*m ie number of elements less than or =equal to the mid INCLUDING MID are less than or equal to half of total
     // elements then we reduce our search space so that start=mid+1. This is because ideally we want all the elements on the left
     // as less than or equal than the mid (EXCLUDING MID) equal to total elements greater than or equal to mid EXCLUDING MID on
-    // the right. When start will cross end, the start will be at the ideal position of median. This is because if we consider the above example, when mid is anything less than 6, the count we're getting is 4. However when mid is 6, then even though it is the median, all of its occurrences are being taken into consideration in the count. so to find the first occurrence of this 6, we have to go to the immediate next index which happens when start goes beyond end. Now to count the number of elements
+    // the right. When start will cross end, the start will be at the ideal position of median. This is because if we consider
+    // the above example, when mid is anything less than 6, the count we're getting is 4. However when mid is 6, then even
+    // though it is the median, all of its occurrences are being taken into consideration in the count. so to find the first
+    // occurrence of this 6, we have to go to the immediate next index which happens when start goes beyond end. Now to count the number of elements
     // less than current mid for each row, we apply another bs in each row. The logic is that the number of elements less than or
     // equal to the current element in a sorted array can be obtained by finding the index of the number just greater than the current
     // element. So for the current row, we find the mid and check if it is greater than main mid. If it isn't then it means we have
@@ -579,5 +583,254 @@ class BinarySearch{
         }
         return false;
     }
+
+    //peak element
+    //https://leetcode.com/problems/find-peak-element/
+
+    //brute would be to linearly search for the peak
+    public int findPeakElement(int[] nums) {
+        int n=nums.length;
+        if(n==1){
+            return 0;
+        }
+        int start=0;
+        int end=n-1;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(mid>0&&mid<n-1){
+                if(nums[mid]>nums[mid-1]&&nums[mid]>nums[mid+1]){
+                    return mid;
+                }
+                else if(nums[mid-1]>nums[mid]){
+                    end=mid-1;
+                }
+                else{
+                    start=mid+1;
+                }
+            }
+            else if(mid==0){
+                if(nums[mid]>nums[mid+1]){
+                    return mid;
+                }
+                else{
+                    return mid+1;
+                }
+            }
+            else if(mid==n-1){
+                if(nums[mid]>nums[mid-1]){
+                    return mid;
+                }
+                else{
+                    return mid-1;
+                }
+            }
+        }
+        return -1;
+    }
+
+
+    //peak index in mountain array
+    //https://leetcode.com/problems/peak-index-in-a-mountain-array
+    public int peakIndexInMountainArray(int[] arr) {
+        int n=arr.length;
+        int start=0;
+        int end=n-1;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(mid>0&&mid<n-1){
+                if(arr[mid]>arr[mid+1]&&arr[mid]>arr[mid-1]){
+                    return mid;
+                }
+                else if(arr[mid]>arr[mid-1]){
+                    start=mid+1;
+                }
+                else if(arr[mid]>arr[mid+1]){
+                    end=mid-1;
+                }
+            }
+            else if(mid==0){ //we don't check the edge elements because we know for a fact that in a mountain array, there
+                // will be atleast one el that is present on the right and left of the peak. moreover we don't need to
+                // explicitly check if arr[mid+1] is greater because it is confirmed that if the search space is reduced
+                // so as to make mid 0, then it will mean that the search space has the first 2 elements and in that case
+                // it would be confirmed that the second el is the peak.
+                return mid+1;
+            }
+            //we don't check for mid=n-1 coz there mid will never reach there as it is given in the question that the arr
+            // is mountain with certainty
+        }
+        return -1;
+    }
+
+    //find-first-and-last-position-of-element-in-sorted-array
+    //https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array
+    public int[] searchRange(int[] nums, int target) {
+        int n=nums.length;
+        int start=0;
+        int end=n-1;
+        int s=0;
+        int e=0;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(nums[mid]>=target){
+                s=mid;
+                end=mid-1;
+            }
+            else{
+                start=mid+1;
+            }
+        }
+        start=0;
+        end=n-1;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(nums[mid]<=target){
+                e=mid;
+                start=mid+1;
+            }
+            else{
+                end=mid-1;
+            }
+        }
+        if(n==0||(nums[s]!=target||nums[e]!=target)){
+            return new int[]{-1,-1};
+        }
+        return new int[]{s,e};
+    }
+
+    //bs+sliding window
+
+    //minimum-number-of-operations-to-make-array-continuous
+    //https://leetcode.com/problems/minimum-number-of-operations-to-make-array-continuous
+    public int minOperations(int[] nums) {
+        int ans=Integer.MAX_VALUE;
+        int duplicates=0;
+        int n=nums.length;
+        Arrays.sort(nums);
+        List<Integer> list=new ArrayList<>();
+        for(int i=0;i<n;i++){
+            if(i>0&&nums[i]==nums[i-1]){
+                continue;
+            }
+            list.add(nums[i]);
+        }
+        int max=list.get(list.size()-1);
+        for(int i=0;i<list.size();i++){
+            int j=i;
+            int range=list.get(i)+(n-1);
+            int start=i;
+            int end=list.size()-1;
+            while(start<=end){
+                int mid=start+(end-start)/2;
+                if(list.get(mid)<=range){
+                    j=mid;
+                    start=mid+1;
+                }
+                else{
+                    end=mid-1;
+                }
+            }
+            j++;
+            ans=Math.min(ans,n-(j-i));
+        }
+        return ans;
+    }
+
+    //koko eating bananas
+    //https://leetcode.com/problems/koko-eating-bananas
+    //brute - applying linear search on the given range of bananas
+
+    //optimal O(N*log(maxEl)) - binary search
+    public int minEatingSpeed(int[] piles, int h) {
+        int min=0;
+        Arrays.sort(piles);
+        int n=piles.length;
+        int start=1;
+        int end=piles[n-1];
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(canEat(mid,piles,h)){
+                min=mid;
+                end=mid-1;
+            }
+            else{
+                start=mid+1;
+            }
+        }
+        return min;
+    }
+    public boolean canEat(int b,int[] piles,int h){
+        int time=0;
+        for(int i:piles){
+            time+=Math.ceil((double)i/(double)b);
+        }
+        return time<=h;
+    }
+    interface MountainArray {
+     public int get(int index);
+      public int length();
+  }
+
+    //search/find in mountain array
+    //https://leetcode.com/problems/find-in-mountain-array/
+    public int findInMountainArray(int target, MountainArray mountainArr) {
+        int start=0;
+        int n=mountainArr.length();
+        int end=n-1;
+        int min=-1;
+        int peak=-1;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            int midEl=mountainArr.get(mid);
+            if(mid>0&&mid<n-1){
+                if(midEl>mountainArr.get(mid+1)&&midEl>mountainArr.get(mid-1)){
+                    peak=mid;
+                    break;
+                }
+                else if(midEl>mountainArr.get(mid-1)){
+                    start=mid+1;
+                }
+                else if(midEl>mountainArr.get(mid+1)){
+                    end=mid-1;
+                }
+            }
+            else if(mid==0){
+                peak=mid+1;
+                break;
+            }
+        }
+        int peakEl=mountainArr.get(peak);
+        if(peakEl==target){
+            return peak;
+        }
+        int ans=binarySearch(0,peak-1,mountainArr,target,true);
+        return ans==-1?binarySearch(peak+1,n-1,mountainArr,target,false):ans;
+    }
+    public int binarySearch(int start, int end, MountainArray mountainArr,int target,boolean flag){
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            int midEl=mountainArr.get(mid);
+            if(midEl==target){
+                return mid;
+            }
+            else if(midEl>target){
+                if(flag){
+                    end=mid-1;
+                }
+                else{
+                    start=mid+1;
+                }
+            }
+            else{
+                if(flag){
+                    start=mid+1;
+                }
+                else{
+                    end=mid-1;
+                }
+            }
+        }
+        return -1;
+    }
+
 
 }

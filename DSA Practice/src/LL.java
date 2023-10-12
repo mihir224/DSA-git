@@ -166,9 +166,8 @@ class LL{
     //https://leetcode.com/problems/remove-nth-node-from-end-of-list
 
     //we can use a brute here - basically removing a node at a particular index. only diff here is that we have to remove
-    // it from the last. so we can find the element before nth el from the last at len-n, basically at index len-n-1 and do the necessary. there are
-    // two imp edge cases here where this logic might fail so we have to take care of them separately. if (n==1 and len==2)
-    // or n==len, our logic of len-n-1 won't work.
+    // it from the last. so we can find the element before nth el from the last at len-n, basically at index len-n-1 and
+    // do the necessary
     //O(2N) time - first to find len and then to find node to be deleted
 
     public ListNode removeNthFromEnd(ListNode head, int n) {
@@ -204,7 +203,7 @@ class LL{
     //O(N)
 
     //we basically take a dummy node and point its next to the head of LL. also at this dummy node we take a slow and fast
-    // pointer. now we move fast by n times. then the distance left for it to traverse the whole list would be len-n. this
+    // pointer. now we move fast by n times. then the distance (or nodes) left for it to traverse the whole list would be len-n. this
     // is the same distance it would take us to reach the node we wish to delete from the start of the linked list. now
     // since we used a dummy node, we started 1 node before the start and due to this reason when we will move the slow
     // pointer along with fast until we reach end, we know for sure that slow would cover a distance of len-n that is it
@@ -212,7 +211,6 @@ class LL{
     // the necessary operations. this covers edge cases as well
 
     public ListNode removeNthFromEnd1(ListNode head, int n) {
-        int len=getLen(head);
         ListNode dummy=new ListNode();
         dummy.next=head;
         ListNode fast=dummy;
@@ -338,7 +336,9 @@ class LL{
             ListNode newLast=present;
             ListNode temp=prev;
             ListNode next=present.next;
-            for(int i=0;i<k;i++){ //here we're iterating till k only and so for that reason we dont have to explicitly check if present==null because if say k was 2 and there were 4 items, for both the grps, we would've traversed only k times and after that numGrps would've become zero and we wouldn't iterate further
+            for(int i=0;i<k;i++){ //here we're iterating till k only and so for that reason we dont have to explicitly
+                // check if present==null because if say k was 2 and there were 4 items, for both the grps, we would've
+                // traversed only k times and after that numGrps would've become zero and we wouldn't iterate further
                 present.next=prev;
                 prev=present;
                 present=next;
@@ -560,9 +560,9 @@ class LL{
     //3 sum
     //https://leetcode.com/problems/3sum/
 
-    //brute O(N3logM)tc, (O(M)+O(N))sc - log m to put all the unique triplets that sum up to zero in a set in order to remove duplicates
+    //brute O(N3*M)tc, (O(M)+O(N))sc -  M to put all the unique triplets that sum up to zero in a set in order to remove duplicates
 
-    //better O(N2logM), logM for inserting in set - store frequency of each element in a hashmap, then take adjacent two pointers i and j where starts
+    //better O(N2*M), M for inserting triplets in a set in wc when there are m collisions- store frequency of each element in a hashmap, then take adjacent two pointers i and j where j starts
     // from i+1 till the length of thr array and iterate over the array. In each iteration, check if -(a[i]+a[j]) exists
     //in the hashmap, if it does, then we have found a triplet, thus we add  a[i],a[j] and the element -(a[i]+a[j]) into a set
     //to ensure no duplicates are added, we sort the triplet before adding it to the set. In each iteration, we first reduce
@@ -578,7 +578,7 @@ class LL{
         }
         HashMap<Integer,Integer> map=new HashMap<>();
         HashSet<List<Integer>> set=new HashSet<>();
-        //O(logN) insertion of N elements in hashmap
+        //O(N) insertion of N elements in hashmap
         for(int i:nums){
             map.put(i,map.getOrDefault(i,0)+1);
         }
@@ -690,9 +690,15 @@ class LL{
     //intuition basically is that whatever is the valid candidate for being leftmax or right max, say we're dealing with
     // left max, then we know for sure that this candidate that we tried to compare with leftmax, we were only able to do
     // it because this candidate was smaller than something on the right. now if this cand becomes a valid leftmax, then I
-    // know for sure that on the right there's someone greater. similarly when the next el is also smaller than something
-    // on the right and is also smaller than left max, i can ideally find its unit of water by deducting its height from
-    // lm because i know lm is smaller than something on the right and current el is smaller than lm
+    // know for sure that on the right there's someone greater. there's obv chance of someone on the right being smaller
+    // than the current block but currently we're talking about the water stored by the current block and not its smaller
+    // neighbours and for this reason, these smaller neighbours on the right dont matter. what matters is the fact that
+    // we know there's someone greater on the right and the current block is smaller than that. so if we talk about the
+    // units of water that will be stored by the current block, then it will be 0 units if the current block is leftmax
+    // (as it won't be able to hold any water) and it will be leftmax - height[current] other wise as discussed in the
+    // formula. similarly when the next el is also smaller than something on the right and is also smaller than left max,
+    // i can ideally find its unit of water by deducting its height from lm because we know lm is smaller than something on
+    // the right and current el is smaller than lm
 
     //while the left is smaller than the right, we won't be moving right ptr. for this reason we know for sure that currently
     // any el that left points to, if it is smaller than right, we know that either that el can be the leftmax or it can be
@@ -742,7 +748,7 @@ class LL{
     // iterate over the array such that if nums[i]==nums[j], then move j fwd, basically skipping the duplicate elements
     // till we find a different one. as soon as we do, we move the i one step ahead so that right after the first occurrence
     // of the duplicate element, we place this distinct element that we found and we repeat this until j goes out of bounds.
-    // this way we maintain the k distinct elements in the starting of the array after the iteration is done
+    // this way we maintain the k distinct elements in the starting of the array after the iteration is done.
     //O(N)
 
     public int removeDuplicates(int[] nums) {

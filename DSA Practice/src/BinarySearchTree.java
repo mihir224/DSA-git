@@ -241,6 +241,8 @@ class BinarySearchTree{
     //find kth smallest element in a bst
     //https://leetcode.com/problems/kth-smallest-element-in-a-bst/
 
+    //moving in inorder fashion and keeping track of the kth el, returning it as soon as k reaches the given val
+
     public int kthSmallest(TreeNode root, int k) {
         int[] count=new int[1];
         count[0]=1;
@@ -248,16 +250,37 @@ class BinarySearchTree{
         helperKsmall(root,k,count,ans);
         return ans[0];
     }
-    public void helperKsmall(TreeNode root, int k, int[] count, int[] ans){
-        if(root==null){
+    public void helperKsmall(TreeNode root, int k, int[] count, int[] ans) {
+        if (root == null) {
             return;
         }
-        helperKsmall(root.left,k,count,ans);
-        if(count[0]==k){
-            ans[0]=root.val;
+        helperKsmall(root.left, k, count, ans);
+        if (count[0] == k) {
+            ans[0] = root.val;
         }
         count[0]++;
-        helperKsmall(root.right,k,count,ans);
+        helperKsmall(root.right, k, count, ans);
+    }
+
+    //alt approach
+    int k=0;
+    public int kthSmal1est(TreeNode root, int k) {
+        return helper(root,k);
+    }
+    public int helper(TreeNode root, int k){
+        if(root==null){
+            return 0;
+        }
+        int left=helper(root.left,k);
+        if(left!=0){
+            return left;
+        }
+        this.k++;
+        if(this.k==k){
+            return root.val;
+        }
+        int right=helper(root.right,k);
+        return right;
     }
 
     //kth largest element in bst
@@ -353,6 +376,10 @@ class BinarySearchTree{
         BSTIterator2 obj2=new BSTIterator2(root,true);
         int i=obj1.next();
         int j=obj2.prev();
+        //since we're iterating over the inorder from front and back both, so in the worst case either i won't move and
+        // j will reach index 0 or j won't move and i will reach index n-1. in both the cases i==j and the loop will break.
+        // thus we don't need to explicitly check if the next or prev ptr have gone out of bounds. as soon as i>=j,
+        // execution will stop
         while(i<j){
             if(i+j==k){
                 return true;
@@ -408,9 +435,9 @@ class BinarySearchTree{
 
     //optimal
 
-    //Optimal - O(N)time - preorder, O(1) space (if we don't consider recursive stack space)
+    //Optimal - O(N)time - postorder, O(1) space (if we don't consider recursive stack space)
     //we know that for a tree to be a bst, it's root's value should be greater than the largest element on the left subtree
-    // and, it should be smaller than the smallest element on left subtree. Thus, we start from the bottom and for each node,
+    // and, it should be smaller than the smallest element on the right subtree. Thus, we start from the bottom and for each node,
     // we store the greatest element on its left, the smallest element on its right and the max sum till that node and if the node
     // satisfies the above condition,we save that node's largest value on the left as the min of (smallest val on left, node's val)
     // and its smallest value on right as max of (largest val on right, node's val). If it isn't a bst, we keep track of the max sum
@@ -441,12 +468,9 @@ class BinarySearchTree{
         if(root.val>left.largest&&root.val<right.smallest){ //valid bst
             max=Math.max(max,root.val+left.size+right.size); //comparing current bst's size with current max
             return new Node(root.val+left.size+right.size,Math.max(root.val,right.largest),Math.min(root.val,left.smallest));
-            //since this is a valid bst, for its parent node, we return the largest as the largest val when this node is
-            // taken as root for a bst thus comparing the current node's val with the largest on right and we return the
-            // smallest as the smallest val when this node's taken as root for a bst and thus comparing current node's val
-            // with the smallest on left (smallest might lie on the left because we know that this is a valid bst and there
-            // might be a smaller val on left). This is basically done so that for leaf nodes we don't end up taking INT_MIN
-            // as the largest and INT_MAX as the smallest as this will end up validating all nodes as bst
+            //for largest and smallest we take max and min and not root.left.smallest and root.right.largest directly
+            // because we have to account for leaf nodes as well where largest on the right would give us a very small
+            // val (since that node will be null) and smallest on the left will give us a very large value
         }
         return new Node(0,Integer.MAX_VALUE,Integer.MIN_VALUE); //not a bst, thus returning such extreme values for
         // largest and smallest so that the parent is also deemed not a bst. since it is not a bst, we mark it's
@@ -538,24 +562,28 @@ class BinarySearchTree{
     //distinct numbers in window
     //https://www.interviewbit.com/problems/distinct-numbers-in-window/
 
-    public ArrayList<Integer> dNums(ArrayList<Integer> nums, int k) {
+    public ArrayList<Integer> dNums(ArrayList<Integer> A, int B) {
+        int i=0;
+        int j=0;
+        ArrayList<Integer> list=new ArrayList<>();
         HashMap<Integer,Integer> map=new HashMap<>();
-        ArrayList<Integer> ans=new ArrayList<>();
-        for(int i=0;i<k;i++){
-            map.put(nums.get(i),map.getOrDefault(nums.get(i),0)+1);
-        }
-        ans.add(map.size());
-        for(int i=k;i<nums.size();i++){
-            if(map.get(nums.get(i-k))==1){
-                map.remove(nums.get(i-k));
+        int n=A.size();
+        while(j<n){
+            map.put(A.get(j),map.getOrDefault(A.get(j),0)+1);
+            if(j-i+1<B){
+                j++;
             }
-            else{
-                map.put(nums.get(i-k),map.get(nums.get(i-k))-1);
+            else if(j-i+1==B){
+                list.add(map.size());
+                map.put(A.get(i),map.get(A.get(i))-1);
+                if(map.get(A.get(i))==0){
+                    map.remove(A.get(i));
+                }
+                i++;
+                j++;
             }
-            map.put(nums.get(i),map.getOrDefault(nums.get(i),0)+1);
-            ans.add(map.size());
         }
-        return ans;
+        return list;
     }
 
 

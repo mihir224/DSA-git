@@ -508,12 +508,14 @@ public class Array {
     //https://leetcode.com/problems/search-a-2d-matrix/
 
     //there are two versions of this problem: 1 where it is given that first element of every row is greater than last of
-    //prev row (leetcode version) and the other where this condition is not necessarily true (gfg version)
+    //prev row (leetcode version) and the other where the condition is that every row and col is sorted. now in the gfg
+    // version we cannot apply binary search as it is not necessary that last el of a row would always be smaller than
+    // first el of next row. ie it is not guaranteed that after flattening the matrix it would be sorted
 
     //brute O(N*M) tc, O(1) sc - linearly search for the element
 
     //better - this approach is better for leetcode & optimal for gfg
-    //O(N) tc, O(1) sc
+    //O(N+M) wc tc, O(1) sc
     public boolean searchMatrix(int[][] matrix, int target) {
         int row = 0;
         int col = matrix[0].length - 1;
@@ -556,7 +558,7 @@ public class Array {
     //pow(x,n)
     //brute O(N) tc, O(1) sc - iterate n times, multiply x with itself in each iteration
 
-    //optimal O(logN) tc, O(1) sc - binary exponentiation
+    //optimal O(logbase2N) tc, O(1) sc - binary exponentiation
     public double myPow(double x, int n) {
         double ans = 1.0;
         long nCopy = n; //we take a long copy of n because there might be a case where n is negative. In that case we have
@@ -635,7 +637,7 @@ public class Array {
                 candidate2=i;
                 count2=1;
             }
-            else{
+            else{ //doing so, minority will be cancelled out, majority will stay
                 count1--;
                 count2--;
             }
@@ -781,7 +783,7 @@ public class Array {
     //brute O(N2) time, O(1) space - iterate over the array and for each element check on its right if its sum with an element equals target and
     // in case it does, then return indices of both the elements
 
-    //better O(N2 wc - in case the other matching element is the last one we have to iterate over the whole array) - start
+    //better O(N2 N for wc map and N in case the other matching element is the last one we have to iterate over the whole array) - start
     // inserting elements in the map and if there exists an element in the map such that target-nums[i]=that element, then
     // return the indices of these two elements
 
@@ -839,6 +841,7 @@ public class Array {
     // them in the list it would take O(M) time)) - three pointers+binary search: we basically sort the array, then take three pointers at i at the
     // start, j from i+1, and k from j+1. Now the quadruple includes arr[i],arr[j],arr[k], and the 4th element, which lies
     // in the right half. So we use binary search to find the 4th element. We can use hashset to avoid duplicate quadruples.
+    // time for sorting the quadruples is not taken as it will be constant (4log4)
 
     public List<List<Integer>> fourSum(int[] nums, int target) {
         int n = nums.length;
@@ -1264,6 +1267,50 @@ public class Array {
             }
         }
         return list;
+    }
+
+    //number of flowers in full bloom
+    //https://leetcode.com/problems/number-of-flowers-in-full-bloom
+
+    //brute O(N*M)
+    public int[] fullBloomFl1owers(int[][] flowers, int[] people) {
+        int n=people.length;
+        int m=flowers.length;
+        int[] ans=new int[n];
+        for(int i=0;i<n;i++){
+            int count=0;
+            for(int j=0;j<m;j++){
+                if(flowers[j][0]<=people[i]&&flowers[j][1]>=people[i]){
+                    count++;
+                }
+            }
+            ans[i]=count;
+        }
+        return ans;
+    }
+
+    //optimal O(N)
+    //sort of a pref sum approach
+    public int[] fullBloomFlowers(int[][] flowers, int[] people) {
+        TreeMap<Integer,Integer> map=new TreeMap<>();
+        int n=people.length;
+        int[] ans=new int[n];
+        for(int i:people){
+            map.put(i,0);
+        }
+        for(int[] flower:flowers){
+            map.put(flower[0],map.getOrDefault(flower[0],0)+1); // a flower started blossoming
+            map.put(flower[1]+1,map.getOrDefault(flower[1]+1,0)-1); //a flower stopped blossoming
+        }
+        int prefSum=0;
+        for(int key:map.keySet()){
+            prefSum+=map.get(key);
+            map.put(key,prefSum); //flowers blossoming at this time
+        }
+        for(int i=0;i<n;i++){
+            ans[i]=map.get(people[i]);
+        }
+        return ans;
     }
 
 

@@ -143,6 +143,7 @@ class StackQueues{
 
     //implementing queue using stacks
     //https://leetcode.com/problems/implement-queue-using-stacks/
+    //O(2N) time and space
 
     class MyQueue {
         Stack<Integer> st1;
@@ -467,24 +468,29 @@ class StackQueues{
     // window only so that elements of that window are compared with each other only
 
     public int[] maxSlidingWindow(int[] nums, int k) {
+        ArrayDeque<Integer> deq=new ArrayDeque<>();
         int n=nums.length;
-        int index=0;
-        int[] arr=new int[n-k+1];
-        Deque<Integer> d=new ArrayDeque<>();
-        for(int i=0;i<n;i++){
-            if(!d.isEmpty()&&d.peek()==i-k){
-                d.poll();
+        int[] ans=new int[n-k+1];
+        int i=0;
+        int j=0;
+        while(j<n){
+            while(!deq.isEmpty()&&deq.peekLast()<nums[j]){
+                deq.pollLast();
             }
-            while(!d.isEmpty()&&nums[d.peekLast()]<=nums[i]){
-                d.pollLast();
+            deq.offer(nums[j]);
+            if(j-i+1<k){
+                j++;
             }
-            d.offer(i);
-            if(i>=k-1){
-                arr[index]=nums[d.peek()];
-                index++;
+            else if(j-i+1==k){
+                ans[i]=deq.peek();
+                if(nums[i]==deq.peek()){
+                    deq.poll();
+                }
+                i++;
+                j++;
             }
         }
-        return arr;
+        return ans;
     }
 
     //min stack
@@ -546,7 +552,7 @@ class StackQueues{
         }
 
         public void push(int val) {
-            Long v=Long.valueOf(val);
+            long v=val;
             if(v<min){
                 long modifiedVal=(2*v)-min;
                 min=v;
@@ -672,21 +678,21 @@ class StackQueues{
     //max of min of every window size
     //https://practice.geeksforgeeks.org/problems/maximum-of-minimum-for-every-window-size3453/1
 
-    //brute - for every window size from 1 to N, find the max of min of every window, store it in a list and then return
-    //Function to find maximum of minimums of every window size.
+    //brute - for every window size from 1 to N, find the max of min of every window size, store it in a list and then return
+
 
     //O(N3)
     static int[] maxOfMin(int[] arr, int n)
     {
-        ArrayList<Integer> list=new ArrayList<>();
-        int min=Integer.MAX_VALUE;
-        int max=Integer.MIN_VALUE;
-        for(int k=1;k<=n;k++){
-            max=Integer.MIN_VALUE;
-            for(int i=0;i<n-k+1;i++){
-                min=(int)1e9;
-                for(int j=i;j<i+k;j++){
-                    min=Math.min(min,arr[j]);
+        List<Integer> list=new ArrayList<>();
+        for(int i=1;i<=n;i++){
+            int max=Integer.MIN_VALUE;
+            for(int j=0;j<n-i+1;j++){
+                int min=Integer.MAX_VALUE;
+                for(int k=j;k<j+i;k++){
+                    if(arr[k]<min){
+                        min=arr[k];
+                    }
                 }
                 max=Math.max(max,min);
             }
@@ -698,7 +704,6 @@ class StackQueues{
         }
         return ans;
     }
-
     //better - for each element iterating left and right to find its pse and nse
     //through this approach, assuming the arr is sorted, we'll be able to find potential candidates for being max of min
     // of every window of a given size. if we're not able to fill values for some windows, then that'll mean that the value

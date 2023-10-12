@@ -361,6 +361,33 @@ class BinaryTree{
 
     }
 
+    //alt approach (easy one with better space)
+    ArrayList<Integer> leftV1iew(TreeNode root)
+    {
+        if(root==null){
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> ans=new ArrayList<>();
+        Queue<TreeNode> q=new LinkedList<>();
+        q.offer(root);
+        while(!q.isEmpty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                TreeNode node=q.poll();
+                if(i==0){
+                    ans.add(node.val);
+                }
+                if(node.left!=null){
+                    q.offer(node.left);
+                }
+                if(node.right!=null){
+                    q.offer(node.right);
+                }
+            }
+        }
+        return ans;
+    }
+
     //bottom view of binary tree
     //https://practice.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1
     public ArrayList <Integer> bottomView(TreeNode root)
@@ -503,7 +530,11 @@ class BinaryTree{
     //max width of a binary tree (good question)
     //https://leetcode.com/problems/maximum-width-of-binary-tree/
 
-    //we'll be traversing in level order
+    //method 1 (does not take care of int overflow in case n is very large) - index nodes from 0 to n-1 from first to last node using
+    // conventional formulas
+
+    //method 2 (takes into account int overflow where we try to index every level from 0 to (numNodes in that level - 1))
+
     //note - null nodes between end nodes count. null nodes at the end of a level do not count in the width of that level
     public int widthOfBinaryTree(TreeNode root) {
         Queue<Pair> q=new LinkedList<>();
